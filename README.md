@@ -10,11 +10,13 @@
     ```
     openssl pkcs12 -nodes -out cert.pem -in ipetrash.p12
     ```
-  * Настроить [config.py](etc/examples/config.json) (пример см. в etc/examples/config.json). Поля:
-    * **username** - ник, по которому, идет запрос информации
-    * **max_results** - количество записей по активности
-    * **jira_host** - хост
-    * **name_cert** - имя файла или путь к файлу с сертификатом 
+  * Настроить [config.json](etc/examples/config.json) (пример см. в etc/examples/config.json).
+    * Если, при импорте/запуске config.py, config.json не будет в корне папки, то он будет скопирован из etc/examples/config.json
+    * Поля:
+      * **username** - ник, по которому, идет запрос информации
+      * **max_results** - количество записей по активности
+      * **jira_host** - хост
+      * **name_cert** - имя файла или путь к файлу с сертификатом 
 
 Для запуска:
   * Нужен python (проверялось на 3.10-3.12 версиях)

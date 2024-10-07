@@ -43,9 +43,10 @@ from PyQt5.QtCore import (
 )
 from PyQt5.QtGui import QTextOption, QIcon
 
-from config import PATH_FAVICON, JIRA_HOST, USERNAME
+from config import PATH_FAVICON, JIRA_HOST
 from console import (
     URL,
+    USERNAME,  # В модуле его значение может быть переопределено
     Activity,
     get_rss_jira_log,
     seconds_to_str,

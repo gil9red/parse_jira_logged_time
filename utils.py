@@ -5,10 +5,8 @@ __author__ = "ipetrash"
 
 
 import ssl
-
 import requests
-
-from config import PATH_CERT
+from config import PATH_CERT, JIRA_HOST
 
 
 class TLSAdapter(requests.adapters.HTTPAdapter):
@@ -30,9 +28,14 @@ session.mount("https://", TLSAdapter())
 session.headers["User-Agent"] = USER_AGENT
 
 
-if __name__ == "__main__":
-    from config import JIRA_HOST
+def get_jira_current_username() -> str:
+    rs = session.get(f"{JIRA_HOST}/rest/api/latest/myself")
+    rs.raise_for_status()
 
+    return rs.json()["name"]
+
+
+if __name__ == "__main__":
     # Check
     rs = session.get(f"{JIRA_HOST}/pa-reports/")
     print(rs)
@@ -41,3 +44,6 @@ if __name__ == "__main__":
     rs = session.get(f"{JIRA_HOST}/secure/ViewProfile.jspa")
     print(rs)
     rs.raise_for_status()
+
+    print()
+    print(get_jira_current_username())

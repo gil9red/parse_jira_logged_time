@@ -28,14 +28,8 @@
     ```
 	Если при установке возникает сетевая ошибка, то можно к команде `pip` добавить прокси:
 	```
-	pip install --proxy http://proxy.compassplus.ru:3128 -r requirements.txt
+	pip install --proxy http://proxy.<домен>:3128 -r requirements.txt
 	```
   * Запуск:
     ```
     python gui.py
-
-[Исходники на Github](https://github.com/gil9red/parse_jira_logged_time)
-
-
-### Ответственные лица ###
-Илья Петраш (i.petrash@compassplus.com)

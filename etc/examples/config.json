@@ -1,0 +1,6 @@
+{
+    "username": "ipetrash",
+    "max_results": 500,
+    "jira_host": "https://helpdesk.compassluxe.com",
+    "name_cert": "cert.pem"
+}

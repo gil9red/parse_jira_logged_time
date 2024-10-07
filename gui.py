@@ -535,9 +535,8 @@ class MainWindow(QMainWindow):
     def _fill_tables(self, xml_data: bytes):
         buffer_io = io.StringIO()
         try:
-            print(f"{URL}\n")
-
             with redirect_stdout(buffer_io):
+                print(f"{URL}\n")
                 print(
                     f"Xml data ({len(xml_data)} bytes):\n"
                     f"{xml_data[:150] + b'...' if len(xml_data) > 150 else xml_data!r}"

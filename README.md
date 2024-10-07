@@ -10,7 +10,7 @@
     ```
     openssl pkcs12 -nodes -out cert.pem -in ipetrash.p12
     ```
-  * Настроить [config.py](config.py). Поля:
+  * Настроить [config.py](etc/examples/config.json) (пример см. в etc/examples/config.json). Поля:
     * **username** - ник, по которому, идет запрос информации
     * **max_results** - количество записей по активности
     * **jira_host** - хост

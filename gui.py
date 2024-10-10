@@ -135,6 +135,41 @@ def open_jira(jira_id: str):
     webbrowser.open(url)
 
 
+def from_base64(state: str) -> QByteArray:
+    return QByteArray.fromBase64(state.encode("utf-8"))
+
+
+def to_base64(state: QByteArray) -> str:
+    return state.toBase64().data().decode("utf-8")
+
+
+def read_settings_children(widget, config: dict[str, Any] | None):
+    if not config:
+        return
+
+    for child in widget.findChildren(QSplitter):
+        object_name: str = child.objectName()
+        if not object_name:
+            print(f"[WARN] {child} does not have an objectName")
+            continue
+
+        state: str | None = config.get(object_name)
+        if not state:
+            continue
+
+        child.restoreState(from_base64(state))
+
+
+def write_settings_children(widget, config: dict[str, Any]):
+    for child in widget.findChildren(QSplitter):
+        object_name: str = child.objectName()
+        if not object_name:
+            print(f"[WARN] {child} does not have an objectName")
+            continue
+
+        config[object_name] = to_base64(child.saveState())
+
+
 class LoggedWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -160,6 +195,7 @@ class LoggedWidget(QWidget):
         )
 
         splitter_main = QSplitter(Qt.Horizontal)
+        splitter_main.setObjectName("splitter_main")
         splitter_main.addWidget(self.table_logged)
         splitter_main.addWidget(self.table_logged_info)
         splitter_main.setSizes([300, 600])
@@ -278,10 +314,12 @@ class ActivitiesWidget(QWidget):
             )
 
         splitter_table_activities = QSplitter(Qt.Vertical)
+        splitter_table_activities.setObjectName("splitter_table_activities")
         splitter_table_activities.addWidget(self.table_date_by_jira)
         splitter_table_activities.addWidget(self.table_jira_by_activities)
 
         splitter_main = QSplitter(Qt.Horizontal)
+        splitter_main.setObjectName("splitter_main")
         splitter_main.addWidget(self.table_date)
         splitter_main.addWidget(splitter_table_activities)
         splitter_main.setSizes([400, 600])
@@ -616,23 +654,40 @@ class MainWindow(QMainWindow):
     def read_settings(self):
         config_gui: dict[str, Any] | None = CONFIG.get("gui")
         if config_gui:
-            self.restoreGeometry(
-                QByteArray.fromBase64(
-                    config_gui["MainWindow"]["geometry"].encode("utf-8")
-                )
+            geometry = from_base64(config_gui["MainWindow"]["geometry"])
+            self.restoreGeometry(geometry)
+
+            state = from_base64(config_gui["MainWindow"]["state"])
+            self.restoreState(state)
+
+            read_settings_children(
+                self.logged_widget,
+                config_gui.get("LoggedWidget"),
             )
-            self.restoreState(
-                QByteArray.fromBase64(config_gui["MainWindow"]["state"].encode("utf-8"))
+            read_settings_children(
+                self.activities_widget,
+                config_gui.get("ActivitiesWidget"),
             )
 
     def write_settings(self):
         with open(PATH_CONFIG, "w") as f:
             CONFIG["gui"] = {
                 "MainWindow": {
-                    "state": self.saveState().toBase64().data().decode("utf-8"),
-                    "geometry": self.saveGeometry().toBase64().data().decode("utf-8"),
+                    "state": to_base64(self.saveState()),
+                    "geometry": to_base64(self.saveGeometry()),
                 },
+                "LoggedWidget": dict(),
+                "ActivitiesWidget": dict(),
             }
+
+            write_settings_children(
+                self.logged_widget,
+                CONFIG["gui"]["LoggedWidget"],
+            )
+            write_settings_children(
+                self.activities_widget,
+                CONFIG["gui"]["ActivitiesWidget"],
+            )
 
             json.dump(CONFIG, f, indent=4, ensure_ascii=False)
 

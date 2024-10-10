@@ -705,8 +705,19 @@ class MainWindow(QMainWindow):
                 # Прячем окно с панели задач
                 QTimer.singleShot(0, self.hide)
 
-    def closeEvent(self, *args, **kwargs):
-        super().closeEvent(*args, **kwargs)
+    def closeEvent(self, event):
+        super().closeEvent(event)
+
+        reply = QMessageBox.question(
+            self,
+            "Quit",
+            "Are you sure you want to quit?",
+            QMessageBox.Yes,
+            QMessageBox.No,
+        )
+        if reply != QMessageBox.Yes:
+            event.ignore()
+            return
 
         self.write_settings()
 

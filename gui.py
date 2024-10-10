@@ -706,8 +706,6 @@ class MainWindow(QMainWindow):
                 QTimer.singleShot(0, self.hide)
 
     def closeEvent(self, event):
-        super().closeEvent(event)
-
         reply = QMessageBox.question(
             self,
             "Quit",

@@ -14,7 +14,13 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
         ctx = ssl.create_default_context()
         ctx.set_ciphers("DEFAULT@SECLEVEL=1")
         kwargs["ssl_context"] = ctx
-        return super(TLSAdapter, self).init_poolmanager(*args, **kwargs)
+        return super().init_poolmanager(*args, **kwargs)
+
+    def send(self, *args, **kwargs):
+        # Установка таймаута в 60 секунд, если оно не было задано
+        if not kwargs.get("timeout"):
+            kwargs["timeout"] = 60
+        return super().send(*args, **kwargs)
 
 
 USER_AGENT = (

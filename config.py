@@ -10,6 +10,8 @@ import shutil
 from pathlib import Path
 
 
+VERSION: str = "1.0.0"
+
 # Текущая папка со скриптом
 DIR = Path(__file__).resolve().parent
 

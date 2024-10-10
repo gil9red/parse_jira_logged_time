@@ -43,7 +43,7 @@ from PyQt5.QtCore import (
 )
 from PyQt5.QtGui import QTextOption, QIcon
 
-from config import PATH_FAVICON, JIRA_HOST
+from config import VERSION, PATH_FAVICON, JIRA_HOST
 from console import (
     URL,
     USERNAME,  # В модуле его значение может быть переопределено
@@ -84,7 +84,7 @@ class RunFuncThread(QThread):
             self.about_error.emit(traceback.format_exc())
 
 
-WINDOW_TITLE: str = f"parse_jira_logged_time. {USERNAME}"
+WINDOW_TITLE: str = f"parse_jira_logged_time v{VERSION}. username={USERNAME}"
 
 
 def create_table(header_labels: list[str]) -> QTableWidget:

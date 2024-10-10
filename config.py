@@ -8,6 +8,7 @@ import json
 import shutil
 
 from pathlib import Path
+from typing import Any
 
 
 VERSION: str = "1.0.0"
@@ -28,8 +29,8 @@ if not PATH_CONFIG.exists():
     print(f"Файл конфига скопирован из примера {PATH_ETC_EXAMPLES_CONFIG}")
     shutil.copy(PATH_ETC_EXAMPLES_CONFIG, PATH_CONFIG)
 
-CONFIG: dict[str, str | int] = json.loads(PATH_CONFIG.read_text("utf-8"))
-USERNAME: str | None = CONFIG["username"]
+CONFIG: dict[str, Any] = json.loads(PATH_CONFIG.read_text("utf-8"))
+USERNAME: str | None = CONFIG.get("username")
 MAX_RESULTS: int = CONFIG["max_results"]
 JIRA_HOST: str = CONFIG["jira_host"]
 NAME_CERT: str = CONFIG["name_cert"]  # NOTE: Получение описано в README.md

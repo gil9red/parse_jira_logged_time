@@ -5,6 +5,7 @@ __author__ = "ipetrash"
 
 
 import io
+import json
 import sys
 import traceback
 import webbrowser
@@ -40,10 +41,11 @@ from PyQt5.QtCore import (
     Qt,
     QEvent,
     QTimer,
+    QByteArray,
 )
 from PyQt5.QtGui import QTextOption, QIcon
 
-from config import VERSION, PATH_FAVICON, JIRA_HOST
+from config import VERSION, PATH_FAVICON, JIRA_HOST, PATH_CONFIG, CONFIG
 from console import (
     URL,
     USERNAME,  # В модуле его значение может быть переопределено
@@ -168,10 +170,7 @@ class LoggedWidget(QWidget):
 
         self.setLayout(layout)
 
-    def set_date_by_activities(
-        self,
-        date_by_activities: dict[date, list[Activity]]
-    ):
+    def set_date_by_activities(self, date_by_activities: dict[date, list[Activity]]):
         clear_table(self.table_logged)
 
         for entry_date, activities in sorted(
@@ -258,7 +257,9 @@ class ActivitiesWidget(QWidget):
             header_labels=["LOGGED", "ACTIVITIES", "JIRA", "TITLE"],
         )
         self.table_date_by_jira.itemSelectionChanged.connect(
-            lambda: self._on_table_date_by_jira_item_clicked(self.table_date_by_jira.currentItem())
+            lambda: self._on_table_date_by_jira_item_clicked(
+                self.table_date_by_jira.currentItem()
+            )
         )
         self.table_date_by_jira.itemDoubleClicked.connect(
             self._on_table_date_by_jira_item_double_clicked
@@ -291,10 +292,7 @@ class ActivitiesWidget(QWidget):
 
         self.setLayout(layout)
 
-    def set_date_by_activities(
-        self,
-        date_by_activities: dict[date, list[Activity]]
-    ):
+    def set_date_by_activities(self, date_by_activities: dict[date, list[Activity]]):
         clear_table(self.table_date)
 
         for entry_date, activities in sorted(
@@ -345,14 +343,18 @@ class ActivitiesWidget(QWidget):
         for activity in activities:
             jira_by_activity[activity.jira_id].append(activity)
 
-        for activities in sorted(jira_by_activity.values(), key=get_logged_total_seconds, reverse=True):
+        for activities in sorted(
+            jira_by_activity.values(), key=get_logged_total_seconds, reverse=True
+        ):
             # Группировка была по джире
             activity = activities[0]
             jira_id = activity.jira_id
             jira_title = activity.jira_title
 
             total_logged_seconds = get_logged_total_seconds(activities)
-            total_logged_human = seconds_to_str(total_logged_seconds) if total_logged_seconds else ""
+            total_logged_human = (
+                seconds_to_str(total_logged_seconds) if total_logged_seconds else ""
+            )
 
             items = [
                 create_table_item(total_logged_human),
@@ -611,6 +613,29 @@ class MainWindow(QMainWindow):
 
         self.thread_get_data.start()
 
+    def read_settings(self):
+        config_gui: dict[str, Any] | None = CONFIG.get("gui")
+        if config_gui:
+            self.restoreGeometry(
+                QByteArray.fromBase64(
+                    config_gui["MainWindow"]["geometry"].encode("utf-8")
+                )
+            )
+            self.restoreState(
+                QByteArray.fromBase64(config_gui["MainWindow"]["state"].encode("utf-8"))
+            )
+
+    def write_settings(self):
+        with open(PATH_CONFIG, "w") as f:
+            CONFIG["gui"] = {
+                "MainWindow": {
+                    "state": self.saveState().toBase64().data().decode("utf-8"),
+                    "geometry": self.saveGeometry().toBase64().data().decode("utf-8"),
+                },
+            }
+
+            json.dump(CONFIG, f, indent=4, ensure_ascii=False)
+
     def _on_tray_activated(self, reason):
         self.setVisible(not self.isVisible())
 
@@ -625,12 +650,18 @@ class MainWindow(QMainWindow):
                 # Прячем окно с панели задач
                 QTimer.singleShot(0, self.hide)
 
+    def closeEvent(self, *args, **kwargs):
+        super().closeEvent(*args, **kwargs)
+
+        self.write_settings()
+
 
 if __name__ == "__main__":
     app = QApplication([])
 
     mw = MainWindow()
     mw.resize(1200, 800)
+    mw.read_settings()
     mw.show()
 
     mw.refresh()

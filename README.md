@@ -34,7 +34,7 @@
     ```
 	Если при установке возникает сетевая ошибка, то можно к команде `pip` добавить прокси:
 	```
-	pip install --proxy http://<домен>:3128 -r requirements.txt
+	pip install --proxy <адрес> -r requirements.txt
 	```
   * Запуск:
     ```

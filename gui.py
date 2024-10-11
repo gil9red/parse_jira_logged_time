@@ -143,6 +143,10 @@ def to_base64(state: QByteArray) -> str:
     return state.toBase64().data().decode("utf-8")
 
 
+def get_class_name(obj: Any) -> str:
+    return obj.__class__.__name__
+
+
 def read_settings_children(widget, config: dict[str, Any] | None):
     if not config:
         return
@@ -660,14 +664,12 @@ class MainWindow(QMainWindow):
             state = from_base64(config_gui["MainWindow"]["state"])
             self.restoreState(state)
 
-            read_settings_children(
-                self.logged_widget,
-                config_gui.get("LoggedWidget"),
-            )
-            read_settings_children(
-                self.activities_widget,
-                config_gui.get("ActivitiesWidget"),
-            )
+            for child in [self.logged_widget, self.activities_widget]:
+                child_name = get_class_name(child)
+                read_settings_children(
+                    child,
+                    config_gui.get(child_name),
+                )
 
     def write_settings(self):
         with open(PATH_CONFIG, "w") as f:
@@ -676,18 +678,14 @@ class MainWindow(QMainWindow):
                     "state": to_base64(self.saveState()),
                     "geometry": to_base64(self.saveGeometry()),
                 },
-                "LoggedWidget": dict(),
-                "ActivitiesWidget": dict(),
             }
 
-            write_settings_children(
-                self.logged_widget,
-                CONFIG["gui"]["LoggedWidget"],
-            )
-            write_settings_children(
-                self.activities_widget,
-                CONFIG["gui"]["ActivitiesWidget"],
-            )
+            for child in [self.logged_widget, self.activities_widget]:
+                child_config: dict[str, Any] = dict()
+                write_settings_children(child, child_config)
+
+                child_name = get_class_name(child)
+                CONFIG["gui"][child_name] = child_config
 
             json.dump(CONFIG, f, indent=4, ensure_ascii=False)
 

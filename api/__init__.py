@@ -26,19 +26,11 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0"
 )
-
-
 session = requests.session()
+
 session.cert = str(PATH_CERT)
 session.mount("https://", TLSAdapter())
 session.headers["User-Agent"] = USER_AGENT
-
-
-def get_jira_current_username() -> str:
-    rs = session.get(f"{JIRA_HOST}/rest/api/latest/myself")
-    rs.raise_for_status()
-
-    return rs.json()["name"]
 
 
 if __name__ == "__main__":
@@ -50,6 +42,3 @@ if __name__ == "__main__":
     rs = session.get(f"{JIRA_HOST}/secure/ViewProfile.jspa")
     print(rs)
     rs.raise_for_status()
-
-    print()
-    print(get_jira_current_username())

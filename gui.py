@@ -328,7 +328,7 @@ class MainWindow(QMainWindow):
     def read_settings(self):
         config_gui: dict[str, Any] | None = CONFIG.get("gui")
         if config_gui:
-            geometry =  from_base64(config_gui["MainWindow"]["geometry"])
+            geometry = from_base64(config_gui["MainWindow"]["geometry"])
             self.restoreGeometry(geometry)
 
             state = from_base64(config_gui["MainWindow"]["state"])
@@ -359,7 +359,7 @@ class MainWindow(QMainWindow):
 
             json.dump(CONFIG, f, indent=4, ensure_ascii=False)
 
-    def _on_tray_activated(self, reason):
+    def _on_tray_activated(self, _: QSystemTrayIcon.ActivationReason):
         self.setVisible(not self.isVisible())
 
         if self.isVisible():

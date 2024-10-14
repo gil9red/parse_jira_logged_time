@@ -6,7 +6,7 @@ __author__ = "ipetrash"
 
 from dataclasses import dataclass
 from bs4 import BeautifulSoup
-from utils import get_report_context, NotFoundReport
+from api.job_report.utils import get_report_context, NotFoundReport
 
 
 @dataclass

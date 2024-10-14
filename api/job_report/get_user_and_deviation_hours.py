@@ -6,7 +6,7 @@ __author__ = "ipetrash"
 
 import re
 from bs4 import BeautifulSoup, Tag
-from utils import (
+from api.job_report.utils import (
     NotFoundReport,
     get_report_context,
     get_quarter_report_context,

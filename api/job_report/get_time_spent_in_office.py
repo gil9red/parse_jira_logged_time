@@ -7,7 +7,7 @@ __author__ = "ipetrash"
 import re
 from dataclasses import dataclass
 
-from utils import session, HOST, NotFoundReport
+from api.job_report.utils import session, HOST, NotFoundReport
 
 
 URL = f"{HOST}/pa-reports-new/report/"

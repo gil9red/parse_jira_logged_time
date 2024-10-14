@@ -29,16 +29,16 @@ from PyQt5.QtWidgets import (
     QSizePolicy,
     QToolTip,
     QTabWidget,
+    QDockWidget,
 )
 from PyQt5.QtCore import (
-    QThread,
-    pyqtSignal,
     QEvent,
     QTimer,
     QByteArray,
 )
 from PyQt5.QtGui import QTextOption, QIcon
 
+from api import RunFuncThread
 from config import VERSION, PATH_FAVICON, PATH_CONFIG, CONFIG
 from console import (
     URL,
@@ -63,23 +63,6 @@ def log_uncaught_exceptions(ex_cls, ex, tb):
 
 
 sys.excepthook = log_uncaught_exceptions
-
-
-class RunFuncThread(QThread):
-    run_finished = pyqtSignal(object)
-    about_error = pyqtSignal(str)
-
-    def __init__(self, func):
-        super().__init__()
-
-        self.func = func
-
-    def run(self):
-        try:
-            self.run_finished.emit(self.func())
-        except Exception as e:
-            print(f"Error: {e}")
-            self.about_error.emit(traceback.format_exc())
 
 
 WINDOW_TITLE: str = f"parse_jira_logged_time v{VERSION}. username={USERNAME}"
@@ -184,6 +167,34 @@ class MainWindow(QMainWindow):
 
         self.logged_widget = LoggedWidget()
         self.activities_widget = ActivitiesWidget()
+
+        self.menu_file = self.menuBar().addMenu("&File")
+        action_exit = self.menu_file.addAction("&Exit")
+        action_exit.triggered.connect(self.close)
+
+        self.menu_docks = self.menuBar().addMenu("Docks")
+
+        # TODO:
+        from widgets.addons import AddonDockWidget
+        from widgets.addons.get_worklog import AddonGetWorklogWidget
+        from PyQt5.QtCore import Qt
+
+        addon_dock_widget = AddonDockWidget(addon_cls=AddonGetWorklogWidget)
+        addon_dock_widget.addon.refresh()  # TODO:
+        self.addDockWidget(
+            Qt.RightDockWidgetArea,
+            addon_dock_widget,
+        )
+
+        # Все действия к прикрепляемым окнам поместим в меню
+        for dock in self.findChildren(QDockWidget):
+            self.menu_docks.addAction(dock.toggleViewAction())
+            # TODO:
+            dock.setObjectName(f"{get_class_name(dock.widget())}_DockWidget")
+
+        self.menu_help = self.menuBar().addMenu("Help")
+        action_about_qt = self.menu_help.addAction("About Qt")
+        action_about_qt.triggered.connect(QApplication.aboutQt)
 
         tab_widget = QTabWidget()
         tab_widget.addTab(self.logged_widget, "LOGGED")
@@ -323,7 +334,8 @@ class MainWindow(QMainWindow):
         if self.thread_get_data.isRunning():
             return
 
-        self.thread_get_data.start()
+        # TODO:
+        # self.thread_get_data.start()
 
     def read_settings(self):
         config_gui: dict[str, Any] | None = CONFIG.get("gui")

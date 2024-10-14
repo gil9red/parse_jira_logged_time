@@ -5,8 +5,29 @@ __author__ = "ipetrash"
 
 
 import ssl
+import traceback
+
 import requests
+from PyQt5.QtCore import QThread, pyqtSignal
+
 from config import PATH_CERT, JIRA_HOST
+
+
+class RunFuncThread(QThread):
+    run_finished = pyqtSignal(object)
+    about_error = pyqtSignal(str)
+
+    def __init__(self, func):
+        super().__init__()
+
+        self.func = func
+
+    def run(self):
+        try:
+            self.run_finished.emit(self.func())
+        except Exception as e:
+            print(f"Error: {e}")
+            self.about_error.emit(traceback.format_exc())
 
 
 class TLSAdapter(requests.adapters.HTTPAdapter):

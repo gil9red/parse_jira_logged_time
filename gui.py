@@ -31,14 +31,13 @@ from PyQt5.QtWidgets import (
     QTabWidget,
 )
 from PyQt5.QtCore import (
-    QThread,
-    pyqtSignal,
     QEvent,
     QTimer,
     QByteArray,
 )
 from PyQt5.QtGui import QTextOption, QIcon
 
+from api import RunFuncThread
 from config import VERSION, PATH_FAVICON, PATH_CONFIG, CONFIG
 from console import (
     URL,
@@ -49,6 +48,7 @@ from console import (
     parse_date_by_activities,
     get_logged_total_seconds,
 )
+from widgets import get_class_name
 from widgets.activities_widget import ActivitiesWidget
 from widgets.logged_widget import LoggedWidget
 
@@ -65,23 +65,6 @@ def log_uncaught_exceptions(ex_cls, ex, tb):
 sys.excepthook = log_uncaught_exceptions
 
 
-class RunFuncThread(QThread):
-    run_finished = pyqtSignal(object)
-    about_error = pyqtSignal(str)
-
-    def __init__(self, func):
-        super().__init__()
-
-        self.func = func
-
-    def run(self):
-        try:
-            self.run_finished.emit(self.func())
-        except Exception as e:
-            print(f"Error: {e}")
-            self.about_error.emit(traceback.format_exc())
-
-
 WINDOW_TITLE: str = f"parse_jira_logged_time v{VERSION}. username={USERNAME}"
 
 
@@ -91,10 +74,6 @@ def from_base64(state: str) -> QByteArray:
 
 def to_base64(state: QByteArray) -> str:
     return state.toBase64().data().decode("utf-8")
-
-
-def get_class_name(obj: Any) -> str:
-    return obj.__class__.__name__
 
 
 def read_settings_children(widget, config: dict[str, Any] | None):

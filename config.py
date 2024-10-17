@@ -15,12 +15,12 @@ VERSION: str = "1.1.0"
 PROGRAM_NAME: str = "parse_jira_logged_time"
 
 # Текущая папка со скриптом
-DIR = Path(__file__).resolve().parent
+DIR: Path = Path(__file__).resolve().parent
 
-PATH_FAVICON = DIR / "favicon.png"
+PATH_FAVICON: Path = DIR / "favicon.png"
 
-PATH_ETC_EXAMPLES_CONFIG = DIR / "etc" / "examples" / "config.json"
-PATH_CONFIG = DIR / "config.json"
+PATH_ETC_EXAMPLES_CONFIG: Path = DIR / "etc" / "examples" / "config.json"
+PATH_CONFIG: Path = DIR / "config.json"
 if not PATH_CONFIG.exists():
     print(f"Не найден файл конфига {PATH_CONFIG}")
 
@@ -30,8 +30,8 @@ if not PATH_CONFIG.exists():
     print(f"Файл конфига скопирован из примера {PATH_ETC_EXAMPLES_CONFIG}")
     shutil.copy(PATH_ETC_EXAMPLES_CONFIG, PATH_CONFIG)
 
-DIR_RESOURCES = DIR / "resources"
-PATH_STYLE_SHEET = DIR / DIR_RESOURCES / "style.qss"
+DIR_RESOURCES: Path = DIR / "resources"
+PATH_STYLE_SHEET: Path = DIR / DIR_RESOURCES / "style.qss"
 
 CONFIG: dict[str, Any] = json.loads(PATH_CONFIG.read_text("utf-8"))
 USERNAME: str | None = CONFIG.get("username")

@@ -185,15 +185,16 @@ class MainWindow(QMainWindow):
 
         self._last_refresh_datetime: datetime | None = None
 
-        # TODO:
+        self.addons: list[AddonDockWidget] = []
         for addon_cls in import_all_addons():
-            addon_dock_widget = AddonDockWidget(addon_cls=addon_cls)
+            addon = AddonDockWidget(addon_cls=addon_cls)
+            self.addons.append(addon)
+
             self.addDockWidget(
                 Qt.RightDockWidgetArea,
-                addon_dock_widget,
+                addon,
             )
-            self.menu_addons.addAction(addon_dock_widget.toggleViewAction())
-            addon_dock_widget.refresh()  # TODO:
+            self.menu_addons.addAction(addon.toggleViewAction())
 
         self.menu_help = self.menuBar().addMenu("Help")
         action_about_qt = self.menu_help.addAction("About Qt")
@@ -342,13 +343,12 @@ class MainWindow(QMainWindow):
         self.pb_refresh.setEnabled(False)
         self.progress_refresh.show()
 
-        for dock in self.findChildren(AddonDockWidget):
-            dock.refresh()
+        for addon in self.addons:
+            addon.refresh()
 
     def _update_window_title(self):
-        # TODO:
-        for dock in self.findChildren(AddonDockWidget):
-            dock.update_last_refresh_datetime()
+        for addon in self.addons:
+            addon.update_last_refresh_datetime()
 
         if not self._last_refresh_datetime:
             return
@@ -373,7 +373,6 @@ class MainWindow(QMainWindow):
         if self.thread_get_data.isRunning():
             return
 
-        # TODO:
         self.thread_get_data.start()
 
     def read_settings(self):

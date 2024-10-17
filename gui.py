@@ -124,6 +124,8 @@ class MainWindow(QMainWindow):
         self.tray.activated.connect(self._on_tray_activated)
         self.tray.show()
 
+        self.windowTitleChanged.connect(self.tray.setToolTip)
+
         self.pb_refresh = QPushButton("🔄 REFRESH")
         self.pb_refresh.setObjectName("button_refresh")
         self.pb_refresh.setShortcut("F5")
@@ -357,7 +359,6 @@ class MainWindow(QMainWindow):
                 ago=get_ago(self._last_refresh_datetime),
             )
         )
-        self.tray.setToolTip(self.windowTitle())
 
     def _after_refresh(self):
         self.pb_refresh.setEnabled(True)

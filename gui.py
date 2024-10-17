@@ -34,6 +34,7 @@ from PyQt5.QtCore import (
     QEvent,
     QTimer,
     QByteArray,
+    Qt,
 )
 from PyQt5.QtGui import QTextOption, QIcon
 
@@ -48,6 +49,7 @@ from console import (
     parse_date_by_activities,
     get_logged_total_seconds,
 )
+from widgets.addons import AddonDockWidget, import_all_addons
 from widgets.activities_widget import ActivitiesWidget
 from widgets.logged_widget import LoggedWidget
 
@@ -181,9 +183,7 @@ class MainWindow(QMainWindow):
 
         self._last_refresh_datetime: datetime | None = None
 
-        # # TODO:
-        from widgets.addons import AddonDockWidget, import_all_addons
-        from PyQt5.QtCore import Qt
+        # TODO:
         for addon_cls in import_all_addons():
             addon_dock_widget = AddonDockWidget(addon_cls=addon_cls)
             self.addDockWidget(
@@ -192,11 +192,6 @@ class MainWindow(QMainWindow):
             )
             self.menu_addons.addAction(addon_dock_widget.toggleViewAction())
             addon_dock_widget.refresh()  # TODO:
-
-        # # Все действия к прикрепляемым окнам поместим в меню
-        # for dock in self.findChildren(AddonDockWidget):
-        #     self.menu_addons.addAction(dock.toggleViewAction())
-        #     dock.refresh()  # TODO:
 
         self.menu_help = self.menuBar().addMenu("Help")
         action_about_qt = self.menu_help.addAction("About Qt")
@@ -345,9 +340,11 @@ class MainWindow(QMainWindow):
         self.pb_refresh.setEnabled(False)
         self.progress_refresh.show()
 
+        for dock in self.findChildren(AddonDockWidget):
+            dock.refresh()
+
     def _update_window_title(self):
         # TODO:
-        from widgets.addons import AddonDockWidget
         for dock in self.findChildren(AddonDockWidget):
             dock.update_last_refresh_datetime()
 
@@ -376,7 +373,7 @@ class MainWindow(QMainWindow):
             return
 
         # TODO:
-        # self.thread_get_data.start()
+        self.thread_get_data.start()
 
     def read_settings(self):
         config_gui: dict[str, Any] | None = CONFIG.get("gui")

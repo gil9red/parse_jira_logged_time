@@ -375,6 +375,7 @@ class MainWindow(QMainWindow):
         if self.thread_get_data.isRunning():
             return
 
+        # TODO:
         # self.thread_get_data.start()
 
     def read_settings(self):

@@ -6,11 +6,13 @@ __author__ = "ipetrash"
 
 import ssl
 import traceback
+from datetime import datetime
 
 import requests
 from PyQt5.QtCore import QThread, pyqtSignal
 
 from config import PATH_CERT, JIRA_HOST
+from third_party.ago import ago
 
 
 class RunFuncThread(QThread):
@@ -42,6 +44,22 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
         if not kwargs.get("timeout"):
             kwargs["timeout"] = 60
         return super().send(*args, **kwargs)
+
+
+def get_human_datetime(dt: datetime | None = None) -> str:
+    if not dt:
+        dt = datetime.now()
+    return dt.strftime("%d.%m.%Y %H:%M:%S")
+
+
+def get_ago(dt1: datetime | None = None, dt2: datetime | None = None) -> str:
+    if not dt1:
+        dt1 = datetime.now()
+
+    if not dt2:
+        dt2 = datetime.now()
+
+    return ago(dt2 - dt1)
 
 
 USER_AGENT = (

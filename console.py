@@ -16,7 +16,7 @@ from config import USERNAME, MAX_RESULTS, JIRA_HOST
 from api import session
 from api.jira import get_jira_current_username
 from third_party.decode_escapes_telegram_bot.utils import decode
-from third_party.logged_human_time_to_seconds import logged_human_time_to_seconds
+from third_party.jira_logged_human_time_to_seconds import logged_human_time_to_seconds
 from third_party.seconds_to_str import seconds_to_str
 
 

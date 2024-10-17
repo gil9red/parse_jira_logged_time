@@ -4,17 +4,17 @@
 __author__ = "ipetrash"
 
 
-from api.job_report.get_worklog import get_worklog, Worklog
+from api.job_report.get_time_spent_in_office import get_time_spent_in_office, TimeSpent
 from widgets.addons import AddonWidget
 
 from PyQt5.QtWidgets import QVBoxLayout, QLabel
 
 
-class AddonGetWorklogWidget(AddonWidget):
+class AddonGetTimeSpentNnOfficeWidget(AddonWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Worklog")
+        self.setWindowTitle("Time spent in office")
 
         self.info = QLabel()
         self.info.setWordWrap(True)
@@ -24,8 +24,8 @@ class AddonGetWorklogWidget(AddonWidget):
         main_layout.setContentsMargins(0, 0, 0, 0)  # TODO:
         main_layout.addWidget(self.info)
 
-    def get_data(self) -> Worklog:
-        return get_worklog()
+    def get_data(self) -> TimeSpent:
+        return get_time_spent_in_office()
 
-    def process(self, data: Worklog):
+    def process(self, data: TimeSpent):
         self.info.setText(str(data))

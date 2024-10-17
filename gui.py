@@ -29,7 +29,6 @@ from PyQt5.QtWidgets import (
     QSizePolicy,
     QToolTip,
     QTabWidget,
-    QDockWidget,
 )
 from PyQt5.QtCore import (
     QEvent,
@@ -38,8 +37,8 @@ from PyQt5.QtCore import (
 )
 from PyQt5.QtGui import QTextOption, QIcon
 
-from api import RunFuncThread
-from config import VERSION, PATH_FAVICON, PATH_CONFIG, CONFIG
+from api import RunFuncThread, get_human_datetime, get_ago
+from config import VERSION, PROGRAM_NAME, PATH_FAVICON, PATH_CONFIG, CONFIG
 from console import (
     URL,
     USERNAME,  # В модуле его значение может быть переопределено
@@ -65,7 +64,8 @@ def log_uncaught_exceptions(ex_cls, ex, tb):
 sys.excepthook = log_uncaught_exceptions
 
 
-WINDOW_TITLE: str = f"parse_jira_logged_time v{VERSION}. username={USERNAME}"
+WINDOW_TITLE: str = f"{PROGRAM_NAME} v{VERSION}. username={USERNAME}"
+TEMPLATE_WINDOW_TITLE_WITH_REFRESH: str = f"{WINDOW_TITLE}. Last refresh date: {{dt}} ({{ago}})"
 
 
 def from_base64(state: str) -> QByteArray:
@@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
         self.tray.show()
 
         self.pb_refresh = QPushButton("🔄 REFRESH")
-        self.pb_refresh.setObjectName("pb_refresh")
+        self.pb_refresh.setObjectName("button_refresh")
         self.pb_refresh.setShortcut("F5")
         self.pb_refresh.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.pb_refresh.clicked.connect(self.refresh)
@@ -141,6 +141,11 @@ class MainWindow(QMainWindow):
         self.timer_auto_refresh = QTimer()
         self.timer_auto_refresh.setInterval(60 * 60 * 1000)  # 1 hour
         self.timer_auto_refresh.timeout.connect(self.refresh)
+
+        self.timer_update_window_title = QTimer()
+        self.timer_update_window_title.setInterval(5 * 1000)  # 5 seconds
+        self.timer_update_window_title.timeout.connect(self._update_window_title)
+        self.timer_update_window_title.start()
 
         self.cb_auto_refresh = QCheckBox()
         self.cb_auto_refresh.setText("Auto")
@@ -172,25 +177,26 @@ class MainWindow(QMainWindow):
         action_exit = self.menu_file.addAction("&Exit")
         action_exit.triggered.connect(self.close)
 
-        self.menu_docks = self.menuBar().addMenu("Docks")
+        self.menu_addons = self.menuBar().addMenu("Addons")
 
-        # TODO:
-        from widgets.addons import AddonDockWidget
-        from widgets.addons.get_worklog import AddonGetWorklogWidget
+        self._last_refresh_datetime: datetime | None = None
+
+        # # TODO:
+        from widgets.addons import AddonDockWidget, import_all_addons
         from PyQt5.QtCore import Qt
+        for addon_cls in import_all_addons():
+            addon_dock_widget = AddonDockWidget(addon_cls=addon_cls)
+            self.addDockWidget(
+                Qt.RightDockWidgetArea,
+                addon_dock_widget,
+            )
+            self.menu_addons.addAction(addon_dock_widget.toggleViewAction())
+            addon_dock_widget.refresh()  # TODO:
 
-        addon_dock_widget = AddonDockWidget(addon_cls=AddonGetWorklogWidget)
-        addon_dock_widget.addon.refresh()  # TODO:
-        self.addDockWidget(
-            Qt.RightDockWidgetArea,
-            addon_dock_widget,
-        )
-
-        # Все действия к прикрепляемым окнам поместим в меню
-        for dock in self.findChildren(QDockWidget):
-            self.menu_docks.addAction(dock.toggleViewAction())
-            # TODO:
-            dock.setObjectName(f"{get_class_name(dock.widget())}_DockWidget")
+        # # Все действия к прикрепляемым окнам поместим в меню
+        # for dock in self.findChildren(AddonDockWidget):
+        #     self.menu_addons.addAction(dock.toggleViewAction())
+        #     dock.refresh()  # TODO:
 
         self.menu_help = self.menuBar().addMenu("Help")
         action_about_qt = self.menu_help.addAction("About Qt")
@@ -222,20 +228,39 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(central_widget)
 
+        # TODO: Вынести в отдельный файл
         self.setStyleSheet(
             """
             * {
                 font-size: 16px;
             }
-            #pb_refresh {
+            MainWindow #button_refresh {
                 font-size: 18px;
             }
-            #progress_refresh {
+            MainWindow #progress_refresh {
                 min-height: 14px;
                 max-height: 14px;
             }
-            #log {
+            MainWindow #log {
                 font-family: Courier New;
+            }
+            
+            AddonDockWidget #button_refresh {
+                font-size: 10px;
+            }
+            AddonDockWidget #tabs QTabBar::tab {
+                font-size: 14px;
+            }
+            AddonDockWidget #logs {
+                font-family: Courier New;
+            }
+            AddonDockWidget #ago {
+                font-size: 14px;
+                color: gray;
+                qproperty-alignment: AlignRight;
+            }
+            AddonDockWidget #ago_progress {
+                margin-right: 5px;
             }
             """
         )
@@ -320,21 +345,36 @@ class MainWindow(QMainWindow):
         self.pb_refresh.setEnabled(False)
         self.progress_refresh.show()
 
+    def _update_window_title(self):
+        # TODO:
+        from widgets.addons import AddonDockWidget
+        for dock in self.findChildren(AddonDockWidget):
+            dock.update_last_refresh_datetime()
+
+        if not self._last_refresh_datetime:
+            return
+
+        self.setWindowTitle(
+            TEMPLATE_WINDOW_TITLE_WITH_REFRESH.format(
+                dt=get_human_datetime(self._last_refresh_datetime),
+                ago=get_ago(self._last_refresh_datetime),
+            )
+        )
+        self.tray.setToolTip(self.windowTitle())
+
     def _after_refresh(self):
         self.pb_refresh.setEnabled(True)
         self.progress_refresh.hide()
 
-        self.setWindowTitle(
-            f"{WINDOW_TITLE}. Last refresh date: {datetime.now():%d/%m/%Y %H:%M:%S}"
-        )
-        self.tray.setToolTip(self.windowTitle())
+        self._last_refresh_datetime = datetime.now()
+
+        self._update_window_title()
 
     def refresh(self):
         # Если обновление уже запущено
         if self.thread_get_data.isRunning():
             return
 
-        # TODO:
         # self.thread_get_data.start()
 
     def read_settings(self):

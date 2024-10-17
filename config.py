@@ -12,6 +12,7 @@ from typing import Any
 
 
 VERSION: str = "1.0.0"
+PROGRAM_NAME: str = "parse_jira_logged_time"
 
 # Текущая папка со скриптом
 DIR = Path(__file__).resolve().parent

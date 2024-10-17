@@ -10,7 +10,7 @@
     ```
     openssl pkcs12 -nodes -out cert.pem -in ipetrash.p12
     ```
-  * Настроить [config.json](etc/examples/config.json) (пример см. в etc/examples/config.json).
+  * Настроить [config.json](resources/examples/config.json) (пример см. в resources/examples/config.json).
     * Если, при импорте/запуске config.py, config.json не будет в корне папки, то он будет скопирован из etc/examples/config.json
     * Поля:
   

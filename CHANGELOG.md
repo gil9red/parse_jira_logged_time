@@ -6,6 +6,7 @@
  
 ## [Unreleased]
 ### Changed
+- Перенос /examples/config.json из etc/ в resources/
 - GUI: Перенос стилей из кода в resources/style.qss
 - GUI: Добавлены аддоны
 - GUI: Сохранение состояния окна приложения (размер, положение и т.п.)

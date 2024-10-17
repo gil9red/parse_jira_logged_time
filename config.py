@@ -30,6 +30,9 @@ if not PATH_CONFIG.exists():
     print(f"Файл конфига скопирован из примера {PATH_ETC_EXAMPLES_CONFIG}")
     shutil.copy(PATH_ETC_EXAMPLES_CONFIG, PATH_CONFIG)
 
+DIR_RESOURCES = DIR / "resources"
+PATH_STYLE_SHEET = DIR / DIR_RESOURCES / "style.qss"
+
 CONFIG: dict[str, Any] = json.loads(PATH_CONFIG.read_text("utf-8"))
 USERNAME: str | None = CONFIG.get("username")
 MAX_RESULTS: int = CONFIG["max_results"]

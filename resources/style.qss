@@ -1,0 +1,31 @@
+* {
+    font-size: 16px;
+}
+MainWindow #button_refresh {
+    font-size: 18px;
+}
+MainWindow #progress_refresh {
+    min-height: 14px;
+    max-height: 14px;
+}
+MainWindow #log {
+    font-family: Courier New;
+}
+
+AddonDockWidget #button_refresh {
+    font-size: 10px;
+}
+AddonDockWidget #tabs QTabBar::tab {
+    font-size: 14px;
+}
+AddonDockWidget #logs {
+    font-family: Courier New;
+}
+AddonDockWidget #ago {
+    font-size: 14px;
+    color: gray;
+    qproperty-alignment: AlignRight;
+}
+AddonDockWidget #ago_progress {
+    margin-right: 5px;
+}

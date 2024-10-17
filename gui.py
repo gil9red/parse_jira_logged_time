@@ -39,7 +39,7 @@ from PyQt5.QtCore import (
 from PyQt5.QtGui import QTextOption, QIcon
 
 from api import RunFuncThread, get_human_datetime, get_ago
-from config import VERSION, PROGRAM_NAME, PATH_FAVICON, PATH_CONFIG, CONFIG
+from config import VERSION, PROGRAM_NAME, PATH_STYLE_SHEET, PATH_FAVICON, PATH_CONFIG, CONFIG
 from console import (
     URL,
     USERNAME,  # В модуле его значение может быть переопределено
@@ -226,43 +226,6 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(central_widget)
 
-        # TODO: Вынести в отдельный файл
-        self.setStyleSheet(
-            """
-            * {
-                font-size: 16px;
-            }
-            MainWindow #button_refresh {
-                font-size: 18px;
-            }
-            MainWindow #progress_refresh {
-                min-height: 14px;
-                max-height: 14px;
-            }
-            MainWindow #log {
-                font-family: Courier New;
-            }
-            
-            AddonDockWidget #button_refresh {
-                font-size: 10px;
-            }
-            AddonDockWidget #tabs QTabBar::tab {
-                font-size: 14px;
-            }
-            AddonDockWidget #logs {
-                font-family: Courier New;
-            }
-            AddonDockWidget #ago {
-                font-size: 14px;
-                color: gray;
-                qproperty-alignment: AlignRight;
-            }
-            AddonDockWidget #ago_progress {
-                margin-right: 5px;
-            }
-            """
-        )
-
     def set_auto_refresh(self, checked: bool):
         if checked:
             self.timer_auto_refresh.start()
@@ -440,6 +403,9 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication([])
+    app.setStyleSheet(
+        PATH_STYLE_SHEET.read_text(encoding="utf-8")
+    )
 
     mw = MainWindow()
     mw.resize(1200, 800)

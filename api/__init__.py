@@ -12,29 +12,7 @@ import requests
 from PyQt5.QtCore import QThread, pyqtSignal
 
 from config import PATH_CERT, JIRA_HOST
-from third_party.ago import ago, L10N, UnitSeconds
-
-
-L10N_RU = L10N(
-    singular={
-        UnitSeconds.SECOND: "{value} секунда назад",
-        UnitSeconds.MINUTE: "{value} минута назад",
-        UnitSeconds.HOUR: "{value} час назад",
-        UnitSeconds.DAY: "{value} день назад",
-        UnitSeconds.WEEK: "{value} неделя назад",
-        UnitSeconds.MONTH: "{value} месяц назад",
-        UnitSeconds.YEAR: "{value} год назад",
-    },
-    plural={
-        UnitSeconds.SECOND: "{value} секунды назад",
-        UnitSeconds.MINUTE: "{value} минуты назад",
-        UnitSeconds.HOUR: "{value} часа назад",
-        UnitSeconds.DAY: "{value} дня назад",
-        UnitSeconds.WEEK: "{value} недели назад",
-        UnitSeconds.MONTH: "{value} месяца назад",
-        UnitSeconds.YEAR: "{value} года назад",
-    },
-)
+from third_party.ago import ago, L10N_RU
 
 
 def get_exception_traceback(e: Exception) -> str:
@@ -100,7 +78,7 @@ def get_ago(dt1: datetime | None = None, dt2: datetime | None = None) -> str:
     if not dt2:
         dt2 = datetime.now()
 
-    return ago(dt2 - dt1, L10N_RU)
+    return ago(dt2 - dt1, l10n=L10N_RU())
 
 
 USER_AGENT = (

@@ -4,6 +4,8 @@
 __author__ = "ipetrash"
 
 
+from typing import Any
+
 from api.job_report.get_hours_worked import (
     get_user_and_deviation_hours,
     get_quarter_user_and_deviation_hours,
@@ -12,7 +14,7 @@ from api.job_report.get_hours_worked import (
 from third_party.get_quarter import get_quarter_roman
 from widgets.addons import AddonWidget
 
-from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit
+from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit, QFormLayout, QCheckBox
 
 
 class AddonGetHoursWorkedWidget(AddonWidget):
@@ -23,6 +25,13 @@ class AddonGetHoursWorkedWidget(AddonWidget):
 
         self.info = QPlainTextEdit()
         self.info.setReadOnly(True)
+
+        self.cb_is_colorized = QCheckBox()
+        self.cb_is_colorized.setObjectName("is_colorized")
+        self.cb_is_colorized.setChecked(True)
+        self.cb_is_colorized.toggled.connect(self._update_is_colorized)
+
+        self.color: str | None = None
 
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -61,8 +70,27 @@ class AddonGetHoursWorkedWidget(AddonWidget):
     def process(self, data: tuple[bool, str]):
         ok, text = data
 
-        # TODO: А вот это можно настроить - раскрашивать ли. Или мб только текст закрашивать?
-        color = "#29AB87" if ok else "#80ff0000"
-        self.info.setStyleSheet(f"background: {color};")
+        self.color = "#29AB87" if ok else "#80ff0000"
+        self._update_is_colorized()
 
         self.info.setPlainText(text)
+
+    def _update_is_colorized(self):
+        self.info.setStyleSheet(
+            f"background: {self.color};"
+            if self.color and self.cb_is_colorized.isChecked()
+            else None
+        )
+
+    def init_settings(self, settings_layout: QFormLayout):
+        settings_layout.addRow("Раскрашивать:", self.cb_is_colorized)
+
+    def read_settings(self, settings: dict[str, Any] | None):
+        if not settings:
+            return
+
+        value: bool = settings.get(self.cb_is_colorized.objectName(), True)
+        self.cb_is_colorized.setChecked(value)
+
+    def write_settings(self, settings: dict[str, Any]):
+        settings[self.cb_is_colorized.objectName()] = self.cb_is_colorized.isChecked()

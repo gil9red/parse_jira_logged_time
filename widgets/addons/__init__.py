@@ -75,6 +75,15 @@ class AddonWidget(QWidget):
 
         self.thread_process.start()
 
+    def init_settings(self, settings_layout: QFormLayout):
+        pass
+
+    def read_settings(self, settings: dict[str, Any] | None):
+        pass
+
+    def write_settings(self, settings: dict[str, Any]):
+        pass
+
 
 class AddonDockWidget(QDockWidget):
     def __init__(self, addon_cls: Type[AddonWidget]):
@@ -105,6 +114,7 @@ class AddonDockWidget(QDockWidget):
         self.logs.setReadOnly(True)
 
         self.cb_is_active = QCheckBox()
+        self.cb_is_active.setObjectName("is_active")
         self.cb_is_active.setChecked(True)
         self.cb_is_active.toggled.connect(self._update_is_active)
 
@@ -134,12 +144,14 @@ class AddonDockWidget(QDockWidget):
         self.setWidget(self.tab_widget)
 
         self._update_window_title()
-        self._fill_settings()
+        self._init_settings()
 
-    def _fill_settings(self):
+    def _init_settings(self):
         settings_layout = QFormLayout()
         settings_layout.addRow("Активный:", self.cb_is_active)
         self.settings.setLayout(settings_layout)
+
+        self.addon.init_settings(settings_layout)
 
     def _update_window_title(self):
         title = self.addon.title
@@ -192,11 +204,15 @@ class AddonDockWidget(QDockWidget):
         if not settings:
             return
 
-        is_active: bool = settings.get("is_active", True)
-        self.cb_is_active.setChecked(is_active)
+        value: bool = settings.get(self.cb_is_active.objectName(), True)
+        self.cb_is_active.setChecked(value)
+
+        self.addon.read_settings(settings)
 
     def write_settings(self, settings: dict[str, Any]):
-        settings["is_active"] = self.cb_is_active.isChecked()
+        settings[self.cb_is_active.objectName()] = self.cb_is_active.isChecked()
+
+        self.addon.write_settings(settings)
 
 
 def import_all_addons() -> list[AddonDockWidget]:

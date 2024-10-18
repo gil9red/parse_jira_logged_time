@@ -34,11 +34,27 @@ from PyQt5.QtCore import (
     QEvent,
     QTimer,
     QByteArray,
+    Qt,
+    QTranslator,
+    QLibraryInfo,
 )
 from PyQt5.QtGui import QTextOption, QIcon
 
-from api import RunFuncThread
-from config import VERSION, PATH_FAVICON, PATH_CONFIG, CONFIG
+from api import (
+    RunFuncThread,
+    get_human_datetime,
+    get_human_date,
+    get_ago,
+    get_exception_traceback,
+)
+from config import (
+    VERSION,
+    PROGRAM_NAME,
+    PATH_STYLE_SHEET,
+    PATH_FAVICON,
+    PATH_CONFIG,
+    CONFIG,
+)
 from console import (
     URL,
     USERNAME,  # В модуле его значение может быть переопределено
@@ -48,7 +64,7 @@ from console import (
     parse_date_by_activities,
     get_logged_total_seconds,
 )
-from widgets import get_class_name
+from widgets.addons import AddonDockWidget, import_all_addons
 from widgets.activities_widget import ActivitiesWidget
 from widgets.logged_widget import LoggedWidget
 
@@ -58,14 +74,17 @@ def log_uncaught_exceptions(ex_cls, ex, tb):
     text += "".join(traceback.format_tb(tb))
 
     print(text)
-    QMessageBox.critical(None, "Error", text)
+    QMessageBox.critical(None, "Ошибка", text)
     sys.exit(1)
 
 
 sys.excepthook = log_uncaught_exceptions
 
 
-WINDOW_TITLE: str = f"parse_jira_logged_time v{VERSION}. username={USERNAME}"
+WINDOW_TITLE: str = f"{PROGRAM_NAME} v{VERSION}. username={USERNAME}"
+TEMPLATE_WINDOW_TITLE_WITH_REFRESH: str = (
+    f"{WINDOW_TITLE}. Последнее обновление: {{dt}} ({{ago}})"
+)
 
 
 def from_base64(state: str) -> QByteArray:
@@ -74,6 +93,10 @@ def from_base64(state: str) -> QByteArray:
 
 def to_base64(state: QByteArray) -> str:
     return state.toBase64().data().decode("utf-8")
+
+
+def get_class_name(obj: Any) -> str:
+    return obj.__class__.__name__
 
 
 def read_settings_children(widget, config: dict[str, Any] | None):
@@ -118,8 +141,10 @@ class MainWindow(QMainWindow):
         self.tray.activated.connect(self._on_tray_activated)
         self.tray.show()
 
-        self.pb_refresh = QPushButton("🔄 REFRESH")
-        self.pb_refresh.setObjectName("pb_refresh")
+        self.windowTitleChanged.connect(self.tray.setToolTip)
+
+        self.pb_refresh = QPushButton("🔄 ОБНОВИТЬ")
+        self.pb_refresh.setObjectName("button_refresh")
         self.pb_refresh.setShortcut("F5")
         self.pb_refresh.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.pb_refresh.clicked.connect(self.refresh)
@@ -131,16 +156,21 @@ class MainWindow(QMainWindow):
         self.progress_refresh.hide()
 
         self.cb_show_log = QCheckBox()
-        self.cb_show_log.setText("Show log")
+        self.cb_show_log.setText("Лог")
         self.cb_show_log.setChecked(False)
 
         self.timer_auto_refresh = QTimer()
         self.timer_auto_refresh.setInterval(60 * 60 * 1000)  # 1 hour
         self.timer_auto_refresh.timeout.connect(self.refresh)
 
+        self.timer_update_window_title = QTimer()
+        self.timer_update_window_title.setInterval(5 * 1000)  # 5 seconds
+        self.timer_update_window_title.timeout.connect(self._update_window_title)
+        self.timer_update_window_title.start()
+
         self.cb_auto_refresh = QCheckBox()
-        self.cb_auto_refresh.setText("Auto")
-        self.cb_auto_refresh.setToolTip("Every 1 hour")
+        self.cb_auto_refresh.setText("Авто")
+        self.cb_auto_refresh.setToolTip("Каждый 1 час")
         self.cb_auto_refresh.setChecked(True)
 
         self.cb_auto_refresh.clicked.connect(self.set_auto_refresh)
@@ -164,9 +194,28 @@ class MainWindow(QMainWindow):
         self.logged_widget = LoggedWidget()
         self.activities_widget = ActivitiesWidget()
 
+        self.menu_file = self.menuBar().addMenu("&Файл")
+        action_exit = self.menu_file.addAction("&Выйти")
+        action_exit.triggered.connect(self.close)
+
+        self.menu_addons = self.menuBar().addMenu("Аддоны")
+
+        self._last_refresh_datetime: datetime | None = None
+
+        self.addons: list[AddonDockWidget] = []
+        for addon_dock in import_all_addons():
+            self.addons.append(addon_dock)
+
+            self.addDockWidget(Qt.RightDockWidgetArea, addon_dock)
+            self.menu_addons.addAction(addon_dock.toggleViewAction())
+
+        self.menu_help = self.menuBar().addMenu("Помощь")
+        action_about_qt = self.menu_help.addAction("О Qt")
+        action_about_qt.triggered.connect(QApplication.aboutQt)
+
         tab_widget = QTabWidget()
-        tab_widget.addTab(self.logged_widget, "LOGGED")
-        tab_widget.addTab(self.activities_widget, "ACTIVITIES")
+        tab_widget.addTab(self.logged_widget, "ЗАЛОГИРОВАНО")
+        tab_widget.addTab(self.activities_widget, "АКТИВНОСТИ")
 
         layout_log = QVBoxLayout()
         layout_log.addWidget(self.log)
@@ -190,24 +239,6 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(central_widget)
 
-        self.setStyleSheet(
-            """
-            * {
-                font-size: 16px;
-            }
-            #pb_refresh {
-                font-size: 18px;
-            }
-            #progress_refresh {
-                min-height: 14px;
-                max-height: 14px;
-            }
-            #log {
-                font-family: Courier New;
-            }
-            """
-        )
-
     def set_auto_refresh(self, checked: bool):
         if checked:
             self.timer_auto_refresh.start()
@@ -216,9 +247,10 @@ class MainWindow(QMainWindow):
 
         pos = self.cb_auto_refresh.geometry().topRight()
         pos = self.mapToGlobal(pos)
-        QToolTip.showText(pos, f"Timer {'started' if checked else 'stopped'}")
+        QToolTip.showText(pos, f"Таймер {'запущен' if checked else 'остановлен'}")
 
-    def _set_error_log(self, text: str):
+    def _set_error_log(self, e: Exception):
+        text: str = get_exception_traceback(e)
         self.log.setPlainText(text)
 
         # Отображение лога
@@ -245,7 +277,12 @@ class MainWindow(QMainWindow):
                 self.activities_widget.set_date_by_activities(date_by_activities)
 
                 # Для красоты выводим результат в табличном виде
-                table_header: tuple = ("DATE", "LOGGED", "SECONDS", "ACTIVITIES")
+                table_header: tuple = (
+                    "ДАТА",
+                    "ЗАЛОГИРОВАНО",
+                    "СЕКУНД(Ы)",
+                    "АКТИВНОСТИ",
+                )
                 table_lines: list[tuple[str, str, int, int]] = []
 
                 for entry_date, activities in sorted(
@@ -260,7 +297,7 @@ class MainWindow(QMainWindow):
                     total_seconds: int = get_logged_total_seconds(activities)
                     total_seconds_str: str = seconds_to_str(total_seconds)
 
-                    date_str: str = entry_date.strftime("%d/%m/%Y")
+                    date_str: str = get_human_date(entry_date)
                     table_lines.append(
                         (date_str, total_seconds_str, total_seconds, activities_number)
                     )
@@ -288,14 +325,30 @@ class MainWindow(QMainWindow):
         self.pb_refresh.setEnabled(False)
         self.progress_refresh.show()
 
+        for addon_dock in self.addons:
+            addon_dock.refresh()
+
+    def _update_window_title(self):
+        for addon_dock in self.addons:
+            addon_dock.update_last_refresh_datetime()
+
+        if not self._last_refresh_datetime:
+            return
+
+        self.setWindowTitle(
+            TEMPLATE_WINDOW_TITLE_WITH_REFRESH.format(
+                dt=get_human_datetime(self._last_refresh_datetime),
+                ago=get_ago(self._last_refresh_datetime),
+            )
+        )
+
     def _after_refresh(self):
         self.pb_refresh.setEnabled(True)
         self.progress_refresh.hide()
 
-        self.setWindowTitle(
-            f"{WINDOW_TITLE}. Last refresh date: {datetime.now():%d/%m/%Y %H:%M:%S}"
-        )
-        self.tray.setToolTip(self.windowTitle())
+        self._last_refresh_datetime = datetime.now()
+
+        self._update_window_title()
 
     def refresh(self):
         # Если обновление уже запущено
@@ -306,19 +359,27 @@ class MainWindow(QMainWindow):
 
     def read_settings(self):
         config_gui: dict[str, Any] | None = CONFIG.get("gui")
-        if config_gui:
-            geometry = from_base64(config_gui["MainWindow"]["geometry"])
-            self.restoreGeometry(geometry)
+        if not config_gui:
+            return
 
-            state = from_base64(config_gui["MainWindow"]["state"])
-            self.restoreState(state)
+        geometry = from_base64(config_gui["MainWindow"]["geometry"])
+        self.restoreGeometry(geometry)
 
-            for child in [self.logged_widget, self.activities_widget]:
-                child_name = get_class_name(child)
-                read_settings_children(
-                    child,
-                    config_gui.get(child_name),
-                )
+        state = from_base64(config_gui["MainWindow"]["state"])
+        self.restoreState(state)
+
+        for child in [self.logged_widget, self.activities_widget]:
+            child_name = get_class_name(child)
+            read_settings_children(
+                child,
+                config_gui.get(child_name),
+            )
+
+        for name, settings in config_gui.get("Addons", dict()).items():
+            for addon_dock in self.addons:
+                if addon_dock.addon.name == name:
+                    addon_dock.read_settings(settings)
+                    break
 
     def write_settings(self):
         with open(PATH_CONFIG, "w") as f:
@@ -335,6 +396,14 @@ class MainWindow(QMainWindow):
 
                 child_name = get_class_name(child)
                 CONFIG["gui"][child_name] = child_config
+
+            addons: dict[str, Any] = dict()
+            for addon_dock in self.addons:
+                settings: dict[str, Any] = dict()
+                addon_dock.write_settings(settings)
+                addons[addon_dock.addon.name] = settings
+
+            CONFIG["gui"]["Addons"] = addons
 
             json.dump(CONFIG, f, indent=4, ensure_ascii=False)
 
@@ -355,8 +424,8 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         reply = QMessageBox.question(
             self,
-            "Quit",
-            "Are you sure you want to quit?",
+            "Выйти",
+            "Вы уверены, что хотите выйти?",
             QMessageBox.Yes,
             QMessageBox.No,
         )
@@ -369,6 +438,14 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication([])
+
+    # Использование локали на русском в стандартных виджетах
+    translator = QTranslator()
+    translations_path = QLibraryInfo.location(QLibraryInfo.TranslationsPath)
+    if translator.load("qtbase_ru", directory=translations_path):
+        app.installTranslator(translator)
+
+    app.setStyleSheet(PATH_STYLE_SHEET.read_text(encoding="utf-8"))
 
     mw = MainWindow()
     mw.resize(1200, 800)

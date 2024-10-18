@@ -13,10 +13,10 @@ from dataclasses import dataclass
 from datetime import datetime, date, timezone
 
 from config import USERNAME, MAX_RESULTS, JIRA_HOST
-from api import session
+from api import session, get_human_date
 from api.jira import get_jira_current_username
 from third_party.decode_escapes_telegram_bot.utils import decode
-from third_party.logged_human_time_to_seconds import logged_human_time_to_seconds
+from third_party.jira_logged_human_time_to_seconds import logged_human_time_to_seconds
 from third_party.seconds_to_str import seconds_to_str
 
 
@@ -206,7 +206,7 @@ if __name__ == "__main__":
         total_seconds: int = get_logged_total_seconds(activities)
         total_seconds_str: str = seconds_to_str(total_seconds)
 
-        date_str: str = entry_date.strftime("%d/%m/%Y")
+        date_str: str = get_human_date(entry_date)
         lines.append((date_str, total_seconds_str, total_seconds, len(activities)))
 
     # Список строк станет списком столбцов, у каждого столбца подсчитается максимальная длина

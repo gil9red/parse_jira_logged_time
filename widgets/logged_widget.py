@@ -9,6 +9,7 @@ from datetime import date
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHeaderView, QSplitter, QVBoxLayout, QTableWidgetItem
 
+from api import get_human_date, get_human_time
 from console import Activity, get_logged_total_seconds
 from widgets import create_table, create_table_item, add_table_row, clear_table, open_jira
 from third_party.seconds_to_str import seconds_to_str
@@ -19,14 +20,14 @@ class LoggedWidget(QWidget):
         super().__init__()
 
         self.table_logged = create_table(
-            header_labels=["DATE", "TOTAL LOGGED"],
+            header_labels=["ДАТА", "ЗАЛОГИРОВАНО"],
         )
         self.table_logged.itemSelectionChanged.connect(
             lambda: self._on_table_logged_item_clicked(self.table_logged.currentItem())
         )
 
         self.table_logged_info = create_table(
-            header_labels=["TIME", "LOGGED", "JIRA", "TITLE", "DESCRIPTION"],
+            header_labels=["ВРЕМЯ", "ЗАЛОГИРОВАНО", "ЗАДАЧА", "НАЗВАНИЕ", "ОПИСАНИЕ"],
         )
 
         # Первые 3 колонки (кроме названия) имеют размер под содержимое
@@ -63,7 +64,7 @@ class LoggedWidget(QWidget):
             total_seconds: int = get_logged_total_seconds(activities)
             total_seconds_str: str = seconds_to_str(total_seconds)
 
-            date_str: str = entry_date.strftime("%d/%m/%Y")
+            date_str: str = get_human_date(entry_date)
             is_odd_week: int = entry_date.isocalendar().week % 2 == 1
 
             # Не показывать даты, в которых не было залогировано
@@ -74,7 +75,7 @@ class LoggedWidget(QWidget):
                 create_table_item(date_str, data=activities),
                 create_table_item(
                     total_seconds_str,
-                    tool_tip=f"Total seconds: {total_seconds}",
+                    tool_tip=f"Всего секунд: {total_seconds}",
                 ),
             ]
             for item in items:
@@ -108,7 +109,7 @@ class LoggedWidget(QWidget):
                 logged_human_time = logged_description = None
 
             items = [
-                create_table_item(activity.entry_dt.strftime("%H:%M:%S")),
+                create_table_item(get_human_time(activity.entry_dt)),
                 create_table_item(logged_human_time),
                 create_table_item(activity.jira_id),
                 create_table_item(activity.jira_title, tool_tip=activity.jira_title),

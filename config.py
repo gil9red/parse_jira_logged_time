@@ -11,23 +11,27 @@ from pathlib import Path
 from typing import Any
 
 
-VERSION: str = "1.0.0"
+VERSION: str = "1.1.0"
+PROGRAM_NAME: str = "parse_jira_logged_time"
 
 # Текущая папка со скриптом
-DIR = Path(__file__).resolve().parent
+DIR: Path = Path(__file__).resolve().parent
 
-PATH_FAVICON = DIR / "favicon.png"
+PATH_FAVICON: Path = DIR / "favicon.png"
 
-PATH_ETC_EXAMPLES_CONFIG = DIR / "etc" / "examples" / "config.json"
-PATH_CONFIG = DIR / "config.json"
+PATH_RESOURCES: Path = DIR / "resources"
+PATH_STYLE_SHEET: Path = DIR / PATH_RESOURCES / "style.qss"
+PATH_EXAMPLES_CONFIG: Path = PATH_RESOURCES / "examples" / "config.json"
+
+PATH_CONFIG: Path = DIR / "config.json"
 if not PATH_CONFIG.exists():
     print(f"Не найден файл конфига {PATH_CONFIG}")
 
-    if not PATH_ETC_EXAMPLES_CONFIG.exists():
-        raise FileNotFoundError(PATH_ETC_EXAMPLES_CONFIG)
+    if not PATH_EXAMPLES_CONFIG.exists():
+        raise FileNotFoundError(PATH_EXAMPLES_CONFIG)
 
-    print(f"Файл конфига скопирован из примера {PATH_ETC_EXAMPLES_CONFIG}")
-    shutil.copy(PATH_ETC_EXAMPLES_CONFIG, PATH_CONFIG)
+    print(f"Файл конфига скопирован из примера {PATH_EXAMPLES_CONFIG}")
+    shutil.copy(PATH_EXAMPLES_CONFIG, PATH_CONFIG)
 
 CONFIG: dict[str, Any] = json.loads(PATH_CONFIG.read_text("utf-8"))
 USERNAME: str | None = CONFIG.get("username")

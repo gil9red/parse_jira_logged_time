@@ -57,3 +57,7 @@ def clear_table(table_widget: QTableWidget):
 def open_jira(jira_id: str):
     url = f"{JIRA_HOST}/browse/{jira_id}"
     webbrowser.open(url)
+
+
+def get_class_name(obj: Any) -> str:
+    return obj.__class__.__name__

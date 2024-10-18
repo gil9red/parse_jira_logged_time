@@ -57,23 +57,6 @@ class RunFuncThread(QThread):
             self.about_error.emit(e)
 
 
-class RunFuncThread(QThread):
-    run_finished = pyqtSignal(object)
-    about_error = pyqtSignal(str)
-
-    def __init__(self, func):
-        super().__init__()
-
-        self.func = func
-
-    def run(self):
-        try:
-            self.run_finished.emit(self.func())
-        except Exception as e:
-            print(f"Error: {e}")
-            self.about_error.emit(traceback.format_exc())
-
-
 class TLSAdapter(requests.adapters.HTTPAdapter):
     def init_poolmanager(self, *args, **kwargs):
         ctx = ssl.create_default_context()

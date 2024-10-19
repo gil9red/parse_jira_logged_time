@@ -150,7 +150,7 @@ class MainWindow(QMainWindow):
 
         self.cb_auto_refresh = QCheckBox()
         self.cb_auto_refresh.setObjectName("cb_auto_refresh")
-        self.cb_auto_refresh.setText("Авто")
+        self.cb_auto_refresh.setText("Авто-обновление")
         self.cb_auto_refresh.setToolTip("Каждый 1 час")
         self.cb_auto_refresh.setChecked(True)
         self.cb_auto_refresh.toggled.connect(self.set_auto_refresh)
@@ -161,7 +161,7 @@ class MainWindow(QMainWindow):
         self.log.setWordWrapMode(QTextOption.NoWrap)
 
         self.cb_show_log = QCheckBox()
-        self.cb_show_log.setText("Лог")
+        self.cb_show_log.setText("Логи")
         self.cb_show_log.setChecked(False)
         self.cb_show_log.clicked.connect(self.log.setVisible)
         self.log.setVisible(self.cb_show_log.isChecked())
@@ -215,7 +215,7 @@ class MainWindow(QMainWindow):
             self.addDockWidget(Qt.RightDockWidgetArea, addon_dock)
             menu_addons.addAction(addon_dock.toggleViewAction())
 
-        self.menu_help = self.menuBar().addMenu("Помощь")
+        self.menu_help = self.menuBar().addMenu("&Помощь")
         action_about_qt = self.menu_help.addAction("О Qt")
         action_about_qt.triggered.connect(QApplication.aboutQt)
 

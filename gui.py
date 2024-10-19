@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
     QApplication,
     QMessageBox,
     QMainWindow,
-    QPushButton,
+    QToolButton,
     QCheckBox,
     QPlainTextEdit,
     QVBoxLayout,
@@ -25,7 +25,6 @@ from PyQt5.QtWidgets import (
     QSplitter,
     QSystemTrayIcon,
     QProgressBar,
-    QSizePolicy,
     QToolTip,
     QTabWidget,
 )
@@ -142,11 +141,12 @@ class MainWindow(QMainWindow):
 
         self.windowTitleChanged.connect(self.tray.setToolTip)
 
-        self.pb_refresh = QPushButton("🔄 ОБНОВИТЬ")
-        self.pb_refresh.setObjectName("button_refresh")
-        self.pb_refresh.setShortcut("F5")
-        self.pb_refresh.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        self.pb_refresh.clicked.connect(self.refresh)
+        self.button_refresh = QToolButton()
+        self.button_refresh.setObjectName("button_refresh")
+        self.button_refresh.setText("🔄")
+        self.button_refresh.setToolTip("Обновить")
+        self.button_refresh.setShortcut("F5")
+        self.button_refresh.clicked.connect(self.refresh)
 
         self.cb_auto_refresh = QCheckBox()
         self.cb_auto_refresh.setObjectName("cb_auto_refresh")
@@ -157,7 +157,7 @@ class MainWindow(QMainWindow):
 
         tool_bar_general = self.addToolBar("&Общее")
         tool_bar_general.setObjectName("tool_bar_general")
-        tool_bar_general.addWidget(self.pb_refresh)
+        tool_bar_general.addWidget(self.button_refresh)
         tool_bar_general.addWidget(self.cb_auto_refresh)
 
         self.progress_refresh = QProgressBar()
@@ -328,7 +328,7 @@ class MainWindow(QMainWindow):
             print(text)
 
     def _before_refresh(self):
-        self.pb_refresh.setEnabled(False)
+        self.button_refresh.setEnabled(False)
         self.progress_refresh.show()
 
         for addon_dock in self.addons:
@@ -350,7 +350,7 @@ class MainWindow(QMainWindow):
         )
 
     def _after_refresh(self):
-        self.pb_refresh.setEnabled(True)
+        self.button_refresh.setEnabled(True)
         self.progress_refresh.hide()
 
         self._last_refresh_datetime = datetime.now()

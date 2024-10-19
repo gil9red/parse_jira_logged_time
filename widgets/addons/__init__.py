@@ -118,6 +118,10 @@ class AddonDockWidget(QDockWidget):
         self.cb_is_active.setChecked(True)
         self.cb_is_active.toggled.connect(self._update_is_active)
 
+        self.cb_is_auto_refresh = QCheckBox()
+        self.cb_is_auto_refresh.setObjectName("is_auto_refresh")
+        self.cb_is_auto_refresh.setChecked(True)
+
         self.settings = QWidget()
 
         self.button_refresh = QToolButton()
@@ -149,6 +153,8 @@ class AddonDockWidget(QDockWidget):
     def _init_settings(self):
         settings_layout = QFormLayout()
         settings_layout.addRow("Активный:", self.cb_is_active)
+        settings_layout.addRow("Авто-обновление:", self.cb_is_auto_refresh)
+
         self.settings.setLayout(settings_layout)
 
         self.addon.init_settings(settings_layout)
@@ -169,6 +175,9 @@ class AddonDockWidget(QDockWidget):
         self.label_ago.setText(
             get_ago(self._last_refresh_datetime) if self._last_refresh_datetime else ""
         )
+
+    def is_auto_refresh(self) -> bool:
+        return self.cb_is_auto_refresh.isChecked()
 
     def refresh(self):
         self.addon.refresh()
@@ -207,10 +216,14 @@ class AddonDockWidget(QDockWidget):
         value: bool = settings.get(self.cb_is_active.objectName(), True)
         self.cb_is_active.setChecked(value)
 
+        value: bool = settings.get(self.cb_is_auto_refresh.objectName(), True)
+        self.cb_is_auto_refresh.setChecked(value)
+
         self.addon.read_settings(settings)
 
     def write_settings(self, settings: dict[str, Any]):
         settings[self.cb_is_active.objectName()] = self.cb_is_active.isChecked()
+        settings[self.cb_is_auto_refresh.objectName()] = self.cb_is_auto_refresh.isChecked()
 
         self.addon.write_settings(settings)
 

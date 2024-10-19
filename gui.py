@@ -166,7 +166,6 @@ class MainWindow(QMainWindow):
         self.timer_update_window_title = QTimer()
         self.timer_update_window_title.setInterval(5 * 1000)  # 5 seconds
         self.timer_update_window_title.timeout.connect(self._update_window_title)
-        self.timer_update_window_title.start()
 
         self.cb_auto_refresh = QCheckBox()
         self.cb_auto_refresh.setText("Авто")
@@ -174,8 +173,6 @@ class MainWindow(QMainWindow):
         self.cb_auto_refresh.setChecked(True)
 
         self.cb_auto_refresh.clicked.connect(self.set_auto_refresh)
-        if self.cb_auto_refresh.isChecked():
-            self.timer_auto_refresh.start()
 
         self.log = QPlainTextEdit()
         self.log.setObjectName("log")
@@ -238,6 +235,12 @@ class MainWindow(QMainWindow):
         central_widget.setLayout(layout_main)
 
         self.setCentralWidget(central_widget)
+
+        # Запуск таймеров после инициализации GUI
+        self.timer_update_window_title.start()
+
+        if self.cb_auto_refresh.isChecked():
+            self.timer_auto_refresh.start()
 
     def set_auto_refresh(self, checked: bool):
         if checked:
@@ -326,7 +329,8 @@ class MainWindow(QMainWindow):
         self.progress_refresh.show()
 
         for addon_dock in self.addons:
-            addon_dock.refresh()
+            if addon_dock.is_auto_refresh():
+                addon_dock.refresh()
 
     def _update_window_title(self):
         for addon_dock in self.addons:

@@ -5,6 +5,8 @@
 и этот проект придерживается [Semantic Versioning](http://semver.org/).
  
 ## [Unreleased]
+### Changed
+- GUI: Перенос флаги лога в панель инструментов
 
 ## [1.1.0] - 2024-10-20
 ### Changed

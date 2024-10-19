@@ -155,10 +155,23 @@ class MainWindow(QMainWindow):
         self.cb_auto_refresh.setChecked(True)
         self.cb_auto_refresh.toggled.connect(self.set_auto_refresh)
 
+        self.log = QPlainTextEdit()
+        self.log.setObjectName("log")
+        self.log.setReadOnly(True)
+        self.log.setWordWrapMode(QTextOption.NoWrap)
+
+        self.cb_show_log = QCheckBox()
+        self.cb_show_log.setText("Лог")
+        self.cb_show_log.setChecked(False)
+        self.cb_show_log.clicked.connect(self.log.setVisible)
+        self.log.setVisible(self.cb_show_log.isChecked())
+
         tool_bar_general = self.addToolBar("&Общее")
         tool_bar_general.setObjectName("tool_bar_general")
         tool_bar_general.addWidget(self.button_refresh)
         tool_bar_general.addWidget(self.cb_auto_refresh)
+        tool_bar_general.addSeparator()
+        tool_bar_general.addWidget(self.cb_show_log)
 
         self.progress_refresh = QProgressBar()
         self.progress_refresh.setObjectName("progress_refresh")
@@ -173,18 +186,6 @@ class MainWindow(QMainWindow):
         self.timer_update_window_title = QTimer()
         self.timer_update_window_title.setInterval(5 * 1000)  # 5 seconds
         self.timer_update_window_title.timeout.connect(self._update_window_title)
-
-        self.log = QPlainTextEdit()
-        self.log.setObjectName("log")
-        self.log.setReadOnly(True)
-        self.log.setWordWrapMode(QTextOption.NoWrap)
-
-        self.cb_show_log = QCheckBox()
-        self.cb_show_log.setText("Лог")
-        self.cb_show_log.setChecked(False)
-
-        self.cb_show_log.clicked.connect(self.log.setVisible)
-        self.log.setVisible(self.cb_show_log.isChecked())
 
         self.thread_get_data = RunFuncThread(func=get_rss_jira_log)
         self.thread_get_data.started.connect(self._before_refresh)
@@ -222,13 +223,9 @@ class MainWindow(QMainWindow):
         tab_widget.addTab(self.logged_widget, "ЗАЛОГИРОВАНО")
         tab_widget.addTab(self.activities_widget, "АКТИВНОСТИ")
 
-        layout_log = QVBoxLayout()
-        layout_log.addWidget(self.log)
-        layout_log.addWidget(self.cb_show_log)
-
         layout_content = QVBoxLayout()
         layout_content.addWidget(tab_widget)
-        layout_content.addLayout(layout_log)
+        layout_content.addWidget(self.log)
 
         layout_main = QVBoxLayout()
         layout_main.addWidget(self.progress_refresh)

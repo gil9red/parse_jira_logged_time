@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
         self.cb_auto_refresh.setText("Авто")
         self.cb_auto_refresh.setToolTip("Каждый 1 час")
         self.cb_auto_refresh.setChecked(True)
-        self.cb_auto_refresh.clicked.connect(self.set_auto_refresh)
+        self.cb_auto_refresh.toggled.connect(self.set_auto_refresh)
 
         tool_bar_general = self.addToolBar("&Общее")
         tool_bar_general.setObjectName("tool_bar_general")
@@ -369,11 +369,15 @@ class MainWindow(QMainWindow):
         if not config_gui:
             return
 
-        geometry = from_base64(config_gui["MainWindow"]["geometry"])
-        self.restoreGeometry(geometry)
+        if config_main_window := config_gui.get("MainWindow"):
+            geometry = from_base64(config_main_window["geometry"])
+            self.restoreGeometry(geometry)
 
-        state = from_base64(config_gui["MainWindow"]["state"])
-        self.restoreState(state)
+            state = from_base64(config_main_window["state"])
+            self.restoreState(state)
+
+            value: bool = config_main_window.get("auto_refresh", True)
+            self.cb_auto_refresh.setChecked(value)
 
         for child in [self.logged_widget, self.activities_widget]:
             child_name = get_class_name(child)
@@ -394,6 +398,7 @@ class MainWindow(QMainWindow):
                 "MainWindow": {
                     "state": to_base64(self.saveState()),
                     "geometry": to_base64(self.saveGeometry()),
+                    "auto_refresh": self.cb_auto_refresh.isChecked(),
                 },
             }
 

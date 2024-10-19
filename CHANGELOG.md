@@ -6,6 +6,7 @@
  
 ## [Unreleased]
 ### Changed
+- GUI: Перенос кнопки обновления в панель инструментов
 - GUI: Перевод на русский
 - Перенос /examples/config.json из etc/ в resources/
 - GUI: Перенос стилей из кода в resources/style.qss

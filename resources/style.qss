@@ -4,9 +4,14 @@
 MainWindow #button_refresh {
     font-size: 18px;
 }
+MainWindow #cb_auto_refresh {
+    margin-left: 5px;
+    margin-right: 5px;
+}
 MainWindow #progress_refresh {
     min-height: 14px;
     max-height: 14px;
+    width: 100%;
 }
 MainWindow #log {
     font-family: Courier New;

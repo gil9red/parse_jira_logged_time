@@ -21,7 +21,6 @@ from PyQt5.QtWidgets import (
     QCheckBox,
     QPlainTextEdit,
     QVBoxLayout,
-    QHBoxLayout,
     QWidget,
     QSplitter,
     QSystemTrayIcon,
@@ -149,15 +148,23 @@ class MainWindow(QMainWindow):
         self.pb_refresh.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.pb_refresh.clicked.connect(self.refresh)
 
+        self.cb_auto_refresh = QCheckBox()
+        self.cb_auto_refresh.setObjectName("cb_auto_refresh")
+        self.cb_auto_refresh.setText("Авто")
+        self.cb_auto_refresh.setToolTip("Каждый 1 час")
+        self.cb_auto_refresh.setChecked(True)
+        self.cb_auto_refresh.clicked.connect(self.set_auto_refresh)
+
+        tool_bar_general = self.addToolBar("&Общее")
+        tool_bar_general.setObjectName("tool_bar_general")
+        tool_bar_general.addWidget(self.pb_refresh)
+        tool_bar_general.addWidget(self.cb_auto_refresh)
+
         self.progress_refresh = QProgressBar()
         self.progress_refresh.setObjectName("progress_refresh")
         self.progress_refresh.setRange(0, 0)
         self.progress_refresh.setTextVisible(False)
         self.progress_refresh.hide()
-
-        self.cb_show_log = QCheckBox()
-        self.cb_show_log.setText("Лог")
-        self.cb_show_log.setChecked(False)
 
         self.timer_auto_refresh = QTimer()
         self.timer_auto_refresh.setInterval(60 * 60 * 1000)  # 1 hour
@@ -167,17 +174,14 @@ class MainWindow(QMainWindow):
         self.timer_update_window_title.setInterval(5 * 1000)  # 5 seconds
         self.timer_update_window_title.timeout.connect(self._update_window_title)
 
-        self.cb_auto_refresh = QCheckBox()
-        self.cb_auto_refresh.setText("Авто")
-        self.cb_auto_refresh.setToolTip("Каждый 1 час")
-        self.cb_auto_refresh.setChecked(True)
-
-        self.cb_auto_refresh.clicked.connect(self.set_auto_refresh)
-
         self.log = QPlainTextEdit()
         self.log.setObjectName("log")
         self.log.setReadOnly(True)
         self.log.setWordWrapMode(QTextOption.NoWrap)
+
+        self.cb_show_log = QCheckBox()
+        self.cb_show_log.setText("Лог")
+        self.cb_show_log.setChecked(False)
 
         self.cb_show_log.clicked.connect(self.log.setVisible)
         self.log.setVisible(self.cb_show_log.isChecked())
@@ -195,16 +199,20 @@ class MainWindow(QMainWindow):
         action_exit = self.menu_file.addAction("&Выйти")
         action_exit.triggered.connect(self.close)
 
-        self.menu_addons = self.menuBar().addMenu("Аддоны")
-
         self._last_refresh_datetime: datetime | None = None
 
+        menu_view = self.menuBar().addMenu("&Вид")
+
+        menu_tool_bar = menu_view.addMenu("&Панель инструментов")
+        menu_tool_bar.addAction(tool_bar_general.toggleViewAction())
+
+        menu_addons = menu_view.addMenu("&Аддоны")
         self.addons: list[AddonDockWidget] = []
         for addon_dock in import_all_addons():
             self.addons.append(addon_dock)
 
             self.addDockWidget(Qt.RightDockWidgetArea, addon_dock)
-            self.menu_addons.addAction(addon_dock.toggleViewAction())
+            menu_addons.addAction(addon_dock.toggleViewAction())
 
         self.menu_help = self.menuBar().addMenu("Помощь")
         action_about_qt = self.menu_help.addAction("О Qt")
@@ -222,12 +230,7 @@ class MainWindow(QMainWindow):
         layout_content.addWidget(tab_widget)
         layout_content.addLayout(layout_log)
 
-        layout_refresh = QHBoxLayout()
-        layout_refresh.addWidget(self.pb_refresh)
-        layout_refresh.addWidget(self.cb_auto_refresh)
-
         layout_main = QVBoxLayout()
-        layout_main.addLayout(layout_refresh)
         layout_main.addWidget(self.progress_refresh)
         layout_main.addLayout(layout_content)
 

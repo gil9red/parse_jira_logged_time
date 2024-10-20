@@ -116,7 +116,7 @@ class AddonDockWidget(QDockWidget):
         self.cb_is_active = QCheckBox()
         self.cb_is_active.setObjectName("is_active")
         self.cb_is_active.setChecked(True)
-        self.cb_is_active.toggled.connect(self._update_is_active)
+        self.cb_is_active.toggled.connect(self._set_is_active)
 
         self.cb_is_auto_refresh = QCheckBox()
         self.cb_is_auto_refresh.setObjectName("is_auto_refresh")
@@ -166,7 +166,13 @@ class AddonDockWidget(QDockWidget):
 
         self.setWindowTitle(title)
 
-    def _update_is_active(self, is_active: bool):
+    def _set_is_active(self, is_active: bool):
+        # Зачеркивание текста действия у отключенного аддона
+        action = self.toggleViewAction()
+        font = action.font()
+        font.setStrikeOut(not is_active)
+        action.setFont(font)
+
         self.addon.is_active = is_active
         self.button_refresh.setEnabled(is_active)
         self._update_window_title()

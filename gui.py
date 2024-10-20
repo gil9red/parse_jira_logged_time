@@ -236,6 +236,8 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(central_widget)
 
+        self._quit_dont_ask_again: bool = False
+
         # Запуск таймеров после инициализации GUI
         self.timer_update_window_title.start()
 
@@ -376,6 +378,9 @@ class MainWindow(QMainWindow):
             value: bool = config_main_window.get("auto_refresh", True)
             self.cb_auto_refresh.setChecked(value)
 
+            value: bool = config_main_window.get("quit_dont_ask_again", False)
+            self._quit_dont_ask_again = value
+
         for child in [self.logged_widget, self.activities_widget]:
             child_name = get_class_name(child)
             read_settings_children(
@@ -396,6 +401,7 @@ class MainWindow(QMainWindow):
                     "state": to_base64(self.saveState()),
                     "geometry": to_base64(self.saveGeometry()),
                     "auto_refresh": self.cb_auto_refresh.isChecked(),
+                    "quit_dont_ask_again": self._quit_dont_ask_again,
                 },
             }
 
@@ -431,16 +437,24 @@ class MainWindow(QMainWindow):
                 QTimer.singleShot(0, self.hide)
 
     def closeEvent(self, event):
-        reply = QMessageBox.question(
-            self,
-            "Выйти",
-            "Вы уверены, что хотите выйти?",
-            QMessageBox.Yes,
-            QMessageBox.No,
-        )
-        if reply != QMessageBox.Yes:
-            event.ignore()
-            return
+        if not self._quit_dont_ask_again:
+            cb_dont_ask_again = QCheckBox("Не спрашивать")
+            cb_dont_ask_again.setChecked(False)
+
+            msg_box = QMessageBox(self)
+            msg_box.setWindowTitle("Выйти")
+            msg_box.setText("Вы уверены, что хотите выйти?")
+            msg_box.setIcon(QMessageBox.Question)
+            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msg_box.setDefaultButton(QMessageBox.No)
+            msg_box.setCheckBox(cb_dont_ask_again)
+
+            reply = msg_box.exec()
+            if reply != QMessageBox.Yes:
+                event.ignore()
+                return
+
+            self._quit_dont_ask_again = cb_dont_ask_again.isChecked()
 
         self.write_settings()
 

@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 
-VERSION: str = "1.2.0"
+VERSION: str = "1.2.0-beta"
 PROGRAM_NAME: str = "parse_jira_logged_time"
 
 # Текущая папка со скриптом

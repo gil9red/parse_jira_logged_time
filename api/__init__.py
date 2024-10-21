@@ -30,7 +30,8 @@ class RunFuncThread(QThread):
 
     def run(self):
         try:
-            print(f"[{get_human_datetime()}] RunFuncThread {self.func} start")
+            from threading import current_thread
+            print(f"[{get_human_datetime()}] RunFuncThread {self.func} ({current_thread()}) start")
             self.run_finished.emit(self.func())
             print(f"[{get_human_datetime()}] RunFuncThread {self.func} finished")
         except Exception as e:

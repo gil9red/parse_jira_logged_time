@@ -228,7 +228,7 @@ class AddonDockWidget(QDockWidget):
         self.tab_widget.setCurrentWidget(self.logs)
 
     def _process_finished(self):
-        print(f"[{get_human_datetime()}] {self.addon.name} _process_finished started")
+        print(f"[{get_human_datetime()}] {self.addon.name}._process_finished started")
 
         self.button_refresh.setEnabled(True)
         self.addon.setEnabled(True)
@@ -237,7 +237,7 @@ class AddonDockWidget(QDockWidget):
         self._last_refresh_datetime = datetime.now()
         self.update_last_refresh_datetime()
 
-        print(f"[{get_human_datetime()}] {self.addon.name} _process_finished finished")
+        print(f"[{get_human_datetime()}] {self.addon.name}._process_finished finished")
 
     def read_settings(self, settings: dict[str, Any] | None):
         if not settings:

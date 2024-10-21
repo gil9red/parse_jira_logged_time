@@ -186,3 +186,20 @@ class ActivitiesWidget(QWidget):
 
         activity: Activity = activities[0]
         open_jira(activity.jira_id)
+
+
+from api import get_human_datetime
+
+def decorator(func):
+    def wrapper(*args, **kwargs):
+        print(f"[{get_human_datetime()}] ActivitiesWidget.{func.__name__} started")
+        v = func(*args[:func.__code__.co_argcount], **kwargs)
+        print(f"[{get_human_datetime()}] ActivitiesWidget.{func.__name__} finished")
+        return v
+    return wrapper
+
+
+import inspect
+
+for name, fn in inspect.getmembers(ActivitiesWidget, inspect.isfunction):
+    setattr(ActivitiesWidget, name, decorator(fn))

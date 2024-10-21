@@ -121,3 +121,21 @@ class LoggedWidget(QWidget):
         row = item.row()
         jira_id = item.tableWidget().item(row, 2).text()
         open_jira(jira_id)
+
+
+from api import get_human_datetime
+
+def decorator(func):
+    def wrapper(*args, **kwargs):
+        print(f"[{get_human_datetime()}] LoggedWidget.{func.__name__} started")
+        v = func(*args[:func.__code__.co_argcount], **kwargs)
+        print(f"[{get_human_datetime()}] LoggedWidget.{func.__name__} finished")
+        return v
+    return wrapper
+
+
+import inspect
+
+for name, fn in inspect.getmembers(LoggedWidget, inspect.isfunction):
+    setattr(LoggedWidget, name, decorator(fn))
+

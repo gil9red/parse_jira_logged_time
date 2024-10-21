@@ -89,6 +89,22 @@ class AddonDockWidget(QDockWidget):
     def __init__(self, addon_cls: Type[AddonWidget]):
         super().__init__()
 
+        from api import get_human_datetime
+
+        def decorator(func):
+            def wrapper(*args, **kwargs):
+                print(f"[{get_human_datetime()}] {addon_cls.__name__}.{func.__name__} started")
+                v = func(*args[:func.__code__.co_argcount], **kwargs)
+                print(f"[{get_human_datetime()}] {addon_cls.__name__}.{func.__name__} finished")
+                return v
+
+            return wrapper
+
+        import inspect
+
+        for name, fn in inspect.getmembers(addon_cls, inspect.isfunction):
+            setattr(addon_cls, name, decorator(fn))
+
         self.progress_refresh = QProgressBar()
         self.progress_refresh.setObjectName("progress_refresh")
         self.progress_refresh.setRange(0, 0)
@@ -189,7 +205,7 @@ class AddonDockWidget(QDockWidget):
         self.addon.refresh()
 
     def _process_started(self):
-        print(get_human_datetime(), f"{self.addon.name} _process_started started")
+        print(f"[{get_human_datetime()}] {self.addon.name} _process_started started")
 
         self._last_refresh_datetime = None
         self.button_refresh.setEnabled(False)
@@ -198,7 +214,7 @@ class AddonDockWidget(QDockWidget):
 
         self.logs.appendPlainText(f"Обновление в {get_human_datetime()}")
 
-        print(get_human_datetime(), f"{self.addon.name} _process_started finished")
+        print(f"[{get_human_datetime()}] {self.addon.name} _process_started finished")
 
     def _process_run_finished(self, _: Any):
         self.tab_widget.setCurrentWidget(self.addon)
@@ -212,7 +228,7 @@ class AddonDockWidget(QDockWidget):
         self.tab_widget.setCurrentWidget(self.logs)
 
     def _process_finished(self):
-        print(get_human_datetime(), f"{self.addon.name} _process_finished started")
+        print(f"[{get_human_datetime()}] {self.addon.name} _process_finished started")
 
         self.button_refresh.setEnabled(True)
         self.addon.setEnabled(True)
@@ -221,7 +237,7 @@ class AddonDockWidget(QDockWidget):
         self._last_refresh_datetime = datetime.now()
         self.update_last_refresh_datetime()
 
-        print(get_human_datetime(), f"{self.addon.name} _process_finished finished")
+        print(f"[{get_human_datetime()}] {self.addon.name} _process_finished finished")
 
     def read_settings(self, settings: dict[str, Any] | None):
         if not settings:
@@ -264,3 +280,22 @@ def import_all_addons() -> list[AddonDockWidget]:
             items.append(AddonDockWidget(addon_cls=obj))
 
     return items
+
+
+from api import get_human_datetime
+
+
+def decorator(func):
+    def wrapper(*args, **kwargs):
+        print(f"[{get_human_datetime()}] AddonDockWidget.{func.__name__} started")
+        v = func(*args[:func.__code__.co_argcount], **kwargs)
+        print(f"[{get_human_datetime()}] AddonDockWidget.{func.__name__} finished")
+        return v
+
+    return wrapper
+
+
+import inspect
+
+for name, fn in inspect.getmembers(AddonDockWidget, inspect.isfunction):
+    setattr(AddonDockWidget, name, decorator(fn))

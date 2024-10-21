@@ -73,16 +73,10 @@ class AddonSprintsWidget(AddonWidget):
         open_jira(sprint.key)
 
     def get_data(self) -> list[Sprint]:
-        from api import get_human_datetime
-        print(get_human_datetime(), "AddonSprintsWidget started")
         v = get_sprints_with_overtime_hours()
-        print(get_human_datetime(), "AddonSprintsWidget finished")
         return v
 
     def process(self, data: list[Sprint]):
-        from api import get_human_datetime
-        print(get_human_datetime(), f"{type(self)} process started")
-
         sprints: list[Sprint] = get_sprints_with_overtime_hours()
         if not sprints:
             self.main_layout.setCurrentWidget(self.label_not_found)
@@ -114,8 +108,6 @@ class AddonSprintsWidget(AddonWidget):
 
         self.label_number.setText(str(len(sprints)))
         self.label_total_hours.setText(str(total_overtime_hours))
-
-        print(get_human_datetime(), f"{type(self)} process finished")
 
 
 if __name__ == "__main__":

@@ -255,6 +255,8 @@ class MainWindow(QMainWindow):
         QToolTip.showText(pos, f"Таймер {'запущен' if checked else 'остановлен'}")
 
     def _set_error_log(self, e: Exception):
+        print(get_human_datetime(), "_set_error_log start")
+
         text: str = get_exception_traceback(e)
         self.log.setPlainText(text)
 
@@ -262,7 +264,11 @@ class MainWindow(QMainWindow):
         self.cb_show_log.setChecked(False)
         self.cb_show_log.click()
 
+        print(get_human_datetime(), "_set_error_log finish")
+
     def _fill_tables(self, xml_data: bytes):
+        print(get_human_datetime(), "_fill_tables start")
+
         buffer_io = io.StringIO()
         try:
             with redirect_stdout(buffer_io):
@@ -278,8 +284,13 @@ class MainWindow(QMainWindow):
                 if not date_by_activities:
                     return
 
+                print(get_human_datetime(), "_fill_tables logged_widget start")
                 self.logged_widget.set_date_by_activities(date_by_activities)
+                print(get_human_datetime(), "_fill_tables logged_widget finish")
+
+                print(get_human_datetime(), "_fill_tables activities_widget start")
                 self.activities_widget.set_date_by_activities(date_by_activities)
+                print(get_human_datetime(), "_fill_tables activities_widget finish")
 
                 # Для красоты выводим результат в табличном виде
                 table_header: tuple = (
@@ -326,13 +337,23 @@ class MainWindow(QMainWindow):
 
             print(text)
 
+            print(get_human_datetime(), "_fill_tables finally")
+
+        print(get_human_datetime(), "_fill_tables finish")
+
     def _before_refresh(self):
+        print(get_human_datetime(), "_before_refresh start")
+
         self.button_refresh.setEnabled(False)
         self.progress_refresh.show()
 
         for addon_dock in self.addons:
+            print(get_human_datetime(), f"_before_refresh addon_dock({addon_dock.addon.name}).refresh start")
             if addon_dock.is_auto_refresh():
                 addon_dock.refresh()
+            print(get_human_datetime(), "_before_refresh addon_dock.refresh finish")
+
+        print(get_human_datetime(), "_before_refresh finish")
 
     def _update_window_title(self):
         for addon_dock in self.addons:
@@ -349,6 +370,8 @@ class MainWindow(QMainWindow):
         )
 
     def _after_refresh(self):
+        print(get_human_datetime(), "_after_refresh start")
+
         self.button_refresh.setEnabled(True)
         self.progress_refresh.hide()
 
@@ -356,12 +379,18 @@ class MainWindow(QMainWindow):
 
         self._update_window_title()
 
+        print(get_human_datetime(), "_after_refresh finish")
+
     def refresh(self):
+        print(get_human_datetime(), "refresh start")
+
         # Если обновление уже запущено
         if self.thread_get_data.isRunning():
             return
 
         self.thread_get_data.start()
+
+        print(get_human_datetime(), "refresh finish")
 
     def read_settings(self):
         config_gui: dict[str, Any] | None = CONFIG.get("gui")

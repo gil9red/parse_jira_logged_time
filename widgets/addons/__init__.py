@@ -189,12 +189,16 @@ class AddonDockWidget(QDockWidget):
         self.addon.refresh()
 
     def _process_started(self):
+        print(get_human_datetime(), f"{self.addon.name} _process_started started")
+
         self._last_refresh_datetime = None
         self.button_refresh.setEnabled(False)
         self.addon.setEnabled(False)
         self.stacked_ago_progress.setCurrentWidget(self.progress_refresh)
 
         self.logs.appendPlainText(f"Обновление в {get_human_datetime()}")
+
+        print(get_human_datetime(), f"{self.addon.name} _process_started finished")
 
     def _process_run_finished(self, _: Any):
         self.tab_widget.setCurrentWidget(self.addon)
@@ -208,12 +212,16 @@ class AddonDockWidget(QDockWidget):
         self.tab_widget.setCurrentWidget(self.logs)
 
     def _process_finished(self):
+        print(get_human_datetime(), f"{self.addon.name} _process_finished started")
+
         self.button_refresh.setEnabled(True)
         self.addon.setEnabled(True)
         self.stacked_ago_progress.setCurrentWidget(self.label_ago)
 
         self._last_refresh_datetime = datetime.now()
         self.update_last_refresh_datetime()
+
+        print(get_human_datetime(), f"{self.addon.name} _process_finished finished")
 
     def read_settings(self, settings: dict[str, Any] | None):
         if not settings:

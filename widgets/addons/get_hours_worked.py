@@ -6,6 +6,8 @@ __author__ = "ipetrash"
 
 from typing import Any
 
+import requests.exceptions
+
 from api.job_report.get_hours_worked import (
     get_user_and_deviation_hours,
     get_quarter_user_and_deviation_hours,

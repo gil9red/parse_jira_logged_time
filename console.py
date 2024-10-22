@@ -24,6 +24,7 @@ if not USERNAME:
     USERNAME = get_jira_current_username()
 
 
+MAX_RESULTS = 100
 URL: str = (
     f"{JIRA_HOST}/activity?maxResults={MAX_RESULTS}"
     f"&streams=user+IS+{USERNAME}&os_authType=basic&title=undefined"

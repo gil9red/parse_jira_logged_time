@@ -27,12 +27,27 @@ class RunFuncThread(QThread):
         super().__init__()
 
         self.func = func
+        self.result = None
 
     def run(self):
         try:
             from threading import current_thread
             print(f"[{get_human_datetime()}] RunFuncThread {self.func} ({current_thread()}) start")
-            self.run_finished.emit(self.func())
+            # from console import get_rss_jira_log
+            # if not self.result:
+            #     self.result = self.func()
+            #
+            # if self.func == get_rss_jira_log:
+            #     self.result = self.func()
+
+            self.result = self.func()
+
+            print("[RESULT]", self.func, repr(self.result)[:200])
+
+            import time
+            import random
+            time.sleep(random.choice(list(range(10))))
+            self.run_finished.emit(self.result)
             print(f"[{get_human_datetime()}] RunFuncThread {self.func} finished")
         except Exception as e:
             print(f"[{get_human_datetime()}] RunFuncThread {self.func} error: {e} ({type(e)})")

@@ -61,6 +61,12 @@ class AddonWidget(QWidget):
 
     def get_data(self) -> Any:
         raise NotImplementedError()
+    #
+    # def do_process(self, data: Any):
+    #     try:
+    #         self.process(data)
+    #     except Exception as e:
+    #         self.thread_process.about_error.emit(e)
 
     def process(self, data: Any):
         raise NotImplementedError()

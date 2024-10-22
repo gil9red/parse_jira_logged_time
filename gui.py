@@ -78,7 +78,7 @@ def log_uncaught_exceptions(ex_cls, ex, tb):
 
     print(text)
     QMessageBox.critical(None, "Ошибка", text)
-    sys.exit(1)
+    # sys.exit(1)
 
 
 sys.excepthook = log_uncaught_exceptions
@@ -205,7 +205,7 @@ class MainWindow(QMainWindow):
         self.progress_refresh.hide()
 
         self.timer_auto_refresh = QTimer()
-        self.timer_auto_refresh.setInterval(60 * 60 * 1000)  # 1 hour
+        self.timer_auto_refresh.setInterval(15 * 1000)  # 1 hour
         self.timer_auto_refresh.timeout.connect(self.refresh)
 
         self.timer_update_window_title = QTimer()

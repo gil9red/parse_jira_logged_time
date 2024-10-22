@@ -77,7 +77,7 @@ class AddonSprintsWidget(AddonWidget):
         return v
 
     def process(self, data: list[Sprint]):
-        sprints: list[Sprint] = get_sprints_with_overtime_hours()
+        sprints: list[Sprint] = data
         if not sprints:
             self.main_layout.setCurrentWidget(self.label_not_found)
             return

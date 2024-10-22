@@ -205,7 +205,7 @@ class MainWindow(QMainWindow):
         self.progress_refresh.hide()
 
         self.timer_auto_refresh = QTimer()
-        self.timer_auto_refresh.setInterval(15 * 1000)  # 1 hour
+        self.timer_auto_refresh.setInterval(30 * 1000)  # 30 seconds
         self.timer_auto_refresh.timeout.connect(self.refresh)
 
         self.timer_update_window_title = QTimer()

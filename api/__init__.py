@@ -57,14 +57,21 @@ class RunFuncThread(QThread):
 class TLSAdapter(requests.adapters.HTTPAdapter):
     def init_poolmanager(self, *args, **kwargs):
         ctx = ssl.create_default_context()
-        ctx.set_ciphers("DEFAULT@SECLEVEL=1")
+        # ctx.set_ciphers("DEFAULT@SECLEVEL=1")
+
+        # Отключение проверки сертификата в ответе
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
         kwargs["ssl_context"] = ctx
+
         return super().init_poolmanager(*args, **kwargs)
 
     def send(self, *args, **kwargs):
         # Установка таймаута в 60 секунд, если оно не было задано
         if not kwargs.get("timeout"):
             kwargs["timeout"] = 60
+
         return super().send(*args, **kwargs)
 
 

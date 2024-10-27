@@ -17,10 +17,9 @@ PROGRAM_NAME: str = "parse_jira_logged_time"
 # Текущая папка со скриптом
 DIR: Path = Path(__file__).resolve().parent
 
-PATH_FAVICON: Path = DIR / "favicon.png"
-
 PATH_RESOURCES: Path = DIR / "resources"
-PATH_STYLE_SHEET: Path = DIR / PATH_RESOURCES / "style.qss"
+PATH_FAVICON: Path = PATH_RESOURCES / "favicon.png"
+PATH_STYLE_SHEET: Path = PATH_RESOURCES / "style.qss"
 PATH_EXAMPLES_CONFIG: Path = PATH_RESOURCES / "examples" / "config.json"
 
 PATH_CONFIG: Path = DIR / "config.json"

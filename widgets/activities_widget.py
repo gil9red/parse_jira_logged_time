@@ -8,11 +8,24 @@ from collections import defaultdict
 from datetime import date
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QHeaderView, QSplitter, QVBoxLayout, QTableWidgetItem
+from PyQt5.QtWidgets import (
+    QWidget,
+    QHeaderView,
+    QSplitter,
+    QVBoxLayout,
+    QTableWidgetItem,
+)
 
 from api import get_human_date, get_human_time
 from api.jira_rss import Activity, get_logged_total_seconds
-from widgets import create_table, create_table_item, add_table_row, clear_table, open_jira, block_signals
+from widgets import (
+    create_table,
+    create_table_item,
+    add_table_row,
+    clear_table,
+    open_jira,
+    block_signals,
+)
 from third_party.seconds_to_str import seconds_to_str
 
 
@@ -175,7 +188,9 @@ class ActivitiesWidget(QWidget):
                     create_table_item(logged_human_time),
                     create_table_item(activity.action.name),
                     create_table_item(logged_description, tool_tip=logged_description),
-                    create_table_item(activity.action_text, tool_tip=activity.action_text),
+                    create_table_item(
+                        activity.action_text, tool_tip=activity.action_text
+                    ),
                 ]
                 add_table_row(self.table_jira_by_activities, items)
 

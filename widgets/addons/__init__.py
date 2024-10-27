@@ -224,8 +224,11 @@ class AddonDockWidget(QDockWidget):
         self.addon.read_settings(settings)
 
     def write_settings(self, settings: dict[str, Any]):
-        settings[self.cb_is_active.objectName()] = self.cb_is_active.isChecked()
-        settings[self.cb_is_auto_refresh.objectName()] = self.cb_is_auto_refresh.isChecked()
+        is_active = self.cb_is_active.objectName()
+        settings[is_active] = self.cb_is_active.isChecked()
+
+        is_auto_refresh = self.cb_is_auto_refresh.objectName()
+        settings[is_auto_refresh] = self.cb_is_auto_refresh.isChecked()
 
         self.addon.write_settings(settings)
 

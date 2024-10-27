@@ -93,12 +93,3 @@ if __name__ == "__main__":
     Петраш Илья Андреевич
     Переработка за квартал 15:09
     """
-
-    print()
-
-    from get_worklog import get_worklog
-
-    print(get_worklog())
-    """
-    Worklog(actually='103:05:14', logged='66:35', logged_percent=65)
-    """

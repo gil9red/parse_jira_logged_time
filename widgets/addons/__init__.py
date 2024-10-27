@@ -41,7 +41,7 @@ class AddonWidget(QWidget):
         self.__is_active: bool = True
 
         self.thread_process = RunFuncThread(func=self.get_data)
-        self.thread_process.run_finished.connect(self.process)
+        self.thread_process.run_finished.connect(self.do_process)
 
     @property
     def name(self) -> str:
@@ -64,6 +64,12 @@ class AddonWidget(QWidget):
 
     def process(self, data: Any):
         raise NotImplementedError()
+
+    def do_process(self, data: Any):
+        try:
+            self.process(data)
+        except Exception as e:
+            self.thread_process.about_error.emit(e)
 
     def refresh(self):
         if not self.isEnabled() or not self.__is_active:
@@ -92,6 +98,8 @@ class AddonDockWidget(QDockWidget):
 
         self.label_ago = QLabel()
         self.label_ago.setObjectName("ago")
+
+        self._last_error: Exception | None = None
 
         self.addon: AddonWidget = addon_cls()
         self.addon.thread_process.started.connect(self._process_started)
@@ -185,7 +193,9 @@ class AddonDockWidget(QDockWidget):
         self.addon.refresh()
 
     def _process_started(self):
+        self._last_error = None
         self._last_refresh_datetime = None
+
         self.button_refresh.setEnabled(False)
         self.addon.setEnabled(False)
         self.stacked_ago_progress.setCurrentWidget(self.progress_refresh)
@@ -193,9 +203,16 @@ class AddonDockWidget(QDockWidget):
         self.logs.appendPlainText(f"Обновление в {get_human_datetime()}")
 
     def _process_run_finished(self, _: Any):
+        # Это код может быть выполнен сразу после _process_set_error_log
+        if self._last_error:
+            self.tab_widget.setCurrentWidget(self.logs)
+            return
+
         self.tab_widget.setCurrentWidget(self.addon)
 
     def _process_set_error_log(self, e: Exception):
+        self._last_error = e
+
         error: str = get_exception_traceback(e)
 
         error = html.escape(error).replace("\n", "<br/>")

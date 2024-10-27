@@ -20,7 +20,6 @@ from PyQt5.QtWidgets import (
     QMainWindow,
     QToolButton,
     QCheckBox,
-    QPlainTextEdit,
     QVBoxLayout,
     QWidget,
     QSplitter,
@@ -37,7 +36,7 @@ from PyQt5.QtCore import (
     QTranslator,
     QLibraryInfo,
 )
-from PyQt5.QtGui import QTextOption, QIcon
+from PyQt5.QtGui import QIcon
 
 import api
 from api import (
@@ -45,7 +44,6 @@ from api import (
     get_human_datetime,
     get_human_date,
     get_ago,
-    get_exception_traceback,
 )
 from api.jira import get_jira_current_username
 from api.jira_rss import (
@@ -67,6 +65,7 @@ from config import (
 from widgets.addons import AddonDockWidget, import_all_addons
 from widgets.activities_widget import ActivitiesWidget
 from widgets.logged_widget import LoggedWidget
+from widgets.logs_widget import LogsWidget
 
 
 MAIN_WINDOW: "MainWindow" = None
@@ -177,16 +176,13 @@ class MainWindow(QMainWindow):
         self.cb_auto_refresh.setChecked(True)
         self.cb_auto_refresh.toggled.connect(self.set_auto_refresh)
 
-        self.log = QPlainTextEdit()
-        self.log.setObjectName("log")
-        self.log.setReadOnly(True)
-        self.log.setWordWrapMode(QTextOption.NoWrap)
+        self.logs = LogsWidget()
 
         self.cb_show_log = QCheckBox()
         self.cb_show_log.setText("Логи")
         self.cb_show_log.setChecked(False)
-        self.cb_show_log.clicked.connect(self.log.setVisible)
-        self.log.setVisible(self.cb_show_log.isChecked())
+        self.cb_show_log.clicked.connect(self.logs.setVisible)
+        self.logs.setVisible(self.cb_show_log.isChecked())
 
         tool_bar_general = self.addToolBar("&Общее")
         tool_bar_general.setObjectName("tool_bar_general")
@@ -251,7 +247,7 @@ class MainWindow(QMainWindow):
 
         layout_content = QVBoxLayout()
         layout_content.addWidget(tab_widget)
-        layout_content.addWidget(self.log)
+        layout_content.addWidget(self.logs)
 
         layout_main = QVBoxLayout()
         layout_main.addWidget(self.progress_refresh)
@@ -281,8 +277,7 @@ class MainWindow(QMainWindow):
         QToolTip.showText(pos, f"Таймер {'запущен' if checked else 'остановлен'}")
 
     def _set_error_log(self, e: Exception):
-        text: str = get_exception_traceback(e)
-        self.log.setPlainText(text)
+        self.logs.append_exception(e)
 
         # Отображение лога
         self.cb_show_log.setChecked(False)
@@ -347,7 +342,7 @@ class MainWindow(QMainWindow):
 
         finally:
             text = buffer_io.getvalue()
-            self.log.setPlainText(text)
+            self.logs.append(text)
 
             print(text)
 

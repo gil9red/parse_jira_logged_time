@@ -9,8 +9,12 @@ MainWindow #progress_refresh {
     max-height: 14px;
     width: 100%;
 }
-MainWindow #log {
+
+LogsWidget #logs {
     font-family: Courier New;
+}
+LogsWidget QToolBar QToolButton {
+    font-size: 12px;
 }
 
 AddonDockWidget #button_refresh {
@@ -18,9 +22,6 @@ AddonDockWidget #button_refresh {
 }
 AddonDockWidget #tabs QTabBar::tab {
     font-size: 14px;
-}
-AddonDockWidget #logs {
-    font-family: Courier New;
 }
 AddonDockWidget #ago {
     font-size: 14px;

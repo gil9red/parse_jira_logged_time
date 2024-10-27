@@ -18,7 +18,6 @@ from PyQt5.QtWidgets import (
     QDockWidget,
     QToolButton,
     QProgressBar,
-    QPlainTextEdit,
     QTabWidget,
     QStackedWidget,
     QLabel,
@@ -26,8 +25,9 @@ from PyQt5.QtWidgets import (
     QCheckBox,
 )
 
-from api import RunFuncThread, get_human_datetime, get_ago, get_exception_traceback
+from api import RunFuncThread, get_human_datetime, get_ago
 from widgets import get_class_name
+from widgets.logs_widget import LogsWidget
 
 
 FILE = Path(__file__).resolve()
@@ -110,12 +110,7 @@ class AddonDockWidget(QDockWidget):
         # Для работы saveState/restoreState
         self.setObjectName(f"{self.addon.name}_DockWidget")
 
-        # TODO: Общая инфа, а не только ошибки
-        # TODO: Кнопку очищения бы добавить
-        self.logs = QPlainTextEdit()
-        self.logs.setMaximumBlockCount(1_000)
-        self.logs.setObjectName("logs")
-        self.logs.setReadOnly(True)
+        self.logs = LogsWidget()
 
         self.cb_is_active = QCheckBox()
         self.cb_is_active.setObjectName("is_active")
@@ -200,7 +195,7 @@ class AddonDockWidget(QDockWidget):
         self.addon.setEnabled(False)
         self.stacked_ago_progress.setCurrentWidget(self.progress_refresh)
 
-        self.logs.appendPlainText(f"Обновление в {get_human_datetime()}")
+        self.logs.append(f"Обновление в {get_human_datetime()}")
 
     def _process_run_finished(self, _: Any):
         # Это код может быть выполнен сразу после _process_set_error_log
@@ -213,11 +208,7 @@ class AddonDockWidget(QDockWidget):
     def _process_set_error_log(self, e: Exception):
         self._last_error = e
 
-        error: str = get_exception_traceback(e)
-
-        error = html.escape(error).replace("\n", "<br/>")
-        self.logs.appendHtml(f"<span style='color: red'>{error}</span>")
-
+        self.logs.append_exception(e)
         self.tab_widget.setCurrentWidget(self.logs)
 
     def _process_finished(self):

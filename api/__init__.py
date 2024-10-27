@@ -3,9 +3,6 @@
 
 __author__ = "ipetrash"
 
-
-import traceback
-
 from datetime import datetime, date
 from multiprocessing.pool import Pool
 
@@ -14,10 +11,6 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 from config import PATH_CERT, JIRA_HOST
 from third_party.ago import ago, L10N_RU
-
-
-def get_exception_traceback(e: Exception) -> str:
-    return "".join(traceback.format_exception(e)).strip()
 
 
 class RunFuncThread(QThread):

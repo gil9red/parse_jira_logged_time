@@ -5,6 +5,9 @@
 и этот проект придерживается [Semantic Versioning](http://semver.org/).
  
 ## [Unreleased]
+
+
+## [1.2.0] - 2024-10-28
 ### Changed
 - GUI: Общий виджет для логов. Добавлена кнопка очищения
 - GUI: Стабильное завершение приложения при KeyboardInterrupt

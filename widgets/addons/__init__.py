@@ -66,11 +66,7 @@ class AddonWidget(QWidget):
         raise NotImplementedError()
 
     def refresh(self):
-        if (
-            not self.isEnabled()
-            or not self.__is_active
-            or self.thread_process.isRunning()
-        ):
+        if not self.isEnabled() or not self.__is_active:
             return
 
         self.thread_process.start()

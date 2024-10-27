@@ -44,6 +44,7 @@ class ActivityActionEnum(enum.Enum):
     RESOLVED = enum.auto()
     CREATED = enum.auto()
     REDUCED = enum.auto()
+    REOPENED = enum.auto()
     UNKNOWN = enum.auto()
 
 

@@ -84,7 +84,6 @@ def log_uncaught_exceptions(ex_cls, ex, tb):
             f"Ошибка: {ex}",
             parent=MAIN_WINDOW,
         )
-        msg_box.setSizeGripEnabled(True)
         msg_box.setDetailedText(text)
         msg_box.setStandardButtons(QMessageBox.Ok)
         msg_box.exec()

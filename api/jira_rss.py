@@ -20,16 +20,6 @@ from third_party.jira_logged_human_time_to_seconds import logged_human_time_to_s
 from third_party.seconds_to_str import seconds_to_str
 
 
-if not USERNAME:
-    USERNAME = get_jira_current_username()
-
-
-URL: str = (
-    f"{JIRA_HOST}/activity?maxResults={MAX_RESULTS}"
-    f"&streams=user+IS+{USERNAME}&os_authType=basic&title=undefined"
-)
-
-
 PATTERN_TAGS: re.Pattern = re.compile("<.*?>")
 PATTERN_SPACES: re.Pattern = re.compile(r"\s{2,}")
 
@@ -82,8 +72,16 @@ def utc_to_local(utc_dt: datetime) -> datetime:
     return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
 
-def get_rss_jira_log() -> bytes:
-    rs = session.get(URL)
+def get_rss_jira_log(username: str | None = USERNAME) -> bytes:
+    if not username:
+        username = get_jira_current_username()
+
+    url: str = (
+        f"{JIRA_HOST}/activity?maxResults={MAX_RESULTS}"
+        f"&streams=user+IS+{username}&os_authType=basic&title=undefined"
+    )
+
+    rs = session.get(url)
     rs.raise_for_status()
     return rs.content
 
@@ -185,8 +183,6 @@ def get_logged_total_seconds(activities: list[Activity]) -> int:
 
 
 if __name__ == "__main__":
-    print(URL)
-
     xml_data = get_rss_jira_log()
     print(len(xml_data), repr(xml_data[:50]))
     print()

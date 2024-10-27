@@ -4,9 +4,10 @@
 __author__ = "ipetrash"
 
 
-import ssl
 import traceback
+
 from datetime import datetime, date
+from multiprocessing.pool import Pool
 
 import requests
 from PyQt5.QtCore import QThread, pyqtSignal
@@ -35,18 +36,43 @@ class RunFuncThread(QThread):
             self.about_error.emit(e)
 
 
-class TLSAdapter(requests.adapters.HTTPAdapter):
-    def init_poolmanager(self, *args, **kwargs):
-        ctx = ssl.create_default_context()
-        ctx.set_ciphers("DEFAULT@SECLEVEL=1")
-        kwargs["ssl_context"] = ctx
-        return super().init_poolmanager(*args, **kwargs)
+POOL: Pool | None = None
 
-    def send(self, *args, **kwargs):
-        # Установка таймаута в 60 секунд, если оно не было задано
+
+class CustomAdapter(requests.adapters.HTTPAdapter):
+    timeout: int = 60
+    max_attempts: int = 3
+
+    def send(self, *args, **kwargs) -> requests.Response:
+        # Установка таймаута, если оно не было задано
         if not kwargs.get("timeout"):
-            kwargs["timeout"] = 60
+            kwargs["timeout"] = self.timeout
+
+        # В дочернем процессе будет None
+        if POOL:
+            last_error: Exception | None = None
+            for _ in range(self.max_attempts):
+                try:
+                    apply = POOL.apply_async(super().send, args=args, kwds=kwargs)
+                    return apply.get(timeout=self.timeout)
+
+                except Exception as e:
+                    last_error = e
+
+            raise last_error
+
         return super().send(*args, **kwargs)
+
+
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0"
+)
+
+session = requests.session()
+session.cert = str(PATH_CERT)
+session.mount("https://", CustomAdapter())
+session.mount("http://", CustomAdapter())
+session.headers["User-Agent"] = USER_AGENT
 
 
 DATE_FORMAT: str = "%d.%m.%Y"
@@ -79,16 +105,6 @@ def get_ago(dt1: datetime | None = None, dt2: datetime | None = None) -> str:
         dt2 = datetime.now()
 
     return ago(dt2 - dt1, l10n=L10N_RU())
-
-
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0"
-)
-session = requests.session()
-
-session.cert = str(PATH_CERT)
-session.mount("https://", TLSAdapter())
-session.headers["User-Agent"] = USER_AGENT
 
 
 if __name__ == "__main__":

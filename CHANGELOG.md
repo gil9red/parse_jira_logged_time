@@ -11,6 +11,7 @@
 - GUI: Перенос флаги лога в панель инструментов
 
 ### Fixed
+- Исправлены случайные падение приложения при обращении к JIRA_HOST 
 - Убран повторный вызов get_sprints_with_overtime_hours в process у AddonSprintsWidget
 
 ## [1.1.0] - 2024-10-20

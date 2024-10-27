@@ -6,6 +6,7 @@ __author__ = "ipetrash"
 
 import io
 import json
+import multiprocessing as mp
 import sys
 import traceback
 
@@ -38,12 +39,21 @@ from PyQt5.QtCore import (
 )
 from PyQt5.QtGui import QTextOption, QIcon
 
+import api
 from api import (
     RunFuncThread,
     get_human_datetime,
     get_human_date,
     get_ago,
     get_exception_traceback,
+)
+from api.jira import get_jira_current_username
+from api.jira_rss import (
+    Activity,
+    get_rss_jira_log,
+    seconds_to_str,
+    parse_date_by_activities,
+    get_logged_total_seconds,
 )
 from config import (
     VERSION,
@@ -52,15 +62,7 @@ from config import (
     PATH_FAVICON,
     PATH_CONFIG,
     CONFIG,
-)
-from console import (
-    URL,
-    USERNAME,  # В модуле его значение может быть переопределено
-    Activity,
-    get_rss_jira_log,
-    seconds_to_str,
-    parse_date_by_activities,
-    get_logged_total_seconds,
+    USERNAME,
 )
 from widgets.addons import AddonDockWidget, import_all_addons
 from widgets.activities_widget import ActivitiesWidget
@@ -79,9 +81,12 @@ def log_uncaught_exceptions(ex_cls, ex, tb):
 sys.excepthook = log_uncaught_exceptions
 
 
-WINDOW_TITLE: str = f"{PROGRAM_NAME} v{VERSION}. username={USERNAME}"
+WINDOW_TITLE_BASE: str = f"{PROGRAM_NAME} v{VERSION}"
+TEMPLATE_WINDOW_TITLE_WITH_USERNAME: str = (
+    f"{PROGRAM_NAME} v{VERSION}. username={{username}}"
+)
 TEMPLATE_WINDOW_TITLE_WITH_REFRESH: str = (
-    f"{WINDOW_TITLE}. Последнее обновление: {{dt}} ({{ago}})"
+    f"{TEMPLATE_WINDOW_TITLE_WITH_USERNAME}. Последнее обновление: {{dt}} ({{ago}})"
 )
 
 
@@ -128,7 +133,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle(WINDOW_TITLE)
+        self.setWindowTitle(WINDOW_TITLE_BASE)
 
         icon = QIcon(str(PATH_FAVICON))
 
@@ -187,7 +192,11 @@ class MainWindow(QMainWindow):
         self.timer_update_window_title.setInterval(5 * 1000)  # 5 seconds
         self.timer_update_window_title.timeout.connect(self._update_window_title)
 
-        self.thread_get_data = RunFuncThread(func=get_rss_jira_log)
+        self.username: str | None = USERNAME
+
+        self.thread_get_data = RunFuncThread(
+            func=lambda: get_rss_jira_log(self.username)
+        )
         self.thread_get_data.started.connect(self._before_refresh)
         self.thread_get_data.about_error.connect(self._set_error_log)
         self.thread_get_data.run_finished.connect(self._fill_tables)
@@ -266,7 +275,6 @@ class MainWindow(QMainWindow):
         buffer_io = io.StringIO()
         try:
             with redirect_stdout(buffer_io):
-                print(f"{URL}\n")
                 print(
                     f"Xml data ({len(xml_data)} bytes):\n"
                     f"{xml_data[:150] + b'...' if len(xml_data) > 150 else xml_data!r}"
@@ -343,6 +351,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle(
             TEMPLATE_WINDOW_TITLE_WITH_REFRESH.format(
+                username=self.username,
                 dt=get_human_datetime(self._last_refresh_datetime),
                 ago=get_ago(self._last_refresh_datetime),
             )
@@ -357,9 +366,23 @@ class MainWindow(QMainWindow):
         self._update_window_title()
 
     def refresh(self):
-        # Если обновление уже запущено
-        if self.thread_get_data.isRunning():
-            return
+        if not self.username:
+
+            def _set_username(value: str):
+                self.username = value
+
+            thread = RunFuncThread(func=get_jira_current_username)
+            thread.run_finished.connect(_set_username)
+            # TODO: Отображение проблем получения текущего имени юзера
+            # thread.about_error.connect(lambda e: raise e)
+            thread.start()
+
+            while not self.username:
+                QApplication.instance().processEvents()
+
+        self.setWindowTitle(
+            TEMPLATE_WINDOW_TITLE_WITH_USERNAME.format(username=self.username)
+        )
 
         self.thread_get_data.start()
 
@@ -460,21 +483,24 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    app = QApplication([])
+    with mp.Pool(processes=5) as pool:
+        api.POOL = pool
 
-    # Использование локали на русском в стандартных виджетах
-    translator = QTranslator()
-    translations_path = QLibraryInfo.location(QLibraryInfo.TranslationsPath)
-    if translator.load("qtbase_ru", directory=translations_path):
-        app.installTranslator(translator)
+        app = QApplication([])
 
-    app.setStyleSheet(PATH_STYLE_SHEET.read_text(encoding="utf-8"))
+        # Использование локали на русском в стандартных виджетах
+        translator = QTranslator()
+        translations_path = QLibraryInfo.location(QLibraryInfo.TranslationsPath)
+        if translator.load("qtbase_ru", directory=translations_path):
+            app.installTranslator(translator)
 
-    mw = MainWindow()
-    mw.resize(1200, 800)
-    mw.read_settings()
-    mw.show()
+        app.setStyleSheet(PATH_STYLE_SHEET.read_text(encoding="utf-8"))
 
-    mw.refresh()
+        mw = MainWindow()
+        mw.resize(1200, 800)
+        mw.read_settings()
+        mw.show()
 
-    app.exec()
+        mw.refresh()
+
+        app.exec()

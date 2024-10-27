@@ -5,12 +5,23 @@ __author__ = "ipetrash"
 
 
 import webbrowser
+
+from contextlib import contextmanager
 from typing import Any
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QObject
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
 from config import JIRA_HOST
+
+
+@contextmanager
+def block_signals(obj: QObject):
+    obj.blockSignals(True)
+    try:
+        yield
+    finally:
+        obj.blockSignals(False)
 
 
 def create_table(header_labels: list[str]) -> QTableWidget:

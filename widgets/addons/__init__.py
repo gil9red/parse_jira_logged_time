@@ -157,7 +157,7 @@ class AddonDockWidget(QDockWidget):
     def _init_settings(self):
         settings_layout = QFormLayout()
         settings_layout.addRow("Активный:", self.cb_is_active)
-        settings_layout.addRow("Авто-обновление:", self.cb_is_auto_refresh)
+        settings_layout.addRow("Авто-обновление (общее):", self.cb_is_auto_refresh)
 
         self.settings.setLayout(settings_layout)
 

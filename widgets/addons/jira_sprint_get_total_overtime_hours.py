@@ -23,6 +23,7 @@ from PyQt5.QtWidgets import (
     QHeaderView,
     QFormLayout,
     QLabel,
+    QPlainTextEdit,
     QStackedLayout,
     QWidget,
     QTableWidgetItem,
@@ -35,7 +36,8 @@ class AddonSprintsWidget(AddonWidget):
 
         self.setWindowTitle("Спринты. Сверхурочные часы")
 
-        self.label_not_found = QLabel("Спринты не найдены")
+        self.not_found = QPlainTextEdit("Спринты не найдены")
+        self.not_found.setReadOnly(True)
 
         self.label_number = QLabel()
         self.label_total_hours = QLabel()
@@ -59,7 +61,7 @@ class AddonSprintsWidget(AddonWidget):
         self.main_layout = QStackedLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.addWidget(QWidget())  # Empty
-        self.main_layout.addWidget(self.label_not_found)
+        self.main_layout.addWidget(self.not_found)
         self.main_layout.addWidget(self.main_widget)
 
     def _on_table_item_double_clicked(self, item: QTableWidgetItem):
@@ -78,7 +80,7 @@ class AddonSprintsWidget(AddonWidget):
     def process(self, data: list[Sprint]):
         sprints: list[Sprint] = data
         if not sprints:
-            self.main_layout.setCurrentWidget(self.label_not_found)
+            self.main_layout.setCurrentWidget(self.not_found)
             return
 
         self.main_layout.setCurrentWidget(self.main_widget)

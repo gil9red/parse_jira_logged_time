@@ -339,11 +339,12 @@ class MainWindow(QMainWindow):
         self.progress_refresh.show()
 
         for addon_dock in self.addons:
-            if addon_dock.is_auto_refresh():
+            if addon_dock.addon.is_active and addon_dock.is_auto_refresh():
                 addon_dock.refresh()
 
     def _update_window_title(self):
         for addon_dock in self.addons:
+            # NOTE: Обновление времени последнего обновления будет и для отключенных
             addon_dock.update_last_refresh_datetime()
 
         if not self._last_refresh_datetime:

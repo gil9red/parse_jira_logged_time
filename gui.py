@@ -69,13 +69,25 @@ from widgets.activities_widget import ActivitiesWidget
 from widgets.logged_widget import LoggedWidget
 
 
+MAIN_WINDOW: QWidget | None = None
+
+
 def log_uncaught_exceptions(ex_cls, ex, tb):
     text = f"{ex_cls.__name__}: {ex}:\n"
     text += "".join(traceback.format_tb(tb))
-
     print(text)
-    QMessageBox.critical(None, "Ошибка", text)
-    sys.exit(1)
+
+    if QApplication.instance():
+        msg_box = QMessageBox(
+            QMessageBox.Critical,
+            "Ошибка",
+            f"Ошибка: {ex}",
+            parent=MAIN_WINDOW,
+        )
+        msg_box.setSizeGripEnabled(True)
+        msg_box.setDetailedText(text)
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.exec()
 
 
 sys.excepthook = log_uncaught_exceptions
@@ -498,10 +510,12 @@ if __name__ == "__main__":
         app.setStyleSheet(PATH_STYLE_SHEET.read_text(encoding="utf-8"))
 
         mw = MainWindow()
+        MAIN_WINDOW = mw
+
         mw.resize(1200, 800)
-        mw.read_settings()
         mw.show()
 
+        mw.read_settings()
         mw.refresh()
 
         app.exec()

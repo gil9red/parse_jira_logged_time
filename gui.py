@@ -69,13 +69,19 @@ from widgets.activities_widget import ActivitiesWidget
 from widgets.logged_widget import LoggedWidget
 
 
-MAIN_WINDOW: QWidget | None = None
+MAIN_WINDOW: "MainWindow" = None
 
 
 def log_uncaught_exceptions(ex_cls, ex, tb):
     text = f"{ex_cls.__name__}: {ex}\n"
     text += "".join(traceback.format_tb(tb))
     print(text)
+
+    if isinstance(ex, KeyboardInterrupt):
+        if MAIN_WINDOW:
+            MAIN_WINDOW.write_settings()
+            QApplication.instance().quit()
+        return
 
     if QApplication.instance():
         msg_box = QMessageBox(

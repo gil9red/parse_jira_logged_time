@@ -202,9 +202,9 @@ class MainWindow(QMainWindow):
         self.timer_auto_refresh.setInterval(60 * 60 * 1000)  # 1 hour
         self.timer_auto_refresh.timeout.connect(self.refresh)
 
-        self.timer_update_window_title = QTimer()
-        self.timer_update_window_title.setInterval(5 * 1000)  # 5 seconds
-        self.timer_update_window_title.timeout.connect(self._update_window_title)
+        self.timer_update_states = QTimer()
+        self.timer_update_states.setInterval(5 * 1000)  # 5 seconds
+        self.timer_update_states.timeout.connect(self._update_states)
 
         self.username: str | None = USERNAME
 
@@ -261,7 +261,7 @@ class MainWindow(QMainWindow):
         self._quit_dont_ask_again: bool = False
 
         # Запуск таймеров после инициализации GUI
-        self.timer_update_window_title.start()
+        self.timer_update_states.start()
 
         if self.cb_auto_refresh.isChecked():
             self.timer_auto_refresh.start()
@@ -353,21 +353,21 @@ class MainWindow(QMainWindow):
             if addon_dock.addon.is_active and addon_dock.is_auto_refresh():
                 addon_dock.refresh()
 
-    def _update_window_title(self):
+    def _update_states(self):
+        if self._last_refresh_datetime:
+            self.setWindowTitle(
+                TEMPLATE_WINDOW_TITLE_WITH_REFRESH.format(
+                    username=self.username,
+                    dt=get_human_datetime(self._last_refresh_datetime),
+                    ago=get_ago(self._last_refresh_datetime),
+                )
+            )
+
         for addon_dock in self.addons:
             # NOTE: Обновление времени последнего обновления будет и для отключенных
             addon_dock.update_last_refresh_datetime()
 
-        if not self._last_refresh_datetime:
-            return
-
-        self.setWindowTitle(
-            TEMPLATE_WINDOW_TITLE_WITH_REFRESH.format(
-                username=self.username,
-                dt=get_human_datetime(self._last_refresh_datetime),
-                ago=get_ago(self._last_refresh_datetime),
-            )
-        )
+        self.about.refresh()
 
     def _after_refresh(self):
         self.button_refresh.setEnabled(True)
@@ -375,7 +375,7 @@ class MainWindow(QMainWindow):
 
         self._last_refresh_datetime = datetime.now()
 
-        self._update_window_title()
+        self._update_states()
 
     def refresh(self):
         if not self.username:

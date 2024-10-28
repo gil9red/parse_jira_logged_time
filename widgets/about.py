@@ -8,6 +8,7 @@ import sys
 import os
 import platform
 
+from datetime import datetime
 from pathlib import Path
 
 from PyQt5.QtCore import Qt
@@ -23,6 +24,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
+from api import get_human_datetime, get_ago
 from config import PROGRAM_NAME, VERSION, DIR, GITHUB_PROJECT
 
 
@@ -52,7 +54,6 @@ def get_ext_line_edit(text: str, is_path: bool = False) -> QLineEdit:
         icon = line_edit.style().standardIcon(QStyle.SP_DirOpenIcon)
         action = line_edit.addAction(icon, QLineEdit.TrailingPosition)
         action.setToolTip("Открыть папку")
-
         action.triggered.connect(lambda: os.startfile(str(path)))
 
     return line_edit
@@ -63,6 +64,8 @@ class About(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("О программе")
+
+        self._started: datetime = datetime.now()
 
         gb_python = QGroupBox("Python:")
         gb_python_layout = QFormLayout(gb_python)
@@ -105,13 +108,26 @@ class About(QDialog):
             get_ext_line_edit(platform.platform()),
         )
 
+        self._label_started = get_ext_label("")
+        fields_layout.addRow(
+            "Запущено:",
+            self._label_started,
+        )
+
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(QLabel(f"<h1>{PROGRAM_NAME}</h1>"))
         main_layout.addLayout(fields_layout)
         main_layout.addStretch()
         main_layout.addWidget(button_box)
 
+        self.refresh()
+
         self.resize(800, 400)
+
+    def refresh(self):
+        self._label_started.setText(
+            f"{get_human_datetime(self._started)} ({get_ago(self._started)})"
+        )
 
 
 if __name__ == "__main__":

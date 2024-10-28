@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import (
     QProgressBar,
     QToolTip,
     QTabWidget,
+    QDockWidget,
 )
 from PyQt5.QtCore import (
     QEvent,
@@ -178,19 +179,18 @@ class MainWindow(QMainWindow):
         self.cb_auto_refresh.toggled.connect(self.set_auto_refresh)
 
         self.logs = LogsWidget()
-
-        self.cb_show_log = QCheckBox()
-        self.cb_show_log.setText("Логи")
-        self.cb_show_log.setChecked(False)
-        self.cb_show_log.clicked.connect(self.logs.setVisible)
-        self.logs.setVisible(self.cb_show_log.isChecked())
+        self.dock_widget_logs = QDockWidget("Логи")
+        self.dock_widget_logs.setObjectName(f"{get_class_name(self.logs)}_DockWidget")
+        self.dock_widget_logs.setWidget(self.logs)
+        self.dock_widget_logs.hide()
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.dock_widget_logs)
 
         tool_bar_general = self.addToolBar("&Общее")
         tool_bar_general.setObjectName("tool_bar_general")
         tool_bar_general.addWidget(self.button_refresh)
         tool_bar_general.addWidget(self.cb_auto_refresh)
         tool_bar_general.addSeparator()
-        tool_bar_general.addWidget(self.cb_show_log)
+        tool_bar_general.addAction(self.dock_widget_logs.toggleViewAction())
 
         self.progress_refresh = QProgressBar()
         self.progress_refresh.setObjectName("progress_refresh")
@@ -249,13 +249,9 @@ class MainWindow(QMainWindow):
         tab_widget.addTab(self.logged_widget, "ЗАЛОГИРОВАНО")
         tab_widget.addTab(self.activities_widget, "АКТИВНОСТИ")
 
-        layout_content = QVBoxLayout()
-        layout_content.addWidget(tab_widget)
-        layout_content.addWidget(self.logs)
-
         layout_main = QVBoxLayout()
         layout_main.addWidget(self.progress_refresh)
-        layout_main.addLayout(layout_content)
+        layout_main.addWidget(tab_widget)
 
         central_widget = QWidget()
         central_widget.setLayout(layout_main)
@@ -284,8 +280,7 @@ class MainWindow(QMainWindow):
         self.logs.append_exception(e)
 
         # Отображение лога
-        self.cb_show_log.setChecked(False)
-        self.cb_show_log.click()
+        self.dock_widget_logs.show()
 
     def _fill_tables(self, xml_data: bytes):
         buffer_io = io.StringIO()

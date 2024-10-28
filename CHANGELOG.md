@@ -5,7 +5,8 @@
 и этот проект придерживается [Semantic Versioning](http://semver.org/).
  
 ## [Unreleased]
-
+### Changed
+- GUI: Добавлен виджет "О программе"
 
 ## [1.2.0] - 2024-10-28
 ### Changed

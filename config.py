@@ -11,8 +11,10 @@ from pathlib import Path
 from typing import Any
 
 
-VERSION: str = "1.2.0"
+VERSION: str = "1.3.0"
 PROGRAM_NAME: str = "parse_jira_logged_time"
+
+GITHUB_PROJECT: str = "https://github.com/gil9red/parse_jira_logged_time"
 
 # Текущая папка со скриптом
 DIR: Path = Path(__file__).resolve().parent

@@ -63,6 +63,7 @@ from config import (
     USERNAME,
 )
 from widgets.addons import AddonDockWidget, import_all_addons
+from widgets.about import About
 from widgets.activities_widget import ActivitiesWidget
 from widgets.logged_widget import LoggedWidget
 from widgets.logs_widget import LogsWidget
@@ -238,8 +239,11 @@ class MainWindow(QMainWindow):
             menu_addons.addAction(addon_dock.toggleViewAction())
 
         self.menu_help = self.menuBar().addMenu("&Помощь")
-        action_about_qt = self.menu_help.addAction("О Qt")
-        action_about_qt.triggered.connect(QApplication.aboutQt)
+
+        self.about = About(self)
+        self.menu_help.addAction("О &программе", self.about.exec)
+
+        self.menu_help.addAction("О &Qt", QApplication.aboutQt)
 
         tab_widget = QTabWidget()
         tab_widget.addTab(self.logged_widget, "ЗАЛОГИРОВАНО")

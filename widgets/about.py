@@ -23,7 +23,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from config import VERSION, DIR, GITHUB_PROJECT
+from config import PROGRAM_NAME, VERSION, DIR, GITHUB_PROJECT
 
 
 def get_ext_label(text: str) -> QLabel:
@@ -106,6 +106,7 @@ class About(QDialog):
         )
 
         main_layout = QVBoxLayout(self)
+        main_layout.addWidget(QLabel(f"<h1>{PROGRAM_NAME}</h1>"))
         main_layout.addLayout(fields_layout)
         main_layout.addStretch()
         main_layout.addWidget(button_box)

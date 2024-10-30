@@ -498,7 +498,7 @@ if __name__ == "__main__":
     with mp.Pool(processes=5) as pool:
         api.POOL = pool
 
-        app = QApplication([])
+        app = QApplication(sys.argv)
 
         # Использование локали на русском в стандартных виджетах
         translator = QTranslator()
@@ -506,7 +506,9 @@ if __name__ == "__main__":
         if translator.load("qtbase_ru", directory=translations_path):
             app.installTranslator(translator)
 
-        app.setStyleSheet(PATH_STYLE_SHEET.read_text(encoding="utf-8"))
+        # Использование qss из ресурсов, если он не был задан в аргументах
+        if not app.styleSheet():
+            app.setStyleSheet(f"file:///{PATH_STYLE_SHEET}")
 
         mw = MainWindow()
         MAIN_WINDOW = mw
@@ -517,4 +519,4 @@ if __name__ == "__main__":
         mw.read_settings()
         mw.refresh()
 
-        app.exec()
+        sys.exit(app.exec())

@@ -43,4 +43,12 @@
 ## Аддоны
 
 Дополнительные окна были реализованы через механизм аддонов.
-Они расположены в widgets/addons и автоматически подгружаются при запуске.
+Они расположены в [widgets/addons](widgets%2Faddons) и автоматически подгружаются при запуске.
+
+## Кастомизация
+
+По-умолчанию, приложение загружает файл [Qt Style Sheets](https://doc.qt.io/qt-5/stylesheet.html) (QSS) - [resources/style.qss](resources%2Fstyle.qss).
+Возможно загружать свой файл QSS через аргумент "-stylesheet".
+Про другие аргументы можно узнать из документации по:
+* [QApplication](https://doc.qt.io/qt-5/qapplication.html#QApplication)
+* [QGuiApplication](https://doc.qt.io/qt-5/qguiapplication.html#supported-command-line-options)

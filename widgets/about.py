@@ -133,9 +133,9 @@ class About(QDialog):
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication
 
-    app = QApplication([])
+    app = QApplication(sys.argv)
 
     w = About()
     w.show()
 
-    app.exec()
+    sys.exit(app.exec())

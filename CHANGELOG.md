@@ -6,6 +6,8 @@
  
 ## [Unreleased]
 ### Changed
+- GUI: В "О программе" добавлены поля "Pid" и "Потребление памяти", 
+  отображаемые при установке из [requirements-dev.txt](requirements-dev.txt) 
 - GUI: Добавлена возможность перекрыть файл Qt Style Sheets из resources/style.qss 
   через аргумент -stylesheet. Дополнительно, теперь можно использовать стандартные аргументы
   приложений на Qt

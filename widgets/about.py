@@ -11,6 +11,11 @@ import platform
 from datetime import datetime
 from pathlib import Path
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QDialog,
@@ -22,6 +27,7 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QStyle,
     QVBoxLayout,
+    QScrollArea,
 )
 
 from api import get_human_datetime, get_ago
@@ -114,20 +120,105 @@ class About(QDialog):
             self._label_started,
         )
 
+        if psutil:
+            fields_layout.addRow(
+                "PID:",
+                get_ext_label(str(os.getpid())),
+            )
+
+            self._label_memory = get_ext_label("")
+            fields_layout.addRow(
+                "Потребление памяти:",
+                self._label_memory,
+            )
+
+        fields_widget = QWidget()
+        fields_layout.setContentsMargins(0, 0, 0, 0)
+        fields_widget.setLayout(fields_layout)
+
+        scroll_area = QScrollArea()
+        scroll_area.setFrameStyle(QScrollArea.NoFrame)
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setWidget(fields_widget)
+
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(QLabel(f"<h1>{PROGRAM_NAME}</h1>"))
-        main_layout.addLayout(fields_layout)
-        main_layout.addStretch()
+        main_layout.addWidget(scroll_area)
         main_layout.addWidget(button_box)
 
         self.refresh()
 
-        self.resize(800, 400)
+        self.resize(800, 500)
 
     def refresh(self):
         self._label_started.setText(
             f"{get_human_datetime(self._started)} ({get_ago(self._started)})"
         )
+
+        if psutil:
+            # SOURCE: https://github.com/gil9red/SimplePyScripts/blob/fec522a6d931b0e353ed9e1025fe0a1c2d7c4ae6/human_byte_size.py#L7
+            def sizeof_fmt(num: int | float) -> str:
+                for x in ["bytes", "KB", "MB", "GB"]:
+                    if num < 1024.0:
+                        return "%.1f %s" % (num, x)
+
+                    num /= 1024.0
+
+                return "%.1f %s" % (num, "TB")
+
+            def _get_tr(pid: int, value: int) -> str:
+                return f"<tr><td>{pid}</td><td>{sizeof_fmt(value)}</td></tr>"
+
+            current_process = psutil.Process(os.getpid())
+            mem = current_process.memory_info().rss
+            lines = [_get_tr(current_process.pid, mem)]
+            for child in current_process.children(recursive=True):
+                try:
+                    child_mem = child.memory_info().rss
+                    mem += child_mem
+                    lines.append(_get_tr(child.pid, child_mem))
+                except psutil.NoSuchProcess:
+                    pass
+
+            self._label_memory.setText(
+                f"""
+                <style>
+                    .total {{
+                        text-align: right;
+                    }}
+                    
+                    table {{
+                        border-collapse: collapse;
+                    }}
+                    
+                    th, td {{
+                        border: 1px solid black;
+                        padding: 10px;
+                    }}
+                    th {{
+                        background: lightgray;
+                    }}
+                </style>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pid</th>
+                            <th>Память</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {"".join(lines)}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class="total">Всего:</th>
+                            <th>{sizeof_fmt(mem)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                """
+            )
 
 
 if __name__ == "__main__":

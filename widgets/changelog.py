@@ -22,6 +22,7 @@ class Changelog(QDialog):
 
         self.content = QTextBrowser()
         self.content.setReadOnly(True)
+        self.content.setOpenExternalLinks(True)
 
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(self.content)

@@ -8,9 +8,8 @@ import html
 import traceback
 
 from PyQt5.QtCore import Qt
-# TODO:
-# from PyQt5.QtGui import QTextOption
-from PyQt5.QtWidgets import QMainWindow, QPlainTextEdit, QToolButton, QToolBar
+from PyQt5.QtGui import QTextCharFormat
+from PyQt5.QtWidgets import QMainWindow, QPlainTextEdit, QToolBar
 
 
 def get_exception_traceback(e: Exception) -> str:
@@ -27,6 +26,7 @@ class LogsWidget(QMainWindow):
         self.logs.setReadOnly(True)
 
         # TODO:
+        # from PyQt5.QtGui import QTextOption
         # self.logs.setWordWrapMode(QTextOption.NoWrap)
 
         tool_bar = QToolBar()
@@ -41,11 +41,16 @@ class LogsWidget(QMainWindow):
         self.setCentralWidget(self.logs)
 
     def append(self, text: str):
+        self.logs.setCurrentCharFormat(QTextCharFormat())
         self.logs.appendPlainText(text)
 
     def append_error(self, text: str):
-        text = html.escape(text).replace("\n", "<br/>")
-        self.logs.appendHtml(f"<span style='color: red'>{text}</span>")
+        text: str = html.escape(text)
+        text = f"<p style='color: red'>{text}</p>"
+        text = text.replace("\n", "<br/>")
+
+        self.logs.setCurrentCharFormat(QTextCharFormat())
+        self.logs.appendHtml(text)
 
     def append_exception(self, e: Exception):
         error: str = get_exception_traceback(e)
@@ -61,6 +66,8 @@ if __name__ == "__main__":
     w.show()
 
     w.append("123")
+    w.append_error("RED TEXT")
     w.append("Hello World!")
+    w.append_exception(Exception("ERROR"))
 
     app.exec()

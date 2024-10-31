@@ -14,6 +14,15 @@ from contextlib import redirect_stdout
 from datetime import datetime, date
 from typing import Any
 
+from PyQt5.QtCore import (
+    QEvent,
+    QTimer,
+    QByteArray,
+    Qt,
+    QTranslator,
+    QLibraryInfo,
+)
+from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtWidgets import (
     QApplication,
     QMessageBox,
@@ -30,15 +39,6 @@ from PyQt5.QtWidgets import (
     QDockWidget,
     QMenu,
 )
-from PyQt5.QtCore import (
-    QEvent,
-    QTimer,
-    QByteArray,
-    Qt,
-    QTranslator,
-    QLibraryInfo,
-)
-from PyQt5.QtGui import QIcon
 
 import api
 from api import (
@@ -483,7 +483,7 @@ class MainWindow(QMainWindow):
                 # Прячем окно с панели задач
                 QTimer.singleShot(0, self.hide)
 
-    def closeEvent(self, event):
+    def closeEvent(self, event: QCloseEvent):
         if not self._quit_dont_ask_again:
             cb_dont_ask_again = QCheckBox("Не спрашивать")
             cb_dont_ask_again.setChecked(False)
@@ -497,7 +497,7 @@ class MainWindow(QMainWindow):
             msg_box.setCheckBox(cb_dont_ask_again)
 
             reply = msg_box.exec()
-            if reply != QMessageBox.Yes:
+            if reply == QMessageBox.No:
                 event.ignore()
                 return
 

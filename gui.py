@@ -21,6 +21,7 @@ from PyQt5.QtCore import (
     Qt,
     QTranslator,
     QLibraryInfo,
+    QEventLoop,
 )
 from PyQt5.QtGui import QIcon, QCloseEvent
 from PyQt5.QtWidgets import (
@@ -152,10 +153,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle(WINDOW_TITLE_BASE)
-
         icon = QIcon(str(PATH_FAVICON))
-
         self.setWindowIcon(icon)
 
         self.button_refresh = QToolButton()
@@ -265,6 +263,8 @@ class MainWindow(QMainWindow):
 
         self.windowTitleChanged.connect(self.tray.setToolTip)
 
+        self._update_window_title()
+
         self._quit_dont_ask_again: bool = False
 
         # Запуск таймеров после инициализации GUI
@@ -272,6 +272,24 @@ class MainWindow(QMainWindow):
 
         if self.cb_auto_refresh.isChecked():
             self.timer_auto_refresh.start()
+
+    def _update_window_title(self, dt: datetime | None = None):
+        username = self.username
+        if not username:
+            username = "<не задано>"
+
+        if dt:
+            title = TEMPLATE_WINDOW_TITLE_WITH_REFRESH.format(
+                username=username,
+                dt=get_human_datetime(self._last_refresh_datetime),
+                ago=get_ago(self._last_refresh_datetime),
+            )
+        else:
+            title = TEMPLATE_WINDOW_TITLE_WITH_USERNAME.format(
+                username=username,
+            )
+
+        self.setWindowTitle(title)
 
     def set_auto_refresh(self, checked: bool):
         if checked:
@@ -352,9 +370,12 @@ class MainWindow(QMainWindow):
 
             print(text)
 
+    def _block_ui(self, block: bool):
+        self.button_refresh.setEnabled(not block)
+        self.progress_refresh.setVisible(block)
+
     def _before_refresh(self):
-        self.button_refresh.setEnabled(False)
-        self.progress_refresh.show()
+        self._block_ui(True)
 
         for addon_dock in self.addons:
             if addon_dock.addon.is_active and addon_dock.is_auto_refresh():
@@ -362,13 +383,7 @@ class MainWindow(QMainWindow):
 
     def _update_states(self):
         if self._last_refresh_datetime:
-            self.setWindowTitle(
-                TEMPLATE_WINDOW_TITLE_WITH_REFRESH.format(
-                    username=self.username,
-                    dt=get_human_datetime(self._last_refresh_datetime),
-                    ago=get_ago(self._last_refresh_datetime),
-                )
-            )
+            self._update_window_title(dt=self._last_refresh_datetime)
 
         for addon_dock in self.addons:
             # NOTE: Обновление времени последнего обновления будет и для отключенных
@@ -377,8 +392,7 @@ class MainWindow(QMainWindow):
         self.about.refresh()
 
     def _after_refresh(self):
-        self.button_refresh.setEnabled(True)
-        self.progress_refresh.hide()
+        self._block_ui(False)
 
         self._last_refresh_datetime = datetime.now()
 
@@ -388,22 +402,29 @@ class MainWindow(QMainWindow):
         self.logs.append(f"Обновление в {get_human_datetime()}")
 
         if not self.username:
+            loop = QEventLoop()
+
+            def _on_started():
+                self._block_ui(True)
+                self.logs.append("Имя пользователя не задано. Выполнение запроса к API")
+
+            def _on_finished():
+                self._block_ui(False)
+                loop.quit()
 
             def _set_username(value: str):
                 self.username = value
 
             thread = RunFuncThread(func=get_jira_current_username)
+            thread.started.connect(_on_started)
             thread.run_finished.connect(_set_username)
-            # TODO: Отображение проблем получения текущего имени юзера
-            # thread.about_error.connect(lambda e: raise e)
+            thread.about_error.connect(self._set_error_log)
+            thread.finished.connect(_on_finished)
             thread.start()
 
-            while not self.username:
-                QApplication.instance().processEvents()
+            loop.exec()
 
-        self.setWindowTitle(
-            TEMPLATE_WINDOW_TITLE_WITH_USERNAME.format(username=self.username)
-        )
+        self._update_window_title()
 
         self.thread_get_data.start()
 

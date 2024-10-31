@@ -28,6 +28,7 @@ from PyQt5.QtWidgets import (
     QToolTip,
     QTabWidget,
     QDockWidget,
+    QMenu,
 )
 from PyQt5.QtCore import (
     QEvent,
@@ -157,13 +158,6 @@ class MainWindow(QMainWindow):
 
         self.setWindowIcon(icon)
 
-        self.tray = QSystemTrayIcon(icon)
-        self.tray.setToolTip(self.windowTitle())
-        self.tray.activated.connect(self._on_tray_activated)
-        self.tray.show()
-
-        self.windowTitleChanged.connect(self.tray.setToolTip)
-
         self.button_refresh = QToolButton()
         self.button_refresh.setObjectName("button_refresh")
         self.button_refresh.setText("🔄")
@@ -241,7 +235,7 @@ class MainWindow(QMainWindow):
         self.menu_help = self.menuBar().addMenu("&Помощь")
 
         self.about = About(self)
-        self.menu_help.addAction("О &программе", self.about.exec)
+        action_about = self.menu_help.addAction("О &программе", self.about.exec)
 
         self.menu_help.addAction("О &Qt", QApplication.aboutQt)
 
@@ -257,6 +251,19 @@ class MainWindow(QMainWindow):
         central_widget.setLayout(layout_main)
 
         self.setCentralWidget(central_widget)
+
+        menu_tray = QMenu()
+        menu_tray.addAction(action_about)
+        menu_tray.addSeparator()
+        menu_tray.addAction(action_exit)
+
+        self.tray = QSystemTrayIcon(icon)
+        self.tray.setToolTip(self.windowTitle())
+        self.tray.setContextMenu(menu_tray)
+        self.tray.activated.connect(self._on_tray_activated)
+        self.tray.show()
+
+        self.windowTitleChanged.connect(self.tray.setToolTip)
 
         self._quit_dont_ask_again: bool = False
 
@@ -457,7 +464,10 @@ class MainWindow(QMainWindow):
 
             json.dump(CONFIG, f, indent=4, ensure_ascii=False)
 
-    def _on_tray_activated(self, _: QSystemTrayIcon.ActivationReason):
+    def _on_tray_activated(self, reason: QSystemTrayIcon.ActivationReason):
+        if reason == QSystemTrayIcon.ActivationReason.Context:
+            return
+
         self.setVisible(not self.isVisible())
 
         if self.isVisible():

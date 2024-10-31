@@ -32,6 +32,7 @@ from PyQt5.QtWidgets import (
 
 from api import get_human_datetime, get_ago
 from config import PROGRAM_NAME, VERSION, DIR, GITHUB_PROJECT
+from widgets.changelog import Changelog
 
 
 def get_ext_label(text: str) -> QLabel:
@@ -71,6 +72,7 @@ class About(QDialog):
 
         self.setWindowTitle("О программе")
 
+        self.changelog = Changelog(parent=self)
         self._started: datetime = datetime.now()
 
         gb_python = QGroupBox("Python:")
@@ -92,9 +94,16 @@ class About(QDialog):
         button_box.rejected.connect(self.reject)
 
         fields_layout = QFormLayout()
+
+        le_version = get_ext_line_edit(VERSION)
+        icon = le_version.style().standardIcon(QStyle.SP_FileDialogDetailedView)
+        action_changelog = le_version.addAction(icon, QLineEdit.TrailingPosition)
+        action_changelog.setToolTip("Посмотреть журнал изменений")
+        action_changelog.triggered.connect(self.changelog.exec)
+
         fields_layout.addRow(
             "Версия:",
-            get_ext_line_edit(VERSION),
+            le_version,
         )
         fields_layout.addRow(
             "Проект:",

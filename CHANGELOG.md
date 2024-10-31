@@ -6,6 +6,7 @@
  
 ## [Unreleased]
 ### Changed
+- GUI: В "О программе" в поле "Версия" добавлена кнопка просмотра журнала изменений
 - GUI: В "О программе" добавлены поля "Pid" и "Потребление памяти", 
   отображаемые при установке из [requirements-dev.txt](requirements-dev.txt) 
 - GUI: Добавлена возможность перекрыть файл Qt Style Sheets из resources/style.qss 

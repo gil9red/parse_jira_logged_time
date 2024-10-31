@@ -24,6 +24,8 @@ PATH_FAVICON: Path = PATH_RESOURCES / "favicon.png"
 PATH_STYLE_SHEET: Path = PATH_RESOURCES / "style.qss"
 PATH_EXAMPLES_CONFIG: Path = PATH_RESOURCES / "examples" / "config.json"
 
+PATH_CHANGELOG: Path = DIR / "CHANGELOG.md"
+
 PATH_CONFIG: Path = DIR / "config.json"
 if not PATH_CONFIG.exists():
     print(f"Не найден файл конфига {PATH_CONFIG}")

@@ -4,6 +4,9 @@
 __author__ = "ipetrash"
 
 
+import os
+
+from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import (
     QDialog,
     QWidget,
@@ -11,7 +14,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from config import PATH_CHANGELOG
+from config import PATH_CHANGELOG, DIR
 
 
 class Changelog(QDialog):
@@ -22,7 +25,8 @@ class Changelog(QDialog):
 
         self.content = QTextBrowser()
         self.content.setReadOnly(True)
-        self.content.setOpenExternalLinks(True)
+        self.content.setOpenLinks(False)
+        self.content.anchorClicked.connect(self._anchor_clicked)
 
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(self.content)
@@ -30,6 +34,15 @@ class Changelog(QDialog):
         self.content.setMarkdown(PATH_CHANGELOG.read_text(encoding="utf-8"))
 
         self.resize(800, 500)
+
+    def _anchor_clicked(self, url: QUrl):
+        url: str = url.toString()
+
+        path = DIR / url
+        if path.exists():  # Если это путь к файлу или папке
+            os.startfile(path)
+        else:
+            os.startfile(url)
 
 
 if __name__ == "__main__":

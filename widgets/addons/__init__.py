@@ -185,6 +185,7 @@ class AddonDockWidget(QDockWidget):
         return self.cb_is_auto_refresh.isChecked()
 
     def refresh(self):
+        self.logs.append(f"Обновление в {get_human_datetime()}")
         self.addon.refresh()
 
     def _process_started(self):
@@ -194,8 +195,6 @@ class AddonDockWidget(QDockWidget):
         self.button_refresh.setEnabled(False)
         self.addon.setEnabled(False)
         self.stacked_ago_progress.setCurrentWidget(self.progress_refresh)
-
-        self.logs.append(f"Обновление в {get_human_datetime()}")
 
     def _process_run_finished(self, _: Any):
         # Это код может быть выполнен сразу после _process_set_error_log

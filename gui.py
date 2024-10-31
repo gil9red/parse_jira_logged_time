@@ -385,6 +385,8 @@ class MainWindow(QMainWindow):
         self._update_states()
 
     def refresh(self):
+        self.logs.append(f"Обновление в {get_human_datetime()}")
+
         if not self.username:
 
             def _set_username(value: str):

@@ -7,6 +7,7 @@ __author__ = "ipetrash"
 import sys
 import os
 import platform
+import re
 
 from datetime import datetime
 from pathlib import Path
@@ -31,8 +32,15 @@ from PyQt5.QtWidgets import (
 )
 
 from api import get_human_datetime, get_ago
-from config import PROGRAM_NAME, VERSION, DIR, GITHUB_PROJECT
+from config import PROGRAM_NAME, VERSION, DIR, GITHUB_PROJECT, PATH_README
 from widgets.changelog import Changelog
+
+
+# SOURCE: https://stackoverflow.com/a/78205823/5909792
+PATTERN_EMAIL: re.Pattern = re.compile(
+    r"[A-Za-z0-9!#%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#%&'*+/=?^_`{|}~-]+)*"
+    r"@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?"
+)
 
 
 def get_ext_label(text: str) -> QLabel:
@@ -128,6 +136,17 @@ class About(QDialog):
             "Запущено:",
             self._label_started,
         )
+
+        if emails := PATTERN_EMAIL.findall(PATH_README.read_text(encoding="utf-8")):
+            fields_layout.addRow(
+                "Контактная информация:",
+                get_ext_label(
+                    "\n".join(
+                        f"<a href='mailto:{email}?subject={PROGRAM_NAME}'>{email}</a>"
+                        for email in emails
+                    )
+                ),
+            )
 
         if psutil:
             fields_layout.addRow(

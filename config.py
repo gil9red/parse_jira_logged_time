@@ -25,6 +25,7 @@ PATH_STYLE_SHEET: Path = PATH_RESOURCES / "style.qss"
 PATH_EXAMPLES_CONFIG: Path = PATH_RESOURCES / "examples" / "config.json"
 
 PATH_CHANGELOG: Path = DIR / "CHANGELOG.md"
+PATH_README: Path = DIR / "README.md"
 
 PATH_CONFIG: Path = DIR / "config.json"
 if not PATH_CONFIG.exists():

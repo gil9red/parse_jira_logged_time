@@ -65,7 +65,7 @@ class AddonGetHoursWorkedWidget(AddonWidget):
         if not deviation_hours and quarter_deviation_hours:
             ok = True
 
-        return ok, text
+        return ok, text.strip()
 
     def process(self, data: tuple[bool, str]):
         ok, text = data

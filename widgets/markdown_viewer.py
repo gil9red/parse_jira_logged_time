@@ -5,6 +5,7 @@ __author__ = "ipetrash"
 
 
 import os
+from pathlib import Path
 
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import (
@@ -14,14 +15,19 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from config import PATH_CHANGELOG, DIR
 
-
-class Changelog(QDialog):
-    def __init__(self, parent: QWidget | None = None):
+class MarkdownViewer(QDialog):
+    def __init__(
+        self,
+        title: str,
+        path: Path,
+        parent: QWidget | None = None,
+    ):
         super().__init__(parent)
 
-        self.setWindowTitle("Журнал изменений")
+        self.path = path
+
+        self.setWindowTitle(f"{title} ({self.path.name})")
 
         self.content = QTextBrowser()
         self.content.setReadOnly(True)
@@ -31,14 +37,15 @@ class Changelog(QDialog):
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(self.content)
 
-        self.content.setMarkdown(PATH_CHANGELOG.read_text(encoding="utf-8"))
+        text: str = self.path.read_text(encoding="utf-8")
+        self.content.setMarkdown(text)
 
         self.resize(800, 500)
 
     def _anchor_clicked(self, url: QUrl):
         url: str = url.toString()
 
-        path = DIR / url
+        path = self.path.parent / url
         if path.exists():  # Если это путь к файлу или папке
             os.startfile(path)
         else:
@@ -47,8 +54,9 @@ class Changelog(QDialog):
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication
+    from config import PATH_CHANGELOG
 
     app = QApplication([])
 
-    w = Changelog()
+    w = MarkdownViewer(title="Информация", path=PATH_CHANGELOG)
     w.exec()

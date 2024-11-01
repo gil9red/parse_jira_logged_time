@@ -32,8 +32,8 @@ from PyQt5.QtWidgets import (
 )
 
 from api import get_human_datetime, get_ago
-from config import PROGRAM_NAME, VERSION, DIR, GITHUB_PROJECT, PATH_README
-from widgets.changelog import Changelog
+from config import PROGRAM_NAME, VERSION, DIR, GITHUB_PROJECT, PATH_README, PATH_CHANGELOG
+from widgets.markdown_viewer import MarkdownViewer
 
 
 # SOURCE: https://stackoverflow.com/a/78205823/5909792
@@ -80,7 +80,11 @@ class About(QDialog):
 
         self.setWindowTitle("О программе")
 
-        self.changelog = Changelog(parent=self)
+        self.changelog = MarkdownViewer(
+            title="Журнал изменений",
+            path=PATH_CHANGELOG,
+            parent=self,
+        )
         self._started: datetime = datetime.now()
 
         gb_python = QGroupBox("Python:")

@@ -10,6 +10,29 @@
     ```
     openssl pkcs12 -nodes -out cert.pem -in ipetrash.p12
     ```
+    * Пример структуры файла:
+      ```
+      ...
+      -----BEGIN CERTIFICATE-----
+      ...
+      -----END CERTIFICATE-----
+      ...
+      -----BEGIN PRIVATE KEY-----
+      ...
+      -----END PRIVATE KEY-----
+      ```
+    * Если при выполнении команды ошибки вида
+      ```
+      'openssl' is not recognized as an internal or external command, operable program or batch file.
+      ```
+      И
+      ```
+      bash: openssl: command not found
+      ```
+      
+      То это значит, что программы `openssl` нет в активной директории или в переменной пути `PATH`.
+      Нужно или указывать вместо `openssl` полный к приложению (к примеру `/usr/bin/openssl`), или добавить в `PATH`. 
+
   * Настроить [config.json](resources/examples/config.json) (пример см. в resources/examples/config.json).
     * Если, при импорте/запуске config.py, config.json не будет в корне папки, то он будет скопирован из etc/examples/config.json
     * Поля:

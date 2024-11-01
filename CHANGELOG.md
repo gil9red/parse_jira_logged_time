@@ -5,6 +5,8 @@
 и этот проект придерживается [Semantic Versioning](http://semver.org/).
  
 ## [Unreleased]
+### Changed
+- README: Улучшение раздела про PEM файл
 
 ## [1.3.0] - 2024-11-01
 ### Changed

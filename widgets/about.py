@@ -32,7 +32,14 @@ from PyQt5.QtWidgets import (
 )
 
 from api import get_human_datetime, get_ago
-from config import PROGRAM_NAME, VERSION, DIR, GITHUB_PROJECT, PATH_README, PATH_CHANGELOG
+from config import (
+    PROGRAM_NAME,
+    VERSION,
+    DIR,
+    GITHUB_PROJECT,
+    PATH_README,
+    PATH_CHANGELOG,
+)
 from widgets.markdown_viewer import MarkdownViewer
 
 
@@ -85,6 +92,13 @@ class About(QDialog):
             path=PATH_CHANGELOG,
             parent=self,
         )
+
+        self.readme = MarkdownViewer(
+            title="Информация",
+            path=PATH_README,
+            parent=self,
+        )
+
         self._started: datetime = datetime.now()
 
         gb_python = QGroupBox("Python:")
@@ -108,9 +122,15 @@ class About(QDialog):
         fields_layout = QFormLayout()
 
         le_version = get_ext_line_edit(VERSION)
-        icon = le_version.style().standardIcon(QStyle.SP_FileDialogDetailedView)
+
+        icon = self.style().standardIcon(QStyle.SP_MessageBoxInformation)
+        action_readme = le_version.addAction(icon, QLineEdit.TrailingPosition)
+        action_readme.setToolTip("Посмотреть README.md")
+        action_readme.triggered.connect(self.readme.exec)
+
+        icon = self.style().standardIcon(QStyle.SP_FileDialogDetailedView)
         action_changelog = le_version.addAction(icon, QLineEdit.TrailingPosition)
-        action_changelog.setToolTip("Посмотреть журнал изменений")
+        action_changelog.setToolTip("Посмотреть журнал изменений (CHANGELOG.md)")
         action_changelog.triggered.connect(self.changelog.exec)
 
         fields_layout.addRow(

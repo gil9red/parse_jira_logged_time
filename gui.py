@@ -536,6 +536,7 @@ if __name__ == "__main__":
         api.POOL = pool
 
         app = QApplication(sys.argv)
+        app.setQuitOnLastWindowClosed(False)
 
         # Использование локали на русском в стандартных виджетах
         translator = QTranslator()

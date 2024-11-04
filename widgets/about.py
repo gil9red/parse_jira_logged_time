@@ -53,6 +53,8 @@ PATTERN_EMAIL: re.Pattern = re.compile(
 def get_ext_label(text: str) -> QLabel:
     label = QLabel(text)
 
+    label.setWordWrap(True)
+
     flags = label.textInteractionFlags()
     flags |= Qt.TextSelectableByMouse
     flags |= Qt.LinksAccessibleByMouse
@@ -105,11 +107,11 @@ class About(QDialog):
         gb_python_layout = QFormLayout(gb_python)
         gb_python_layout.addRow(
             "Версия:",
-            get_ext_line_edit(sys.version),
+            get_ext_label(sys.version),
         )
         gb_python_layout.addRow(
             "Реализация:",
-            get_ext_line_edit(platform.python_implementation()),
+            get_ext_label(platform.python_implementation()),
         )
         gb_python_layout.addRow(
             "Путь:", get_ext_line_edit(sys.executable, is_path=True)
@@ -152,7 +154,7 @@ class About(QDialog):
         fields_layout.addRow(gb_python)
         fields_layout.addRow(
             "ОС:",
-            get_ext_line_edit(platform.platform()),
+            get_ext_label(platform.platform()),
         )
 
         self._label_started = get_ext_label("")

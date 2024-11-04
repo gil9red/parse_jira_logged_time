@@ -166,9 +166,7 @@ class MainWindow(QMainWindow):
         self.cb_auto_refresh = QCheckBox()
         self.cb_auto_refresh.setObjectName("cb_auto_refresh")
         self.cb_auto_refresh.setText("Авто-обновление")
-        self.cb_auto_refresh.setToolTip("Каждый 1 час")
         self.cb_auto_refresh.setChecked(True)
-        self.cb_auto_refresh.toggled.connect(self.set_auto_refresh)
 
         self.logs = LogsWidget()
         self.dock_widget_logs = QDockWidget("Логи")
@@ -201,7 +199,7 @@ class MainWindow(QMainWindow):
         self.username: str | None = USERNAME
 
         self.thread_get_data = RunFuncThread(
-            func=lambda: get_rss_jira_log(self.username)
+            func=self._get_data
         )
         self.thread_get_data.started.connect(self._before_refresh)
         self.thread_get_data.about_error.connect(self._set_error_log)
@@ -267,11 +265,14 @@ class MainWindow(QMainWindow):
 
         self._quit_dont_ask_again: bool = False
 
-        # Запуск таймеров после инициализации GUI
+        # Запуск таймера обновления состояния после инициализации GUI
         self.timer_update_states.start()
 
-        if self.cb_auto_refresh.isChecked():
-            self.timer_auto_refresh.start()
+    def _get_data(self) -> bytes | None:
+        if not self.username or not self.cb_auto_refresh.isChecked():
+            return
+
+        return get_rss_jira_log(self.username)
 
     def _update_window_title(self):
         username: str | None = self.username
@@ -291,23 +292,16 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle(title)
 
-    def set_auto_refresh(self, checked: bool):
-        if checked:
-            self.timer_auto_refresh.start()
-        else:
-            self.timer_auto_refresh.stop()
-
-        pos = self.cb_auto_refresh.geometry().topRight()
-        pos = self.mapToGlobal(pos)
-        QToolTip.showText(pos, f"Таймер {'запущен' if checked else 'остановлен'}")
-
     def _set_error_log(self, e: Exception):
         self.logs.append_exception(e)
 
         # Отображение лога
         self.dock_widget_logs.show()
 
-    def _fill_tables(self, xml_data: bytes):
+    def _fill_tables(self, xml_data: bytes | None):
+        if not xml_data:
+            return
+
         buffer_io = io.StringIO()
         try:
             with redirect_stdout(buffer_io):
@@ -398,6 +392,9 @@ class MainWindow(QMainWindow):
         self._update_states()
 
     def refresh(self):
+        if not self.timer_auto_refresh.isActive():
+            self.timer_auto_refresh.start()
+
         self.logs.append(f"Обновление в {get_human_datetime()}")
 
         if not self.username:

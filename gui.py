@@ -393,8 +393,8 @@ class MainWindow(QMainWindow):
 
         try:
             self.write_settings()
-        except:
-            pass
+        except Exception as e:
+            self.logs.append_error(f"Ошибка при сохранении конфига: {e}")
 
     def refresh(self):
         if not self.timer_auto_refresh.isActive():

@@ -415,6 +415,9 @@ class MainWindow(QMainWindow):
             def _set_username(value: str):
                 self.username = value
 
+                # Сохранение в конфиге, чтобы при следующем запуске не запрашивать его
+                CONFIG["username"] = self.username
+
             thread = RunFuncThread(func=get_jira_current_username)
             thread.started.connect(_on_started)
             thread.run_finished.connect(_set_username)

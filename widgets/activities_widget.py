@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
 )
 
 from api import get_human_date, get_human_time
-from api.jira_rss import Activity, get_logged_total_seconds
+from api.jira_rss import ActivityActionEnum, Activity, get_logged_total_seconds
 from widgets import (
     create_table,
     create_table_item,
@@ -183,10 +183,16 @@ class ActivitiesWidget(QWidget):
                 else:
                     logged_human_time = logged_description = None
 
+                action_name = activity.action.name
+                action_tooltip = None
+                if activity.action == ActivityActionEnum.UNKNOWN:
+                    action_name = f"⚠️ {action_name}"
+                    action_tooltip = "Неизвестное действие. Оповестите мейнтейнера, отправив текст активности"
+
                 items = [
                     create_table_item(get_human_time(activity.entry_dt)),
                     create_table_item(logged_human_time),
-                    create_table_item(activity.action.name),
+                    create_table_item(action_name, tool_tip=action_tooltip),
                     create_table_item(logged_description, tool_tip=logged_description),
                     create_table_item(
                         activity.action_text, tool_tip=activity.action_text

@@ -391,6 +391,11 @@ class MainWindow(QMainWindow):
 
         self._update_states()
 
+        try:
+            self.write_settings()
+        except:
+            pass
+
     def refresh(self):
         if not self.timer_auto_refresh.isActive():
             self.timer_auto_refresh.start()

@@ -273,12 +273,12 @@ class MainWindow(QMainWindow):
         if self.cb_auto_refresh.isChecked():
             self.timer_auto_refresh.start()
 
-    def _update_window_title(self, dt: datetime | None = None):
-        username = self.username
+    def _update_window_title(self):
+        username: str | None = self.username
         if not username:
             username = "<не задано>"
 
-        if dt:
+        if self._last_refresh_datetime:
             title = TEMPLATE_WINDOW_TITLE_WITH_REFRESH.format(
                 username=username,
                 dt=get_human_datetime(self._last_refresh_datetime),
@@ -382,8 +382,7 @@ class MainWindow(QMainWindow):
                 addon_dock.refresh()
 
     def _update_states(self):
-        if self._last_refresh_datetime:
-            self._update_window_title(dt=self._last_refresh_datetime)
+        self._update_window_title()
 
         for addon_dock in self.addons:
             # NOTE: Обновление времени последнего обновления будет и для отключенных

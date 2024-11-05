@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import (
 )
 
 from api import RunFuncThread, get_human_datetime, get_ago
-from widgets import get_class_name
+from widgets import get_class_name, get_scroll_area
 from widgets.logs_widget import LogsWidget
 
 
@@ -137,9 +137,9 @@ class AddonDockWidget(QDockWidget):
 
         self.tab_widget = QTabWidget()
         self.tab_widget.setObjectName("tabs")
-        self.tab_widget.addTab(self.addon, "🏛️")
-        self.tab_widget.addTab(self.logs, "📝")
-        self.tab_widget.addTab(self.settings, "⚙️")
+        self.tab_widget.addTab(get_scroll_area(self.addon), "🏛️")
+        self.tab_widget.addTab(self.logs, "📝")  # NOTE: Тут get_scroll_area не нужно
+        self.tab_widget.addTab(get_scroll_area(self.settings), "⚙️")
 
         self.tab_widget.setCornerWidget(self.button_refresh, Qt.TopLeftCorner)
         self.tab_widget.setCornerWidget(self.stacked_ago_progress, Qt.TopRightCorner)

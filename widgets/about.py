@@ -28,7 +28,6 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QStyle,
     QVBoxLayout,
-    QScrollArea,
 )
 
 from api import get_human_datetime, get_ago
@@ -40,6 +39,7 @@ from config import (
     PATH_README,
     PATH_CHANGELOG,
 )
+from widgets import get_scroll_area
 from widgets.markdown_viewer import MarkdownViewer
 
 
@@ -190,14 +190,9 @@ class About(QDialog):
         fields_layout.setContentsMargins(0, 0, 0, 0)
         fields_widget.setLayout(fields_layout)
 
-        scroll_area = QScrollArea()
-        scroll_area.setFrameStyle(QScrollArea.NoFrame)
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setWidget(fields_widget)
-
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(QLabel(f"<h1>{PROGRAM_NAME}</h1>"))
-        main_layout.addWidget(scroll_area)
+        main_layout.addWidget(get_scroll_area(fields_widget))
         main_layout.addWidget(button_box)
 
         self.refresh()

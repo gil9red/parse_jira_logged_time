@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from typing import Any
 
 from PyQt5.QtCore import Qt, QObject
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QScrollArea, QWidget
 
 from config import JIRA_HOST
 
@@ -68,6 +68,15 @@ def clear_table(table_widget: QTableWidget):
 def open_jira(jira_id: str):
     url = f"{JIRA_HOST}/browse/{jira_id}"
     webbrowser.open(url)
+
+
+def get_scroll_area(widget: QWidget) -> QScrollArea:
+    scroll_area = QScrollArea()
+    scroll_area.setFrameStyle(QScrollArea.NoFrame)
+    scroll_area.setWidgetResizable(True)
+    scroll_area.setWidget(widget)
+
+    return scroll_area
 
 
 def get_class_name(obj: Any) -> str:

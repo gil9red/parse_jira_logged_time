@@ -31,8 +31,14 @@ class AddonGetWorklogWidget(AddonWidget):
 
     def process(self, data: Worklog | None):
         if data:
+            logged: str = data.logged
+
+            # "hh:mm" -> "hh:mm:ss"
+            if logged.count(":") == 1:
+                logged = f"{logged}:00"
+
             text = f"""
-Залогировано: {data.logged} ({data.logged_percent}%)
+Залогировано: {logged} ({data.logged_percent}%)
 Всего отработано: {data.actually}
             """.strip()
         else:

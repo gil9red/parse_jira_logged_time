@@ -198,9 +198,7 @@ class MainWindow(QMainWindow):
 
         self.username: str | None = USERNAME
 
-        self.thread_get_data = RunFuncThread(
-            func=self._get_data
-        )
+        self.thread_get_data = RunFuncThread(func=self._get_data)
         self.thread_get_data.started.connect(self._before_refresh)
         self.thread_get_data.about_error.connect(self._set_error_log)
         self.thread_get_data.run_finished.connect(self._fill_tables)

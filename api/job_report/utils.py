@@ -36,7 +36,11 @@ def _send_data(data: dict) -> str:
     return rs.text
 
 
-def get_report_context(dep: str = "all", rep: str = "rep1", period: str | None = None) -> str:
+def get_report_context(
+    dep: str = "all",
+    rep: str = "rep1",
+    period: str | None = None,
+) -> str:
     today = datetime.today()
 
     if not period:

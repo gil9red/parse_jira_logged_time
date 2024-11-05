@@ -27,16 +27,16 @@ def get_time_spent_in_office() -> TimeSpent:
     def _find(pattern: str, about: str) -> str:
         if m := re.search(pattern, rs.text, flags=re.IGNORECASE):
             return m.group(1)
-        raise Exception(f'Not found {about!r}')
+        raise Exception(f"Not found {about!r}")
 
     return TimeSpent(
         first_enter=_find(
             pattern=r"First enter: ([\d+:]+)",
-            about="First enter"
+            about="First enter",
         ),
         today=_find(
             pattern=r"Today\s*\(Possible\): ([\d+:]+)",
-            about="Today(Possible)"
+            about="Today(Possible)",
         ),
     )
 

@@ -66,7 +66,9 @@ def get_sprints_with_overtime_hours() -> list[Sprint]:
         overtime_hours = issue["fields"][FIELD_OVERTIME_HOURS]
         overtime_hours: int = int(overtime_hours) if overtime_hours else 0
 
-        logger.info(f"Issue: {key}, created_str: {created_str}, overtime hours: {overtime_hours}")
+        logger.info(
+            f"Issue: {key}, created_str: {created_str}, overtime hours: {overtime_hours}"
+        )
 
         items.append(
             Sprint(

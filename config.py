@@ -38,7 +38,7 @@ if not PATH_CONFIG.exists():
     shutil.copy(PATH_EXAMPLES_CONFIG, PATH_CONFIG)
 
 CONFIG: dict[str, Any] = json.loads(PATH_CONFIG.read_text("utf-8"))
-USERNAME: str | None = CONFIG.get("username")
+USERNAME: str | None = CONFIG["username"]
 MAX_RESULTS: int = CONFIG["max_results"]
 JIRA_HOST: str = CONFIG["jira_host"]
 NAME_CERT: str = CONFIG["name_cert"]  # NOTE: Получение описано в README.md

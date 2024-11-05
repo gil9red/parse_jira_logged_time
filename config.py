@@ -45,4 +45,4 @@ NAME_CERT: str = CONFIG["name_cert"]  # NOTE: Получение описано 
 
 PATH_CERT = DIR / NAME_CERT
 if not PATH_CERT.exists():
-    raise Exception(f"File {PATH_CERT} not found!")
+    raise Exception(f"Файл {PATH_CERT} не найден!")

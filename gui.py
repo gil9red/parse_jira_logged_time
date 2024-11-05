@@ -530,6 +530,8 @@ class MainWindow(QMainWindow):
 
         self.write_settings()
 
+        QApplication.instance().quit()
+
 
 if __name__ == "__main__":
     with mp.Pool(processes=5) as pool:

@@ -38,6 +38,18 @@ if not PATH_CONFIG.exists():
     shutil.copy(PATH_EXAMPLES_CONFIG, PATH_CONFIG)
 
 CONFIG: dict[str, Any] = json.loads(PATH_CONFIG.read_text("utf-8"))
+
+# Упорядочивание ключей конфига, удаление лишних и авто добавление новых
+merged_config: dict[str, Any] = dict()
+CONFIG_EXAMPLE: dict[str, Any] = json.loads(PATH_EXAMPLES_CONFIG.read_text("utf-8"))
+for k, v in CONFIG_EXAMPLE.items():
+    if k not in CONFIG:
+        print(f"Добавление нового ключа в конфиг: {k!r} = {v!r}")
+
+    merged_config[k] = CONFIG.get(k, v)
+
+CONFIG = merged_config
+
 USERNAME: str | None = CONFIG["username"]
 MAX_RESULTS: int = CONFIG["max_results"]
 JIRA_HOST: str = CONFIG["jira_host"]

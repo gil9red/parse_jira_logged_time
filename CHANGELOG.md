@@ -6,6 +6,7 @@
  
 ## [Unreleased]
 ### Changed
+- GUI: Улучшение интерфейса "О программе"
 - GUI: Аддоны. Размещение виджетов вкладок "Общее" и "Настройки" на прокручиваемой области
 - Механизм актуализации конфига [config.json](config.json) из [resources/examples/config.json](resources/examples/config.json)
 - GUI: Аддон "Рабочий журнал". Изменение формата поля "Залогировано" с "hh:mm" на "hh:mm:ss"

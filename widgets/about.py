@@ -39,6 +39,7 @@ from config import (
     PATH_README,
     PATH_CHANGELOG,
 )
+from third_party.column_resizer import ColumnResizer
 from widgets import get_scroll_area
 from widgets.markdown_viewer import MarkdownViewer
 
@@ -182,7 +183,7 @@ class About(QDialog):
 
             self._label_memory = get_ext_label("")
             fields_layout.addRow(
-                "Потребление памяти:",
+                "Память:",
                 self._label_memory,
             )
 
@@ -194,6 +195,10 @@ class About(QDialog):
         main_layout.addWidget(QLabel(f"<h1>{PROGRAM_NAME}</h1>"))
         main_layout.addWidget(get_scroll_area(fields_widget))
         main_layout.addWidget(button_box)
+
+        resizer = ColumnResizer(self)
+        resizer.addWidgetsFromLayout(fields_layout, 0)
+        resizer.addWidgetsFromLayout(gb_python_layout, 0)
 
         self.refresh()
 

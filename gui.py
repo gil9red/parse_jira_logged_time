@@ -263,6 +263,8 @@ class MainWindow(QMainWindow):
 
         self._quit_dont_ask_again: bool = False
 
+        self._last_is_maximized: bool = self.isMaximized()
+
         # Запуск таймера обновления состояния после инициализации GUI
         self.timer_update_states.start()
 
@@ -496,11 +498,17 @@ class MainWindow(QMainWindow):
         self.setVisible(not self.isVisible())
 
         if self.isVisible():
-            self.showNormal()
+            if self._last_is_maximized:
+                self.showMaximized()
+            else:
+                self.showNormal()
+
             self.activateWindow()
 
     def changeEvent(self, event: QEvent):
         if event.type() == QEvent.WindowStateChange:
+            self._last_is_maximized = self.isMaximized()
+
             # Если окно свернули
             if self.isMinimized():
                 # Прячем окно с панели задач

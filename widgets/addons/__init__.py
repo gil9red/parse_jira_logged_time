@@ -136,9 +136,19 @@ class AddonDockWidget(QDockWidget):
 
         self.tab_widget = QTabWidget()
         self.tab_widget.setObjectName("tabs")
-        self.tab_widget.addTab(get_scroll_area(self.addon), "🏛️")
-        self.tab_widget.addTab(self.logs, "📝")  # NOTE: Тут get_scroll_area не нужно
-        self.tab_widget.addTab(get_scroll_area(self.settings), "⚙️")
+
+        self._idx_tab_addon = self.tab_widget.addTab(
+            get_scroll_area(self.addon),
+            "🏛️",
+        )
+        self._idx_tab_logs = self.tab_widget.addTab(
+            self.logs,  # NOTE: Тут get_scroll_area не нужен
+            "📝",
+        )
+        self.tab_widget.addTab(
+            get_scroll_area(self.settings),
+            "⚙️",
+        )
 
         self.tab_widget.setCornerWidget(self.button_refresh, Qt.TopLeftCorner)
         self.tab_widget.setCornerWidget(self.stacked_ago_progress, Qt.TopRightCorner)
@@ -198,16 +208,16 @@ class AddonDockWidget(QDockWidget):
     def _process_run_finished(self, _: Any):
         # Это код может быть выполнен сразу после _process_set_error_log
         if self._last_error:
-            self.tab_widget.setCurrentWidget(self.logs)
+            self.tab_widget.setCurrentIndex(self._idx_tab_logs)
             return
 
-        self.tab_widget.setCurrentWidget(self.addon)
+        self.tab_widget.setCurrentIndex(self._idx_tab_addon)
 
     def _process_set_error_log(self, e: Exception):
         self._last_error = e
 
         self.logs.append_exception(e)
-        self.tab_widget.setCurrentWidget(self.logs)
+        self.tab_widget.setCurrentIndex(self._idx_tab_logs)
 
     def _process_finished(self):
         self.button_refresh.setEnabled(True)

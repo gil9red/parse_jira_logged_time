@@ -35,7 +35,6 @@ from PyQt5.QtWidgets import (
     QSplitter,
     QSystemTrayIcon,
     QProgressBar,
-    QToolTip,
     QTabWidget,
     QDockWidget,
     QMenu,

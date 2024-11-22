@@ -558,6 +558,8 @@ if __name__ == "__main__":
         mw = MainWindow()
         MAIN_WINDOW = mw
 
+        app.setWindowIcon(mw.windowIcon())
+
         mw.resize(1200, 800)
         mw.show()
 

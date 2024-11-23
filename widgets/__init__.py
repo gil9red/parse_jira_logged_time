@@ -52,7 +52,7 @@ def open_context_menu(
         title = model.headerData(column, Qt.Horizontal)
 
         idx: QModelIndex = model.index(row, column)
-        value: str = str(model.data(idx))
+        value: str = str(model.data(idx, role=Qt.ItemDataRole.EditRole))
 
         action = menu.addAction(
             f'Скопировать из "{title}"',

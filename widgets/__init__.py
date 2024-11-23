@@ -5,6 +5,7 @@ __author__ = "ipetrash"
 
 
 import re
+import textwrap
 import webbrowser
 
 from contextlib import contextmanager
@@ -47,6 +48,17 @@ def open_context_menu(
 
     row: int = index.row()
     model = table.model()
+
+    value: str = str(model.data(index, role=Qt.ItemDataRole.EditRole))
+    if value:
+        def _shorten(text: str) -> str:
+            return textwrap.shorten(text, width=50)
+
+        menu.addAction(
+            f'Скопировать "{_shorten(value)}"',
+            lambda value=value: QApplication.clipboard().setText(value),
+        )
+        menu.addSeparator()
 
     for column in range(model.columnCount()):
         title = model.headerData(column, Qt.Horizontal)

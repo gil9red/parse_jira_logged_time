@@ -89,6 +89,7 @@ class About(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("О программе")
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self.changelog = MarkdownViewer(
             title="Журнал изменений",

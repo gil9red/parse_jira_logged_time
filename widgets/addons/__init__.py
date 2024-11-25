@@ -119,6 +119,7 @@ class AddonDockWidget(QDockWidget):
         self.cb_is_auto_refresh = QCheckBox()
         self.cb_is_auto_refresh.setObjectName("is_auto_refresh")
         self.cb_is_auto_refresh.setChecked(True)
+        self.cb_is_auto_refresh.toggled.connect(self._update_window_title)
 
         self.settings = QWidget()
 
@@ -171,6 +172,9 @@ class AddonDockWidget(QDockWidget):
         title = self.addon.title
         if not self.addon.is_active:
             title = f"{title} (отключено)"
+
+        if not self.is_auto_refresh():
+            title = f"❌ {title}"
 
         self.setWindowTitle(title)
 

@@ -64,7 +64,8 @@ def open_context_menu(
             f'Скопировать "{_shorten(value)}"',
             lambda value=value: _copy_to_clipboard(value),
         )
-        menu.addSeparator()
+
+    menu_copy_from = menu.addMenu("Скопировать из")
 
     for column in range(model.columnCount()):
         title = model.headerData(column, Qt.Horizontal)
@@ -72,8 +73,8 @@ def open_context_menu(
         idx: QModelIndex = model.index(row, column)
         value: str = _get_cell(idx)
 
-        action = menu.addAction(
-            f'Скопировать из "{title}"',
+        action = menu_copy_from.addAction(
+            title,
             lambda value=value: _copy_to_clipboard(value),
         )
         action.setEnabled(bool(value))

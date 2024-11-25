@@ -55,11 +55,11 @@ def open_context_menu(
     def _copy_to_clipboard(value: str):
         QApplication.clipboard().setText(value)
 
+    def _shorten(text: str) -> str:
+        return textwrap.shorten(text, width=50)
+
     value: str = _get_cell(index)
     if value:
-        def _shorten(text: str) -> str:
-            return textwrap.shorten(text, width=50)
-
         menu.addAction(
             f'Скопировать "{_shorten(value)}"',
             lambda value=value: _copy_to_clipboard(value),

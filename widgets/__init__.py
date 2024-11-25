@@ -125,16 +125,20 @@ def create_table(header_labels: list[str]) -> QTableWidget:
             value: str = get_cell_value(model, row, column)
 
             # NOTE: Поиск строки вида "FOO-123"
-            m = re.search(r"^\w+-\d+", value)
+            m = re.search(r"^(\w+)-\d+", value)
             if not m:
                 continue
 
             jira_key: str = m.group(0)
+            project: str = m.group(1)
 
             action_open_jira = QAction(f'Открыть "{jira_key}"')
             action_open_jira.triggered.connect(lambda: open_jira(jira_key))
-
             actions.append(action_open_jira)
+
+            action_open_jira_project = QAction(f'Открыть "{project}"')
+            action_open_jira_project.triggered.connect(lambda: open_jira_project(project))
+            actions.append(action_open_jira_project)
 
         return actions
 
@@ -176,6 +180,11 @@ def clear_table(table_widget: QTableWidget):
 
 def open_jira(jira_id: str):
     url = f"{JIRA_HOST}/browse/{jira_id}"
+    webbrowser.open(url)
+
+
+def open_jira_project(project: str):
+    url = f"{JIRA_HOST}/projects/{project}"
     webbrowser.open(url)
 
 

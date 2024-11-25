@@ -46,7 +46,7 @@ def open_context_menu(
 
     menu = QMenu(table)
 
-    row: int = index.row()
+    current_row: int = index.row()
 
     model = table.model()
     column_count: int = model.columnCount()
@@ -73,7 +73,7 @@ def open_context_menu(
     for column in range(column_count):
         title = model.headerData(column, Qt.Horizontal)
 
-        idx: QModelIndex = model.index(row, column)
+        idx: QModelIndex = model.index(current_row, column)
         value: str = _get_cell(idx)
 
         cells.append(value)
@@ -91,7 +91,7 @@ def open_context_menu(
     )
 
     if get_additional_actions_func:
-        if actions := get_additional_actions_func(table, row):
+        if actions := get_additional_actions_func(table, current_row):
             menu.addSeparator()
             menu.addActions(actions)
 

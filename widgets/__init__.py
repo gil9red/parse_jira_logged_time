@@ -49,14 +49,20 @@ def open_context_menu(
     row: int = index.row()
     model = table.model()
 
-    value: str = str(model.data(index, role=Qt.ItemDataRole.EditRole))
+    def _get_cell(idx: QModelIndex) -> str:
+        return str(model.data(idx, role=Qt.ItemDataRole.EditRole))
+
+    def _copy_to_clipboard(value: str):
+        QApplication.clipboard().setText(value)
+
+    value: str = _get_cell(index)
     if value:
         def _shorten(text: str) -> str:
             return textwrap.shorten(text, width=50)
 
         menu.addAction(
             f'Скопировать "{_shorten(value)}"',
-            lambda value=value: QApplication.clipboard().setText(value),
+            lambda value=value: _copy_to_clipboard(value),
         )
         menu.addSeparator()
 
@@ -64,11 +70,11 @@ def open_context_menu(
         title = model.headerData(column, Qt.Horizontal)
 
         idx: QModelIndex = model.index(row, column)
-        value: str = str(model.data(idx, role=Qt.ItemDataRole.EditRole))
+        value: str = _get_cell(idx)
 
         action = menu.addAction(
             f'Скопировать из "{title}"',
-            lambda value=value: QApplication.clipboard().setText(value),
+            lambda value=value: _copy_to_clipboard(value),
         )
         action.setEnabled(bool(value))
 

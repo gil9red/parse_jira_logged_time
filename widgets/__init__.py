@@ -47,7 +47,9 @@ def open_context_menu(
     menu = QMenu(table)
 
     row: int = index.row()
+
     model = table.model()
+    column_count: int = model.columnCount()
 
     def _get_cell(idx: QModelIndex) -> str:
         return str(model.data(idx, role=Qt.ItemDataRole.EditRole))
@@ -67,17 +69,26 @@ def open_context_menu(
 
     menu_copy_from = menu.addMenu("Скопировать из")
 
-    for column in range(model.columnCount()):
+    cells: list[str] = []
+    for column in range(column_count):
         title = model.headerData(column, Qt.Horizontal)
 
         idx: QModelIndex = model.index(row, column)
         value: str = _get_cell(idx)
+
+        cells.append(value)
 
         action = menu_copy_from.addAction(
             title,
             lambda value=value: _copy_to_clipboard(value),
         )
         action.setEnabled(bool(value))
+
+    menu_copy_from.addSeparator()
+    menu_copy_from.addAction(
+        "<Текущая строка>",
+        lambda value="\t".join(cells): _copy_to_clipboard(value),
+    )
 
     if get_additional_actions_func:
         if actions := get_additional_actions_func(table, row):

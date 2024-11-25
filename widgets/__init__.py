@@ -11,7 +11,7 @@ import webbrowser
 from contextlib import contextmanager
 from typing import Any, Callable
 
-from PyQt5.QtCore import Qt, QObject, QPoint, QModelIndex
+from PyQt5.QtCore import Qt, QObject, QPoint, QModelIndex, QAbstractItemModel
 from PyQt5.QtWidgets import (
     QApplication,
     QTableWidget,
@@ -35,6 +35,11 @@ def block_signals(obj: QObject):
         obj.blockSignals(False)
 
 
+def get_cell_value(model: QAbstractItemModel, row: int, column: int) -> str:
+    idx: QModelIndex = model.index(row, column)
+    return str(model.data(idx, role=Qt.ItemDataRole.EditRole))
+
+
 def open_context_menu(
     table: QTableView,
     p: QPoint,
@@ -51,16 +56,21 @@ def open_context_menu(
     model = table.model()
     column_count: int = model.columnCount()
 
-    def _get_cell(idx: QModelIndex) -> str:
-        return str(model.data(idx, role=Qt.ItemDataRole.EditRole))
-
     def _copy_to_clipboard(value: str):
         QApplication.clipboard().setText(value)
 
     def _shorten(text: str) -> str:
         return textwrap.shorten(text, width=50)
 
-    value: str = _get_cell(index)
+    def _get_row_as_str(row: int) -> str:
+        return "\t".join(
+            get_cell_value(model, row, column) for column in range(column_count)
+        )
+
+    def _get_table_as_str() -> str:
+        return "\n".join(_get_row_as_str(row) for row in range(model.rowCount()))
+
+    value: str = get_cell_value(model, current_row, index.column())
     if value:
         menu.addAction(
             f'Скопировать "{_shorten(value)}"',
@@ -69,17 +79,11 @@ def open_context_menu(
 
     menu_copy_from = menu.addMenu("Скопировать из")
 
-    cells: list[str] = []
     for column in range(column_count):
-        title = model.headerData(column, Qt.Horizontal)
-
-        idx: QModelIndex = model.index(current_row, column)
-        value: str = _get_cell(idx)
-
-        cells.append(value)
+        value: str = get_cell_value(model, current_row, column)
 
         action = menu_copy_from.addAction(
-            title,
+            model.headerData(column, Qt.Horizontal),
             lambda value=value: _copy_to_clipboard(value),
         )
         action.setEnabled(bool(value))
@@ -87,7 +91,11 @@ def open_context_menu(
     menu_copy_from.addSeparator()
     menu_copy_from.addAction(
         "<Текущая строка>",
-        lambda value="\t".join(cells): _copy_to_clipboard(value),
+        lambda: _copy_to_clipboard(_get_row_as_str(current_row)),
+    )
+    menu_copy_from.addAction(
+        "<Все строки>",
+        lambda: _copy_to_clipboard(_get_table_as_str()),
     )
 
     if get_additional_actions_func:
@@ -114,8 +122,7 @@ def create_table(header_labels: list[str]) -> QTableWidget:
 
         actions = []
         for column in range(model.columnCount()):
-            idx = model.index(row, column)
-            value: str = str(model.data(idx))
+            value: str = get_cell_value(model, row, column)
 
             # NOTE: Поиск строки вида "FOO-123"
             m = re.search(r"^\w+-\d+", value)

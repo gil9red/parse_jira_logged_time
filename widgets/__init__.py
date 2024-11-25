@@ -23,6 +23,7 @@ from PyQt5.QtWidgets import (
     QMenu,
 )
 
+from api.jira_rss import Activity
 from config import JIRA_HOST
 
 
@@ -137,8 +138,18 @@ def create_table(header_labels: list[str]) -> QTableWidget:
             actions.append(action_open_jira)
 
             action_open_jira_project = QAction(f'Открыть "{project}"')
-            action_open_jira_project.triggered.connect(lambda: open_jira_project(project))
+            action_open_jira_project.triggered.connect(
+                lambda: open_jira_project(project)
+            )
             actions.append(action_open_jira_project)
+
+        activity: Activity | None = get_activity_from_row(table.model(), row)
+        if activity and activity.link_to_comment:
+            action_open_comment = QAction("Открыть комментарий")
+            action_open_comment.triggered.connect(
+                lambda: webbrowser.open(activity.link_to_comment)
+            )
+            actions.append(action_open_comment)
 
         return actions
 
@@ -163,6 +174,13 @@ def create_table_item(
         item.setData(Qt.UserRole, data)
 
     return item
+
+
+def get_activity_from_row(model: QAbstractItemModel, row: int) -> Activity | None:
+    idx = model.index(row, 0)
+    value = model.data(idx, role=Qt.UserRole)
+
+    return value if isinstance(value, Activity) else None
 
 
 def add_table_row(table: QTableWidget, items: list[QTableWidgetItem]):

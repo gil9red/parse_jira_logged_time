@@ -124,7 +124,10 @@ class LoggedWidget(QWidget):
                     logged_human_time = logged_description = None
 
                 items = [
-                    create_table_item(get_human_time(activity.entry_dt)),
+                    create_table_item(
+                        get_human_time(activity.entry_dt),
+                        data=activity,
+                    ),
                     create_table_item(logged_human_time),
                     create_table_item(activity.jira_id),
                     create_table_item(

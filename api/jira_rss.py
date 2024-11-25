@@ -63,6 +63,7 @@ class Activity:
     jira_id: str
     jira_title: str
     logged: Logged | None = None
+    link_to_comment: str | None = None
 
     def is_logged(self) -> bool:
         return self.logged is not None
@@ -152,6 +153,13 @@ def get_date_by_activities(root) -> dict[date, list[Activity]]:
             jira_id = _get_text(entry, "./activity:target/title")
             jira_title = _get_text(entry, "./activity:target/summary")
 
+        link_to_comment: str | None = None
+        for el in entry.findall("./link[@href]", namespaces=ns):
+            href = el.attrib["href"]
+            if "focusedCommentId=" in href:
+                link_to_comment = href
+                break
+
         # Переменная entry_dt имеет время в UTC, и желательно его привести в локальное время
         entry_dt = datetime.strptime(
             _get_text(entry, "./published"),
@@ -168,6 +176,7 @@ def get_date_by_activities(root) -> dict[date, list[Activity]]:
                 jira_id=jira_id,
                 jira_title=jira_title,
                 logged=logged,
+                link_to_comment=link_to_comment,
             )
         )
 

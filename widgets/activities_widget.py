@@ -190,7 +190,10 @@ class ActivitiesWidget(QWidget):
                     action_tooltip = "Неизвестное действие. Оповестите мейнтейнера, отправив текст активности"
 
                 items = [
-                    create_table_item(get_human_time(activity.entry_dt)),
+                    create_table_item(
+                        get_human_time(activity.entry_dt),
+                        data=activity,
+                    ),
                     create_table_item(logged_human_time),
                     create_table_item(action_name, tool_tip=action_tooltip),
                     create_table_item(logged_description, tool_tip=logged_description),

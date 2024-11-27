@@ -296,9 +296,6 @@ class MainWindow(QMainWindow):
     def _set_error_log(self, e: Exception):
         self.logs.append_exception(e)
 
-        # Отображение лога
-        self.dock_widget_logs.show()
-
     def _fill_tables(self, xml_data: bytes | None):
         if not xml_data:
             return

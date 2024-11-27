@@ -50,6 +50,8 @@ PATTERN_EMAIL: re.Pattern = re.compile(
     r"@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?"
 )
 
+PATTERN_MARKDOWN_HTTP_LINK: re.Pattern = re.compile(r"\[(.+?)]\((https?.+?)\)")
+
 
 def get_ext_label(text: str) -> QLabel:
     label = QLabel(text)
@@ -165,15 +167,24 @@ class About(QDialog):
             self._label_started,
         )
 
-        if emails := PATTERN_EMAIL.findall(PATH_README.read_text(encoding="utf-8")):
+        # NOTE: В текущем README.md может не присутствовать, но есть в
+        #       поставляемой версией
+        readme: str = PATH_README.read_text(encoding="utf-8")
+        links: list[str] = []
+
+        for email in PATTERN_EMAIL.findall(readme):
+            links.append(f"<a href='mailto:{email}?subject={PROGRAM_NAME}'>{email}</a>")
+
+        for title, url in PATTERN_MARKDOWN_HTTP_LINK.findall(readme):
+            if "zoom" not in url.lower():  # Белый список
+                continue
+
+            links.append(f"<a href='{url}'>{title}</a>")
+
+        if links:
             fields_layout.addRow(
                 "Контактная информация:",
-                get_ext_label(
-                    "\n".join(
-                        f"<a href='mailto:{email}?subject={PROGRAM_NAME}'>{email}</a>"
-                        for email in emails
-                    )
-                ),
+                get_ext_label("<br/>".join(links)),
             )
 
         if psutil:

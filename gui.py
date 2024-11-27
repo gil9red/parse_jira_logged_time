@@ -155,6 +155,8 @@ class MainWindow(QMainWindow):
         icon = QIcon(str(PATH_FAVICON))
         self.setWindowIcon(icon)
 
+        self.setDockNestingEnabled(True)
+
         self.button_refresh = QToolButton()
         self.button_refresh.setObjectName("button_refresh")
         self.button_refresh.setText("🔄")

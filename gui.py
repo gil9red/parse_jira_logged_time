@@ -164,10 +164,10 @@ class MainWindow(QMainWindow):
         self.button_refresh.setShortcut("F5")
         self.button_refresh.clicked.connect(self.refresh)
 
-        self.cb_auto_refresh = QCheckBox()
-        self.cb_auto_refresh.setObjectName("cb_auto_refresh")
-        self.cb_auto_refresh.setText("Авто-обновление")
-        self.cb_auto_refresh.setChecked(True)
+        self.cb_auto_refresh_rss = QCheckBox()
+        self.cb_auto_refresh_rss.setObjectName("cb_auto_refresh")
+        self.cb_auto_refresh_rss.setText("Авто-обновление")
+        self.cb_auto_refresh_rss.setChecked(True)
 
         self.logs = LogsWidget()
         self.dock_widget_logs = QDockWidget("Логи")
@@ -179,7 +179,6 @@ class MainWindow(QMainWindow):
         tool_bar_general = self.addToolBar("&Общее")
         tool_bar_general.setObjectName("tool_bar_general")
         tool_bar_general.addWidget(self.button_refresh)
-        tool_bar_general.addWidget(self.cb_auto_refresh)
         tool_bar_general.addSeparator()
         tool_bar_general.addAction(self.dock_widget_logs.toggleViewAction())
 
@@ -237,6 +236,7 @@ class MainWindow(QMainWindow):
         tab_widget = QTabWidget()
         tab_widget.addTab(self.logged_widget, "ЗАЛОГИРОВАНО")
         tab_widget.addTab(self.activities_widget, "АКТИВНОСТИ")
+        tab_widget.setCornerWidget(self.cb_auto_refresh_rss, Qt.TopRightCorner)
 
         layout_main = QVBoxLayout()
         layout_main.addWidget(self.progress_refresh)
@@ -270,7 +270,7 @@ class MainWindow(QMainWindow):
         self.timer_update_states.start()
 
     def _get_data(self) -> bytes | None:
-        if not self.username or not self.cb_auto_refresh.isChecked():
+        if not self.username or not self.cb_auto_refresh_rss.isChecked():
             return
 
         return get_rss_jira_log(self.username)
@@ -443,7 +443,7 @@ class MainWindow(QMainWindow):
             self.restoreState(state)
 
             value: bool = config_main_window.get("auto_refresh", True)
-            self.cb_auto_refresh.setChecked(value)
+            self.cb_auto_refresh_rss.setChecked(value)
 
             value: bool = config_main_window.get("quit_dont_ask_again", False)
             self._quit_dont_ask_again = value
@@ -467,7 +467,7 @@ class MainWindow(QMainWindow):
                 "MainWindow": {
                     "state": to_base64(self.saveState()),
                     "geometry": to_base64(self.saveGeometry()),
-                    "auto_refresh": self.cb_auto_refresh.isChecked(),
+                    "auto_refresh": self.cb_auto_refresh_rss.isChecked(),
                     "quit_dont_ask_again": self._quit_dont_ask_again,
                 },
             }

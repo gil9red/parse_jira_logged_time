@@ -197,6 +197,7 @@ class MainWindow(QMainWindow):
         self.timer_update_states.timeout.connect(self._update_states)
 
         self.username: str | None = USERNAME
+        self._last_refresh_is_forced: bool = False
 
         self.thread_get_data = RunFuncThread(func=self._get_data)
         self.thread_get_data.started.connect(self._before_refresh)
@@ -272,6 +273,16 @@ class MainWindow(QMainWindow):
     def _get_data(self) -> bytes | None:
         if not self.username:
             self.logs.append("Имя пользователя не задано. Запрос RSS не будет выполнен")
+            return
+
+        # Если обновление не было вызвано напрямую и не стоит флаг авто-обновления
+        if (
+            not self._last_refresh_is_forced
+            and not self.cb_auto_refresh_rss.isChecked()
+        ):
+            self.logs.append(
+                f'Флаг "{self.cb_auto_refresh_rss.text()}" отключен. Запрос RSS не будет выполнен'
+            )
             return
 
         return get_rss_jira_log(self.username)
@@ -401,16 +412,6 @@ class MainWindow(QMainWindow):
 
         self.logs.append(f"Обновление в {get_human_datetime()}")
 
-        # Если обновление не было вызвано напрямую и не стоит флаг авто-обновления
-        if (
-            self.sender() != self.button_refresh
-            and not self.cb_auto_refresh_rss.isChecked()
-        ):
-            self.logs.append(
-                f'Флаг "{self.cb_auto_refresh_rss.text()}" отключен. Запрос RSS не будет выполнен'
-            )
-            return
-
         if not self.username:
             loop = QEventLoop()
 
@@ -438,6 +439,12 @@ class MainWindow(QMainWindow):
             loop.exec()
 
         self._update_window_title()
+
+        self._last_refresh_is_forced = (
+            # Не ручной вызов метода
+            self.sender() is not None
+            and self.sender() != self.timer_auto_refresh
+        )
 
         self.thread_get_data.start()
 

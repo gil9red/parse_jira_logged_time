@@ -401,6 +401,10 @@ class MainWindow(QMainWindow):
         if not self.timer_auto_refresh.isActive():
             self.timer_auto_refresh.start()
 
+        # У пустого blockCount = 1
+        if self.logs.logs.blockCount() > 1:
+            self.logs.append("")
+
         self.logs.append(f"Обновление в {get_human_datetime()}")
 
         if not self.username:

@@ -198,6 +198,7 @@ class MainWindow(QMainWindow):
 
         self.username: str | None = USERNAME
         self._last_refresh_is_forced: bool = False
+        self._skip_get_data: bool = False
 
         self.thread_get_data = RunFuncThread(func=self._get_data)
         self.thread_get_data.started.connect(self._before_refresh)
@@ -270,19 +271,9 @@ class MainWindow(QMainWindow):
         # Запуск таймера обновления состояния после инициализации GUI
         self.timer_update_states.start()
 
+    # Функция вызывается в отдельном потоке RunFuncThread
     def _get_data(self) -> bytes | None:
-        if not self.username:
-            self.logs.append("Имя пользователя не задано. Запрос RSS не будет выполнен")
-            return
-
-        # Если обновление не было вызвано напрямую и не стоит флаг авто-обновления
-        if (
-            not self._last_refresh_is_forced
-            and not self.cb_auto_refresh_rss.isChecked()
-        ):
-            self.logs.append(
-                f'Флаг "{self.cb_auto_refresh_rss.text()}" отключен. Запрос RSS не будет выполнен'
-            )
+        if self._skip_get_data:
             return
 
         return get_rss_jira_log(self.username)
@@ -445,6 +436,22 @@ class MainWindow(QMainWindow):
             self.sender() is not None
             and self.sender() != self.timer_auto_refresh
         )
+
+        self._skip_get_data = False
+
+        if not self.username:
+            self.logs.append("Имя пользователя не задано. Запрос RSS не будет выполнен")
+            self._skip_get_data = True
+
+        # Если обновление не было вызвано напрямую и не стоит флаг авто-обновления
+        if (
+            not self._last_refresh_is_forced
+            and not self.cb_auto_refresh_rss.isChecked()
+        ):
+            self.logs.append(
+                f'Флаг "{self.cb_auto_refresh_rss.text()}" отключен. Запрос RSS не будет выполнен'
+            )
+            self._skip_get_data = True
 
         self.thread_get_data.start()
 

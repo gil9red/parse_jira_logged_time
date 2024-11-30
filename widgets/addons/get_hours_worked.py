@@ -86,8 +86,8 @@ class AddonGetHoursWorkedWidget(AddonWidget):
         settings_layout.addRow("Раскрашивать:", self.cb_is_colorized)
 
     def read_settings(self, settings: dict[str, Any] | None):
-        if not settings:
-            return
+        if settings is None:
+            settings: dict[str, Any] = dict()
 
         value: bool = settings.get(self.cb_is_colorized.objectName(), True)
         self.cb_is_colorized.setChecked(value)

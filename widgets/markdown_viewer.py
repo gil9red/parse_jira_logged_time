@@ -31,7 +31,6 @@ class MarkdownViewer(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
 
         self.content = QTextBrowser()
-        self.content.setReadOnly(True)
         self.content.setOpenLinks(False)
         self.content.anchorClicked.connect(self._anchor_clicked)
 

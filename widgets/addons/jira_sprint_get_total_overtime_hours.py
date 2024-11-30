@@ -4,6 +4,17 @@
 __author__ = "ipetrash"
 
 
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import (
+    QHeaderView,
+    QFormLayout,
+    QLabel,
+    QPlainTextEdit,
+    QStackedLayout,
+    QWidget,
+    QTableWidgetItem,
+)
+
 from api import get_human_date
 from api.jira_sprint_get_total_overtime_hours import (
     get_sprints_with_overtime_hours,
@@ -17,17 +28,6 @@ from widgets import (
     clear_table,
 )
 from widgets.addons import AddonWidget
-
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
-    QHeaderView,
-    QFormLayout,
-    QLabel,
-    QPlainTextEdit,
-    QStackedLayout,
-    QWidget,
-    QTableWidgetItem,
-)
 
 
 class AddonSprintsWidget(AddonWidget):

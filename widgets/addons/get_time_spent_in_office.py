@@ -4,14 +4,14 @@
 __author__ = "ipetrash"
 
 
+from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit
+
 from api.job_report.get_time_spent_in_office import (
     get_time_spent_in_office,
     TimeSpent,
     NotFoundReport,
 )
 from widgets.addons import AddonWidget
-
-from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit
 
 
 class AddonGetTimeSpentInOfficeWidget(AddonWidget):

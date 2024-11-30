@@ -6,6 +6,8 @@ __author__ = "ipetrash"
 
 from typing import Any
 
+from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit, QFormLayout, QCheckBox
+
 from api.job_report.get_hours_worked import (
     get_user_and_deviation_hours,
     get_quarter_user_and_deviation_hours,
@@ -13,8 +15,6 @@ from api.job_report.get_hours_worked import (
 )
 from third_party.get_quarter import get_quarter_roman
 from widgets.addons import AddonWidget
-
-from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit, QFormLayout, QCheckBox
 
 
 class AddonGetHoursWorkedWidget(AddonWidget):

@@ -58,16 +58,18 @@ class AddonGetLastIssueKeyWidget(AddonWidget):
         lines = []
 
         if data:
-            lines.append("""
-            <style>
-                a {
-                    color: inherit;
-                }
-                td.key {
-                    padding-right: 10px;
-                }
-            </style>
-            """)
+            lines.append(
+                """
+                <style>
+                    a {
+                        color: inherit;
+                    }
+                    td.key {
+                        padding-right: 10px;
+                    }
+                </style>
+                """
+            )
             lines.append("<table>")
 
             def _get_tag_a(value: str) -> str:

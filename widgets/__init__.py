@@ -12,6 +12,7 @@ from contextlib import contextmanager
 from typing import Any, Callable
 
 from PyQt5.QtCore import Qt, QObject, QPoint, QModelIndex, QAbstractItemModel
+from PyQt5.QtGui import QPalette
 from PyQt5.QtWidgets import (
     QApplication,
     QTableWidget,
@@ -115,6 +116,14 @@ def create_table(header_labels: list[str]) -> QTableWidget:
     table_widget.setColumnCount(len(header_labels))
     table_widget.setHorizontalHeaderLabels(header_labels)
     table_widget.horizontalHeader().setStretchLastSection(True)
+
+    p = table_widget.palette()
+    p.setColor(
+        QPalette.Inactive,
+        QPalette.Highlight,
+        p.color(QPalette.Active, QPalette.Highlight),
+    )
+    table_widget.setPalette(p)
 
     table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
 

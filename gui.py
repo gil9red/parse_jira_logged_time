@@ -9,6 +9,7 @@ import json
 import multiprocessing as mp
 import sys
 import traceback
+import textwrap
 
 from contextlib import redirect_stdout
 from datetime import datetime, date
@@ -255,12 +256,12 @@ class MainWindow(QMainWindow):
         menu_tray.addAction(action_exit)
 
         self.tray = QSystemTrayIcon(icon)
-        self.tray.setToolTip(self.windowTitle())
         self.tray.setContextMenu(menu_tray)
         self.tray.activated.connect(self._on_tray_activated)
+        self._tray_set_tool_tip(self.windowTitle())
         self.tray.show()
 
-        self.windowTitleChanged.connect(self.tray.setToolTip)
+        self.windowTitleChanged.connect(self._tray_set_tool_tip)
 
         self._update_window_title()
 
@@ -277,6 +278,9 @@ class MainWindow(QMainWindow):
             return
 
         return get_rss_jira_log(self.username)
+
+    def _tray_set_tool_tip(self, text: str):
+        self.tray.setToolTip(textwrap.fill(text))
 
     def _update_window_title(self):
         username: str | None = self.username

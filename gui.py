@@ -175,7 +175,10 @@ class MainWindow(QMainWindow):
         self.dock_widget_logs.setObjectName(f"{get_class_name(self.logs)}_DockWidget")
         self.dock_widget_logs.setWidget(self.logs)
         self.dock_widget_logs.hide()
-        self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.dock_widget_logs)
+        self.addDockWidget(
+            Qt.DockWidgetArea.BottomDockWidgetArea,
+            self.dock_widget_logs,
+        )
 
         tool_bar_general = self.addToolBar("&Общее")
         tool_bar_general.setObjectName("tool_bar_general")
@@ -226,7 +229,10 @@ class MainWindow(QMainWindow):
         for addon_dock in import_all_addons():
             self.addons.append(addon_dock)
 
-            self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, addon_dock)
+            self.addDockWidget(
+                Qt.DockWidgetArea.RightDockWidgetArea,
+                addon_dock,
+            )
             menu_addons.addAction(addon_dock.toggleViewAction())
 
         self.menu_help = self.menuBar().addMenu("&Помощь")

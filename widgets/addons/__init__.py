@@ -29,8 +29,8 @@ from widgets import get_class_name, get_scroll_area
 from widgets.logs_widget import LogsWidget
 
 
-FILE = Path(__file__).resolve()
-DIR = FILE.parent
+FILE: Path = Path(__file__).resolve()
+DIR: Path = FILE.parent
 
 
 class AddonWidget(QWidget):

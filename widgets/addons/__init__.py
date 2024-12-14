@@ -6,6 +6,7 @@ __author__ = "ipetrash"
 
 import importlib
 
+from dataclasses import dataclass
 from datetime import datetime
 from inspect import isclass
 from typing import Type, Any
@@ -33,6 +34,13 @@ FILE: Path = Path(__file__).resolve()
 DIR: Path = FILE.parent
 
 
+@dataclass
+class Defaults:
+    is_active: bool
+    is_visible: bool
+    area: Qt.DockWidgetArea
+
+
 class AddonWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -41,6 +49,13 @@ class AddonWidget(QWidget):
 
         self.thread_process = RunFuncThread(func=self.get_data)
         self.thread_process.run_finished.connect(self.do_process)
+
+    def defaults(self) -> Defaults:
+        return Defaults(
+            is_active=True,
+            is_visible=True,
+            area=Qt.DockWidgetArea.RightDockWidgetArea,
+        )
 
     @property
     def name(self) -> str:
@@ -232,14 +247,24 @@ class AddonDockWidget(QDockWidget):
         self.update_last_refresh_datetime()
 
     def read_settings(self, settings: dict[str, Any] | None):
+        defaults: Defaults = self.addon.defaults()
+
         if settings is None:
             settings: dict[str, Any] = dict()
 
-        value: bool = settings.get(self.cb_is_active.objectName(), True)
-        self.cb_is_active.setChecked(value)
+            self.setVisible(defaults.is_visible)
 
-        value: bool = settings.get(self.cb_is_auto_refresh.objectName(), True)
-        self.cb_is_auto_refresh.setChecked(value)
+        is_active: bool = settings.get(
+            self.cb_is_active.objectName(),
+            defaults.is_active,
+        )
+        self.cb_is_active.setChecked(is_active)
+
+        is_auto_refresh: bool = settings.get(
+            self.cb_is_auto_refresh.objectName(),
+            True,
+        )
+        self.cb_is_auto_refresh.setChecked(is_auto_refresh)
 
         self.addon.read_settings(settings)
 

@@ -65,7 +65,7 @@ from config import (
     CONFIG,
     USERNAME,
 )
-from widgets.addons import AddonDockWidget, import_all_addons
+from widgets.addons import Defaults, AddonDockWidget, import_all_addons
 from widgets.about import About
 from widgets.activities_widget import ActivitiesWidget
 from widgets.logged_widget import LoggedWidget
@@ -225,14 +225,11 @@ class MainWindow(QMainWindow):
         menu_tool_bar.addAction(tool_bar_general.toggleViewAction())
 
         menu_addons = menu_view.addMenu("&Аддоны")
-        self.addons: list[AddonDockWidget] = []
-        for addon_dock in import_all_addons():
-            self.addons.append(addon_dock)
+        self.addons: list[AddonDockWidget] = import_all_addons()
+        for addon_dock in self.addons:
+            defaults: Defaults = addon_dock.addon.defaults()
 
-            self.addDockWidget(
-                Qt.DockWidgetArea.RightDockWidgetArea,
-                addon_dock,
-            )
+            self.addDockWidget(defaults.area, addon_dock)
             menu_addons.addAction(addon_dock.toggleViewAction())
 
         self.menu_help = self.menuBar().addMenu("&Помощь")
@@ -494,11 +491,12 @@ class MainWindow(QMainWindow):
                 config_gui.get(child_name),
             )
 
-        for name, settings in config_gui.get("Addons", dict()).items():
-            for addon_dock in self.addons:
-                if addon_dock.addon.name == name:
-                    addon_dock.read_settings(settings)
-                    break
+        config_addons: dict[str, Any] = config_gui.get("Addons", dict())
+
+        for addon_dock in self.addons:
+            name: str = addon_dock.addon.name
+            settings: dict[str, Any] | None = config_addons.get(name)
+            addon_dock.read_settings(settings)
 
     def write_settings(self):
         with open(PATH_CONFIG, "w") as f:

@@ -60,6 +60,9 @@ class AddonWidget(QWidget):
             area=Qt.DockWidgetArea.RightDockWidgetArea,
         )
 
+    def is_supported_refresh(self) -> bool:
+        return True
+
     @property
     def name(self) -> str:
         return get_class_name(self)
@@ -89,7 +92,11 @@ class AddonWidget(QWidget):
             self.thread_process.about_error.emit(e)
 
     def refresh(self):
-        if not self.isEnabled() or not self.__is_active:
+        if (
+            not self.isEnabled()
+            or not self.__is_active
+            or not self.is_supported_refresh()
+        ):
             return
 
         self.thread_process.start()
@@ -169,8 +176,11 @@ class AddonDockWidget(QDockWidget):
             "⚙️",
         )
 
-        self.tab_widget.setCornerWidget(self.button_refresh, Qt.TopLeftCorner)
-        self.tab_widget.setCornerWidget(self.stacked_ago_progress, Qt.TopRightCorner)
+        if self.addon.is_supported_refresh():
+            self.tab_widget.setCornerWidget(self.button_refresh, Qt.TopLeftCorner)
+            self.tab_widget.setCornerWidget(
+                self.stacked_ago_progress, Qt.TopRightCorner
+            )
 
         self.setWidget(self.tab_widget)
 
@@ -180,7 +190,12 @@ class AddonDockWidget(QDockWidget):
     def _init_settings(self):
         settings_layout = QFormLayout()
         settings_layout.addRow("Активный:", self.cb_is_active)
-        settings_layout.addRow("Авто-обновление (общее):", self.cb_is_auto_refresh)
+
+        if self.addon.is_supported_refresh():
+            settings_layout.addRow(
+                "Авто-обновление (общее):",
+                self.cb_is_auto_refresh,
+            )
 
         self.settings.setLayout(settings_layout)
 
@@ -216,6 +231,9 @@ class AddonDockWidget(QDockWidget):
         return self.cb_is_auto_refresh.isChecked()
 
     def refresh(self):
+        if not self.addon.is_supported_refresh():
+            return
+
         self.logs.append(f"Обновление в {get_human_datetime()}")
         self.addon.refresh()
 

@@ -28,14 +28,8 @@ class AddonEyesWidget(AddonWidget):
             area=Qt.DockWidgetArea.LeftDockWidgetArea,
         )
 
-    def refresh(self):
-        return
-
-    def get_data(self) -> None:
-        return
-
-    def process(self, data: None):
-        return
+    def is_supported_refresh(self) -> bool:
+        return False
 
 
 if __name__ == "__main__":

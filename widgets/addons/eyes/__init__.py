@@ -31,6 +31,12 @@ class AddonEyesWidget(AddonWidget):
     def is_supported_refresh(self) -> bool:
         return False
 
+    def is_supported_logs(self) -> bool:
+        return False
+
+    def is_supported_settings(self) -> bool:
+        return False
+
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication

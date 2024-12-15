@@ -63,6 +63,12 @@ class AddonWidget(QWidget):
     def is_supported_refresh(self) -> bool:
         return True
 
+    def is_supported_logs(self) -> bool:
+        return True
+
+    def is_supported_settings(self) -> bool:
+        return True
+
     @property
     def name(self) -> str:
         return get_class_name(self)
@@ -161,20 +167,27 @@ class AddonDockWidget(QDockWidget):
         self.stacked_ago_progress.addWidget(self.progress_refresh)
 
         self.tab_widget = QTabWidget()
+        self.tab_widget.setTabBarAutoHide(True)
         self.tab_widget.setObjectName("tabs")
 
         self._idx_tab_addon = self.tab_widget.addTab(
             get_scroll_area(self.addon),
             "🏛️",
         )
-        self._idx_tab_logs = self.tab_widget.addTab(
-            self.logs,  # NOTE: Тут get_scroll_area не нужен
-            "📝",
-        )
-        self.tab_widget.addTab(
-            get_scroll_area(self.settings),
-            "⚙️",
-        )
+
+        if self.addon.is_supported_logs():
+            self._idx_tab_logs = self.tab_widget.addTab(
+                self.logs,  # NOTE: Тут get_scroll_area не нужен
+                "📝",
+            )
+        else:
+            self._idx_tab_logs = -1
+
+        if self.addon.is_supported_settings():
+            self.tab_widget.addTab(
+                get_scroll_area(self.settings),
+                "⚙️",
+            )
 
         if self.addon.is_supported_refresh():
             self.tab_widget.setCornerWidget(self.button_refresh, Qt.TopLeftCorner)
@@ -247,7 +260,7 @@ class AddonDockWidget(QDockWidget):
 
     def _process_run_finished(self, _: Any):
         # Это код может быть выполнен сразу после _process_set_error_log
-        if self._last_error:
+        if self._last_error and self._idx_tab_logs != -1:
             self.tab_widget.setCurrentIndex(self._idx_tab_logs)
             return
 
@@ -257,7 +270,9 @@ class AddonDockWidget(QDockWidget):
         self._last_error = e
 
         self.logs.append_exception(e)
-        self.tab_widget.setCurrentIndex(self._idx_tab_logs)
+
+        if self._idx_tab_logs != -1:
+            self.tab_widget.setCurrentIndex(self._idx_tab_logs)
 
     def _process_finished(self):
         self.button_refresh.setEnabled(True)

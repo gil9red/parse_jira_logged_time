@@ -5,11 +5,14 @@ __author__ = "ipetrash"
 
 
 import importlib
+import pkgutil
+import sys
 
 from dataclasses import dataclass
 from datetime import datetime
 from inspect import isclass
 from typing import Type, Any
+from types import ModuleType
 from pathlib import Path
 
 from PyQt5.QtCore import Qt
@@ -278,15 +281,23 @@ class AddonDockWidget(QDockWidget):
         self.addon.write_settings(settings)
 
 
-def import_all_addons() -> list[AddonDockWidget]:
+# SOURCE: https://stackoverflow.com/a/25083161/5909792
+def import_submodules(package_name: str) -> dict[str, ModuleType]:
+    """
+    Import all submodules of a module, recursively
+    """
+
+    package = sys.modules[package_name]
+    return {
+        name: importlib.import_module(package_name + "." + name)
+        for _, name, _ in pkgutil.walk_packages(package.__path__)
+    }
+
+
+def import_all_addons(package: str = __name__) -> list[AddonDockWidget]:
     items = []
 
-    for f in DIR.glob("*.py"):
-        if f == FILE:
-            continue
-
-        module = importlib.import_module(f".{f.stem}", package=__name__)
-
+    for module in import_submodules(package).values():
         # Перебираем список объектов в модуле
         for name in dir(module):
             obj = getattr(module, name)

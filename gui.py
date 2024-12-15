@@ -227,6 +227,8 @@ class MainWindow(QMainWindow):
         menu_addons = menu_view.addMenu("&Аддоны")
         self.addons: list[AddonDockWidget] = import_all_addons()
         for addon_dock in self.addons:
+            addon_dock.addon.set_context(self)
+
             defaults: Defaults = addon_dock.addon.defaults()
 
             self.addDockWidget(defaults.area, addon_dock)

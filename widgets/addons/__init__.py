@@ -49,9 +49,13 @@ class AddonWidget(QWidget):
         super().__init__()
 
         self.__is_active: bool = True
+        self.context: Any = None
 
         self.thread_process = RunFuncThread(func=self.get_data)
         self.thread_process.run_finished.connect(self.do_process)
+
+    def set_context(self, context: Any):
+        self.context = context
 
     def defaults(self) -> Defaults:
         return Defaults(

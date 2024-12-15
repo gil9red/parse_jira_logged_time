@@ -57,7 +57,6 @@ from api.jira_rss import (
     get_logged_total_seconds,
 )
 from config import (
-    VERSION,
     PROGRAM_NAME,
     PATH_STYLE_SHEET,
     PATH_FAVICON,
@@ -65,6 +64,7 @@ from config import (
     CONFIG,
     USERNAME,
 )
+from version import VERSION
 from widgets.addons import Defaults, AddonDockWidget, import_all_addons
 from widgets.about import About
 from widgets.activities_widget import ActivitiesWidget

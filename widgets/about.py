@@ -33,12 +33,12 @@ from PyQt5.QtWidgets import (
 from api import get_human_datetime, get_ago
 from config import (
     PROGRAM_NAME,
-    VERSION,
     DIR,
     GITHUB_PROJECT,
     PATH_README,
     PATH_CHANGELOG,
 )
+from version import VERSION
 from third_party.column_resizer import ColumnResizer
 from widgets import get_scroll_area
 from widgets.markdown_viewer import MarkdownViewer

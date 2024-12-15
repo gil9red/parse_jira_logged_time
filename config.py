@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import Any
 
 
-VERSION: str = "1.8.0-dev+2024-12-09"
 PROGRAM_NAME: str = "parse_jira_logged_time"
 
 GITHUB_PROJECT: str = "https://github.com/gil9red/parse_jira_logged_time"

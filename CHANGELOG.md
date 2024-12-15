@@ -6,6 +6,7 @@
  
 ## [Unreleased]
 ### Changed
+- Версия перенесена из config.py в version.py и высчитывается из CHANGELOG.md
 - GUI: Аддоны. Теперь можно настроить видимость отображения виджетов обновления на аддоне 
   через метод is_supported_refresh у AddonWidget
 - GUI: Аддоны. Добавлен аддон Eyes

@@ -39,8 +39,7 @@ class AddonSprintsWidget(AddonWidget):
         self.not_found = QPlainTextEdit("Спринты не найдены")
         self.not_found.setReadOnly(True)
 
-        self.label_number = QLabel()
-        self.label_total_hours = QLabel()
+        self.label_result = QLabel()
 
         self.table = create_table(header_labels=["Задача", "Дата", "Часы"])
         self.table.itemDoubleClicked.connect(self._on_table_item_double_clicked)
@@ -54,8 +53,7 @@ class AddonSprintsWidget(AddonWidget):
         self.main_widget = QWidget()
 
         main_widget_layout = QFormLayout(self.main_widget)
-        main_widget_layout.addRow("Всего задач:", self.label_number)
-        main_widget_layout.addRow("Всего часов:", self.label_total_hours)
+        main_widget_layout.addRow(self.label_result)
         main_widget_layout.addRow(self.table)
 
         self.main_layout = QStackedLayout(self)
@@ -107,8 +105,9 @@ class AddonSprintsWidget(AddonWidget):
                 ],
             )
 
-        self.label_number.setText(str(len(sprints)))
-        self.label_total_hours.setText(str(total_overtime_hours))
+        self.label_result.setText(
+            f"Задач <b>{len(sprints)}</b>, всего часов <b>{total_overtime_hours}</b>"
+        )
 
 
 if __name__ == "__main__":

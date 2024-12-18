@@ -4,6 +4,7 @@
 __author__ = "ipetrash"
 
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QTextBrowser,
     QVBoxLayout,
@@ -18,7 +19,7 @@ from api.jira_get_total_resolved import (
     get_stats,
 )
 from config import JIRA_HOST
-from widgets.addons import AddonWidget
+from widgets.addons import AddonWidget, Defaults
 
 
 class AddonGetTotalResolvedWidget(AddonWidget):
@@ -33,6 +34,13 @@ class AddonGetTotalResolvedWidget(AddonWidget):
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.addWidget(self.html_viewer)
+
+    def defaults(self) -> Defaults:
+        return Defaults(
+            is_visible=False,
+            is_active=False,
+            area=Qt.DockWidgetArea.LeftDockWidgetArea,
+        )
 
     def get_data(self) -> Stats:
         return get_stats()

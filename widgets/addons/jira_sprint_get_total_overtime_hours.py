@@ -27,7 +27,7 @@ from widgets import (
     add_table_row,
     clear_table,
 )
-from widgets.addons import AddonWidget
+from widgets.addons import AddonWidget, Defaults
 
 
 class AddonSprintsWidget(AddonWidget):
@@ -61,6 +61,13 @@ class AddonSprintsWidget(AddonWidget):
         self.main_layout.addWidget(QWidget())  # Empty
         self.main_layout.addWidget(self.not_found)
         self.main_layout.addWidget(self.main_widget)
+
+    def defaults(self) -> Defaults:
+        return Defaults(
+            is_visible=False,
+            is_active=False,
+            area=Qt.DockWidgetArea.RightDockWidgetArea,
+        )
 
     def _on_table_item_double_clicked(self, item: QTableWidgetItem):
         row = item.row()

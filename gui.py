@@ -469,9 +469,9 @@ class MainWindow(QMainWindow):
         self.thread_get_data.start()
 
     def read_settings(self):
-        config_gui: dict[str, Any] | None = CONFIG.get("gui")
-        if not config_gui:
-            return
+        config_gui: dict[str, Any] = CONFIG.get("gui")
+        if config_gui is None:
+            config_gui = dict()
 
         if config_main_window := config_gui.get("MainWindow"):
             geometry = from_base64(config_main_window["geometry"])
@@ -493,7 +493,9 @@ class MainWindow(QMainWindow):
                 config_gui.get(child_name),
             )
 
-        config_addons: dict[str, Any] = config_gui.get("Addons", dict())
+        config_addons: dict[str, Any] = config_gui.get("Addons")
+        if config_addons is None:
+            config_addons = dict()
 
         for addon_dock in self.addons:
             name: str = addon_dock.addon.name

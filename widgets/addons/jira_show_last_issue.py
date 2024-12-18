@@ -7,7 +7,7 @@ __author__ = "ipetrash"
 import time
 from typing import Any
 
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtWidgets import (
     QFormLayout,
     QTextBrowser,
@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
 from api.jira_show_last_issue import get_last_issue_key
 from third_party.advanced_list_widget import AdvancedListWidget
 from widgets import open_jira, open_jira_project
-from widgets.addons import AddonWidget
+from widgets.addons import AddonWidget, Defaults
 
 
 class AddonGetLastIssueKeyWidget(AddonWidget):
@@ -37,6 +37,13 @@ class AddonGetLastIssueKeyWidget(AddonWidget):
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.addWidget(self.html_viewer)
+
+    def defaults(self) -> Defaults:
+        return Defaults(
+            is_visible=False,
+            is_active=False,
+            area=Qt.DockWidgetArea.LeftDockWidgetArea,
+        )
 
     def _anchor_clicked(self, url: QUrl):
         url: str = url.toString()

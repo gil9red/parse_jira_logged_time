@@ -1,1 +1,1 @@
-https://github.com/gil9red/SimplePyScripts/blob/63506fdbbb64adce37dd1835169282fb302fc8c1/qt__pyqt__pyside__pyqode/xeyes_like/eyes
+https://github.com/gil9red/SimplePyScripts/blob/f16f040bff3c4836b768cb81ade11ebfbcceabb2/qt__pyqt__pyside__pyqode/xeyes_like/eyes

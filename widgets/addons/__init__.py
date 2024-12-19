@@ -289,7 +289,7 @@ class AddonDockWidget(QDockWidget):
     def read_settings(self, settings: dict[str, Any] | None):
         defaults: Defaults = self.addon.defaults()
 
-        if settings is None:
+        if not settings:
             settings: dict[str, Any] = dict()
 
             self.setVisible(defaults.is_visible)

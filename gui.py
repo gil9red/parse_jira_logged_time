@@ -474,11 +474,13 @@ class MainWindow(QMainWindow):
             config_gui = dict()
 
         if config_main_window := config_gui.get("MainWindow"):
-            geometry = from_base64(config_main_window["geometry"])
-            self.restoreGeometry(geometry)
+            geometry = from_base64(config_main_window.get("geometry", ""))
+            if geometry:
+                self.restoreGeometry(geometry)
 
-            state = from_base64(config_main_window["state"])
-            self.restoreState(state)
+            state = from_base64(config_main_window.get("state", ""))
+            if state:
+                self.restoreState(state)
 
             value: bool = config_main_window.get("auto_refresh", True)
             self.cb_auto_refresh_rss.setChecked(value)

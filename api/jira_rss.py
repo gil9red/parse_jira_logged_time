@@ -57,6 +57,7 @@ class Logged:
 
 @dataclass
 class Activity:
+    id: str
     entry_dt: datetime
     action: ActivityActionEnum
     action_text: str
@@ -73,6 +74,7 @@ class Activity:
 def utc_to_local(utc_dt: datetime) -> datetime:
     return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
+MAX_RESULTS = 250
 
 def get_rss_jira_log(username: str | None = USERNAME) -> bytes:
     if not username:
@@ -82,9 +84,30 @@ def get_rss_jira_log(username: str | None = USERNAME) -> bytes:
         f"{JIRA_HOST}/activity?maxResults={MAX_RESULTS}"
         f"&streams=user+IS+{username}&os_authType=basic&title=undefined"
     )
+    print(url)
 
     rs = session.get(url)
     rs.raise_for_status()
+    return rs.content
+
+
+def get_rss_jira_log_v2(dt1, dt2, username: str | None = USERNAME) -> bytes:
+    if not username:
+        username = get_jira_current_username()
+
+    url: str = (
+        f"{JIRA_HOST}/activity?maxResults={MAX_RESULTS}&streams=user+IS+{username}"
+        f"&streams=update-date+BETWEEN+{to_ms(dt1)}+{to_ms(dt2)}"
+        "&os_authType=basic&title=undefined"
+    )
+    print(url)
+
+    rs = session.get(url)
+    rs.raise_for_status()
+
+    from pathlib import Path
+    Path(f"{dt1.date().isoformat()}-{dt2.date().isoformat()}.xml").write_bytes(rs.content)
+
     return rs.content
 
 
@@ -113,6 +136,8 @@ def get_date_by_activities(root) -> dict[date, list[Activity]]:
     pattern_logged = re.compile("logged '(.+?)'", flags=re.IGNORECASE)
 
     for entry in root.findall("./entry", namespaces=ns):
+        id: str = _get_text(entry, "./id")
+
         title: str = _get_text(entry, "./title")
 
         # Удаление тегов HTML, лишних пробелов
@@ -170,6 +195,7 @@ def get_date_by_activities(root) -> dict[date, list[Activity]]:
 
         result[entry_date].append(
             Activity(
+                id=id,
                 entry_dt=entry_dt,
                 action=action,
                 action_text=title,
@@ -179,6 +205,7 @@ def get_date_by_activities(root) -> dict[date, list[Activity]]:
                 link_to_comment=link_to_comment,
             )
         )
+        # print(result[entry_date][-1])
 
     return result
 
@@ -193,33 +220,138 @@ def get_logged_total_seconds(activities: list[Activity]) -> int:
 
 
 if __name__ == "__main__":
-    xml_data = get_rss_jira_log()
-    print(len(xml_data), repr(xml_data[:50]))
-    print()
-
-    # Структура документа - xml
-    date_by_activities: dict[date, list[Activity]] = parse_date_by_activities(xml_data)
-    # print(date_by_activities)
+    # t = datetime.now()
+    # print(t)
+    #
+    # xml_data = get_rss_jira_log()
+    # print(len(xml_data), repr(xml_data[:50]))
     # print()
+    #
+    # # Структура документа - xml
+    # date_by_activities: dict[date, list[Activity]] = parse_date_by_activities(xml_data)
+    # # print(date_by_activities)
+    # # print()
+    #
+    # # Для красоты выводим результат в табличном виде
+    # lines = [
+    #     ("DATE", "LOGGED", "SECONDS", "ACTIVITIES"),
+    # ]
+    # total_activities = 0
+    # for entry_date, activities in sorted(
+    #     date_by_activities.items(), key=lambda x: x[0], reverse=True
+    # ):
+    #     total_activities += len(activities)
+    #
+    #     total_seconds: int = get_logged_total_seconds(activities)
+    #     total_seconds_str: str = seconds_to_str(total_seconds)
+    #
+    #     date_str: str = get_human_date(entry_date)
+    #     lines.append((date_str, total_seconds_str, total_seconds, len(activities)))
+    #
+    # # Список строк станет списком столбцов, у каждого столбца подсчитается максимальная длина
+    # max_len_columns = [max(map(len, map(str, col))) for col in zip(*lines)]
+    #
+    # # Создание строки форматирования: [30, 14, 5] -> "{:<30} | {:<14} | {:<5}"
+    # my_table_format = " | ".join("{:<%s}" % max_len for max_len in max_len_columns)
+    #
+    # for line in lines:
+    #     print(my_table_format.format(*line))
+    #
+    # print("total_activities:", total_activities)
+    # print(datetime.now(), datetime.now() - t)
+    # print('\n\n')
 
-    # Для красоты выводим результат в табличном виде
-    lines = [
-        ("DATE", "LOGGED", "SECONDS", "ACTIVITIES"),
-    ]
-    for entry_date, activities in sorted(
-        date_by_activities.items(), key=lambda x: x[0], reverse=True
+    total_activities = 0
+
+    from datetime import datetime, timedelta
+
+
+    def get_zero_time(dt: datetime) -> datetime:
+        return dt.replace(hour=0, minute=0, second=0, microsecond=0)
+
+
+    def get_items(
+        start_dt: datetime,
+        end_dt: datetime,
+        delta: timedelta,
+    ) -> list[tuple[datetime, datetime]]:
+        print(f"[get_items] start_dt: {start_dt}, end_dt: {end_dt}, delta: {delta}")
+        items = []
+
+        dt = end_dt
+        while True:
+            if dt <= start_dt:
+                break
+
+            dt1 = dt
+            dt -= delta
+
+            if dt < start_dt:
+                dt = start_dt
+
+            items.append((dt, dt1))
+
+        return items
+
+
+    def to_ms(dt: datetime) -> int:
+        return int(dt.timestamp() * 1000)
+
+
+    # dt = get_zero_time(datetime.utcnow())
+    # print(dt)
+    dt = get_zero_time(datetime.now())
+    print(dt)
+    # 2024-12-04 00:00:00
+
+    for dt1, dt2 in get_items(
+        # start_dt=get_zero_time(dt - timedelta(weeks=12)),
+        # start_dt=get_zero_time(dt - timedelta(weeks=4)),
+        start_dt=dt,
+        end_dt=get_zero_time(dt + timedelta(days=1)),
+        delta=timedelta(weeks=1),
     ):
-        total_seconds: int = get_logged_total_seconds(activities)
-        total_seconds_str: str = seconds_to_str(total_seconds)
+        t = datetime.now()
+        # print(t)
 
-        date_str: str = get_human_date(entry_date)
-        lines.append((date_str, total_seconds_str, total_seconds, len(activities)))
+        print(f"{dt1} - {dt2}. {to_ms(dt1)}+{to_ms(dt2)}")
 
-    # Список строк станет списком столбцов, у каждого столбца подсчитается максимальная длина
-    max_len_columns = [max(map(len, map(str, col))) for col in zip(*lines)]
+        xml_data = get_rss_jira_log_v2(dt1, dt2)
+        print(len(xml_data), repr(xml_data[:50]))
+        print()
 
-    # Создание строки форматирования: [30, 14, 5] -> "{:<30} | {:<14} | {:<5}"
-    my_table_format = " | ".join("{:<%s}" % max_len for max_len in max_len_columns)
+        # Структура документа - xml
+        date_by_activities: dict[date, list[Activity]] = parse_date_by_activities(xml_data)
+        # print(date_by_activities)
+        # print()
 
-    for line in lines:
-        print(my_table_format.format(*line))
+        # Для красоты выводим результат в табличном виде
+        lines = [
+            ("DATE", "LOGGED", "SECONDS", "ACTIVITIES"),
+        ]
+        for entry_date, activities in sorted(
+            date_by_activities.items(), key=lambda x: x[0], reverse=True
+        ):
+            total_activities += len(activities)
+            total_seconds: int = get_logged_total_seconds(activities)
+            total_seconds_str: str = seconds_to_str(total_seconds)
+
+            date_str: str = get_human_date(entry_date)
+            lines.append((date_str, total_seconds_str, total_seconds, len(activities)))
+
+        # Список строк станет списком столбцов, у каждого столбца подсчитается максимальная длина
+        max_len_columns = [max(map(len, map(str, col))) for col in zip(*lines)]
+
+        # Создание строки форматирования: [30, 14, 5] -> "{:<30} | {:<14} | {:<5}"
+        my_table_format = " | ".join("{:<%s}" % max_len for max_len in max_len_columns)
+
+        print()
+
+        for line in lines:
+            print(my_table_format.format(*line))
+
+        print()
+        print("total_activities:", total_activities)
+        print(datetime.now(), datetime.now() - t)
+
+        print("\n" + "-" * 100 + "\n")

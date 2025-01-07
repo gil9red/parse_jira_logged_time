@@ -27,12 +27,12 @@ from widgets import (
     add_table_row,
     clear_table,
 )
-from widgets.addons import AddonWidget, Defaults
+from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 
 
 class AddonSprintsWidget(AddonWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, addon_dock_widget: AddonDockWidget):
+        super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Спринты. Сверхурочные часы")
 
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    w = AddonSprintsWidget()
+    w = AddonDockWidget(AddonSprintsWidget)
     w.show()
     w.refresh()
 

@@ -11,12 +11,12 @@ from api.job_report.get_time_spent_in_office import (
     TimeSpent,
     NotFoundReport,
 )
-from widgets.addons import AddonWidget
+from widgets.addons import AddonWidget, AddonDockWidget
 
 
 class AddonGetTimeSpentInOfficeWidget(AddonWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, addon_dock_widget: AddonDockWidget):
+        super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Проведенное время в офисе")
 

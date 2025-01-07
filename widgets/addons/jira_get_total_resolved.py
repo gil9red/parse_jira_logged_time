@@ -19,12 +19,12 @@ from api.jira_get_total_resolved import (
     get_stats,
 )
 from config import JIRA_HOST
-from widgets.addons import AddonWidget, Defaults
+from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 
 
 class AddonGetTotalResolvedWidget(AddonWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, addon_dock_widget: AddonDockWidget):
+        super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Jira. Статистика закрытых задач")
 
@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    w = AddonGetTotalResolvedWidget()
+    w = AddonDockWidget(AddonGetTotalResolvedWidget)
     w.show()
     w.refresh()
 

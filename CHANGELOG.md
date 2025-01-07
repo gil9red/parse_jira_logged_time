@@ -6,6 +6,7 @@
  
 ## [Unreleased]
 ### Changed
+- Аддоны. В конструкторы добавлен аргумент AddonDockWidget и заполнение поля addon_dock_widget
 
 ## [1.8.0] - 2024-12-18
 ### Changed

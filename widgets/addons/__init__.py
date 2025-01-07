@@ -45,8 +45,10 @@ class Defaults:
 
 
 class AddonWidget(QWidget):
-    def __init__(self):
+    def __init__(self, addon_dock_widget: "AddonDockWidget"):
         super().__init__()
+
+        self.addon_dock_widget = addon_dock_widget
 
         self.__is_active: bool = True
         self.context: Any = None
@@ -135,7 +137,7 @@ class AddonDockWidget(QDockWidget):
 
         self._last_error: Exception | None = None
 
-        self.addon: AddonWidget = addon_cls()
+        self.addon: AddonWidget = addon_cls(self)
         self.addon.thread_process.started.connect(self._process_started)
         self.addon.thread_process.run_finished.connect(self._process_run_finished)
         self.addon.thread_process.about_error.connect(self._process_set_error_log)

@@ -7,12 +7,12 @@ __author__ = "ipetrash"
 from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit
 
 from api.job_report.get_worklog import get_worklog, Worklog, NotFoundReport
-from widgets.addons import AddonWidget
+from widgets.addons import AddonWidget, AddonDockWidget
 
 
 class AddonGetWorklogWidget(AddonWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, addon_dock_widget: AddonDockWidget):
+        super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Рабочий журнал")
 

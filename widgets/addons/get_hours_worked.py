@@ -14,12 +14,12 @@ from api.job_report.get_hours_worked import (
     NotFoundReport,
 )
 from third_party.get_quarter import get_quarter_roman
-from widgets.addons import AddonWidget
+from widgets.addons import AddonWidget, AddonDockWidget
 
 
 class AddonGetHoursWorkedWidget(AddonWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, addon_dock_widget: AddonDockWidget):
+        super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Рабочие часы")
 

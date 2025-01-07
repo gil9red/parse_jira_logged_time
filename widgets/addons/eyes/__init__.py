@@ -7,13 +7,13 @@ __author__ = "ipetrash"
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout
 
-from widgets.addons import AddonWidget, Defaults
+from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 from widgets.addons.eyes.eyes.eyes_widget import EyesWidget
 
 
 class AddonEyesWidget(AddonWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, addon_dock_widget: AddonDockWidget):
+        super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Глаза 👀")
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    w = AddonEyesWidget()
+    w = AddonDockWidget(AddonEyesWidget)
     w.resize(300, 300)
     w.show()
 

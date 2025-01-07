@@ -17,12 +17,12 @@ from PyQt5.QtWidgets import (
 from api.jira_show_last_issue import get_last_issue_key
 from third_party.advanced_list_widget import AdvancedListWidget
 from widgets import open_jira, open_jira_project
-from widgets.addons import AddonWidget, Defaults
+from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 
 
 class AddonGetLastIssueKeyWidget(AddonWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, addon_dock_widget: AddonDockWidget):
+        super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Jira. Последние задачи в проектах")
 
@@ -120,9 +120,9 @@ if __name__ == "__main__":
 
     app = QApplication([])
 
-    w = AddonGetLastIssueKeyWidget()
+    w = AddonDockWidget(AddonGetLastIssueKeyWidget)
+    w.addon.list_widget_projects.set_items(["RADIX", "FLORA"])
     w.show()
-    w.list_widget_projects.set_items(["RADIX", "FLORA"])
     w.refresh()
 
     app.exec()

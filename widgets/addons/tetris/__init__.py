@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Any
 
 from PyQt5.QtCore import Qt, QObject, QEvent
-from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtWidgets import QVBoxLayout
 
 from widgets.addons import AddonWidget, AddonDockWidget, Defaults

@@ -26,10 +26,11 @@ from PyQt5.QtWidgets import (
     QLabel,
     QFormLayout,
     QCheckBox,
+    QHBoxLayout,
 )
 
 from api import RunFuncThread, get_human_datetime, get_ago
-from widgets import get_class_name, get_scroll_area
+from widgets import get_class_name, get_scroll_area, web_browser_open
 from widgets.logs_widget import LogsWidget
 
 
@@ -90,6 +91,10 @@ class AddonWidget(QWidget):
     @is_active.setter
     def is_active(self, value: bool):
         self.__is_active = value
+
+    @property
+    def url(self) -> str:
+        return ""
 
     def get_data(self) -> Any:
         raise NotImplementedError()
@@ -166,12 +171,29 @@ class AddonDockWidget(QDockWidget):
         self.button_refresh.setText("🔄")
         self.button_refresh.clicked.connect(self.addon.refresh)
 
+        self.button_url = QToolButton()
+        self.button_url.setObjectName("button_url")
+        self.button_url.setAutoRaise(True)
+        self.button_url.setText("🌍")
+        self.button_url.setToolTip("Открыть ссылку")
+        self.button_url.clicked.connect(lambda: web_browser_open(self.addon.url))
+
         self._last_refresh_datetime: datetime | None = None
 
         self.stacked_ago_progress = QStackedWidget()
         self.stacked_ago_progress.setObjectName("ago_progress")
         self.stacked_ago_progress.addWidget(self.label_ago)
         self.stacked_ago_progress.addWidget(self.progress_refresh)
+
+        right_corner_widget = QWidget()
+        right_corner_widget_layout = QHBoxLayout(right_corner_widget)
+        right_corner_widget_layout.setContentsMargins(0, 0, 0, 0)
+
+        if self.addon.url:
+            right_corner_widget_layout.addWidget(self.button_url)
+
+        if self.addon.is_supported_refresh():
+            right_corner_widget_layout.addWidget(self.stacked_ago_progress)
 
         self.tab_widget = QTabWidget()
         self.tab_widget.setTabBarAutoHide(True)
@@ -198,9 +220,8 @@ class AddonDockWidget(QDockWidget):
 
         if self.addon.is_supported_refresh():
             self.tab_widget.setCornerWidget(self.button_refresh, Qt.TopLeftCorner)
-            self.tab_widget.setCornerWidget(
-                self.stacked_ago_progress, Qt.TopRightCorner
-            )
+
+        self.tab_widget.setCornerWidget(right_corner_widget, Qt.TopRightCorner)
 
         self.setWidget(self.tab_widget)
 

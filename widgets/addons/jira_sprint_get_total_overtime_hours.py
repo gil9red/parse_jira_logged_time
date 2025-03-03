@@ -19,6 +19,8 @@ from api import get_human_date
 from api.jira_sprint_get_total_overtime_hours import (
     get_sprints_with_overtime_hours,
     Sprint,
+    JIRA_HOST,
+    QUERY,
 )
 from widgets import (
     open_jira,
@@ -68,6 +70,10 @@ class AddonSprintsWidget(AddonWidget):
             is_active=False,
             area=Qt.DockWidgetArea.RightDockWidgetArea,
         )
+
+    @property
+    def url(self) -> str:
+        return f"{JIRA_HOST}/issues/?jql={QUERY['jql']}"
 
     def _on_table_item_double_clicked(self, item: QTableWidgetItem):
         row = item.row()
@@ -119,8 +125,10 @@ class AddonSprintsWidget(AddonWidget):
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication
+    from config import PATH_STYLE_SHEET
 
     app = QApplication([])
+    app.setStyleSheet(f"file:///{PATH_STYLE_SHEET}")
 
     w = AddonDockWidget(AddonSprintsWidget)
     w.show()

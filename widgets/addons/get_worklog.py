@@ -7,6 +7,7 @@ __author__ = "ipetrash"
 from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit
 
 from api.job_report.get_worklog import get_worklog, Worklog, NotFoundReport
+from api.job_report.utils import URL
 from widgets.addons import AddonWidget, AddonDockWidget
 
 
@@ -22,6 +23,10 @@ class AddonGetWorklogWidget(AddonWidget):
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.addWidget(self.info)
+
+    @property
+    def url(self) -> str:
+        return URL
 
     def get_data(self) -> Worklog | None:
         try:

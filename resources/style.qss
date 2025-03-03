@@ -17,7 +17,8 @@ LogsWidget QToolBar QToolButton {
     font-size: 12px;
 }
 
-AddonDockWidget #button_refresh {
+AddonDockWidget #button_refresh,
+AddonDockWidget #button_url {
     font-size: 10px;
 }
 AddonDockWidget #tabs QTabBar::tab {
@@ -26,7 +27,6 @@ AddonDockWidget #tabs QTabBar::tab {
 AddonDockWidget #ago {
     font-size: 14px;
     color: gray;
-    qproperty-alignment: AlignRight;
 }
 AddonDockWidget #ago_progress {
     margin-right: 5px;

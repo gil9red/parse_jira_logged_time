@@ -13,6 +13,7 @@ from api.job_report.get_hours_worked import (
     get_quarter_user_and_deviation_hours,
     NotFoundReport,
 )
+from api.job_report.utils import URL
 from third_party.get_quarter import get_quarter_roman
 from widgets.addons import AddonWidget, AddonDockWidget
 
@@ -36,6 +37,10 @@ class AddonGetHoursWorkedWidget(AddonWidget):
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.addWidget(self.info)
+
+    @property
+    def url(self) -> str:
+        return URL
 
     def get_data(self) -> tuple[bool, str]:
         def _get_title(deviation_hours: str):

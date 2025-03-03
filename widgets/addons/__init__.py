@@ -162,6 +162,7 @@ class AddonDockWidget(QDockWidget):
 
         self.button_refresh = QToolButton()
         self.button_refresh.setObjectName("button_refresh")
+        self.button_refresh.setAutoRaise(True)
         self.button_refresh.setText("🔄")
         self.button_refresh.clicked.connect(self.addon.refresh)
 

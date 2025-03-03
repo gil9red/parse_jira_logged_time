@@ -22,7 +22,7 @@ sys.path.insert(0, PATH_THIRD_PARTY)
 from widgets.addons.time_calc.eval_expr_total_time import eval_expr_with_time
 
 
-EXAMPLE: str = """
+SAMPLE_DATA: str = """
 08:53:11 - 07:15:00
 + 08:56:12
 + 03:10:00
@@ -39,7 +39,7 @@ class AddonTimeCalcWidget(AddonWidget):
 
         self.text_edit = QTextEdit()
         self.text_edit.textChanged.connect(self._on_text_changed)
-        self.text_edit.setPlainText(EXAMPLE)
+        self.text_edit.setPlainText(SAMPLE_DATA)
 
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -67,7 +67,7 @@ class AddonTimeCalcWidget(AddonWidget):
 
         text: str | None = settings.get("text")
         if text is None:
-            text = EXAMPLE
+            text = SAMPLE_DATA
 
         self.text_edit.setPlainText(text)
 

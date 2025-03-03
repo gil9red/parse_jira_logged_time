@@ -108,6 +108,10 @@ def open_context_menu(
     menu.exec(table.viewport().mapToGlobal(p))
 
 
+def web_browser_open(url: str):
+    webbrowser.open(url)
+
+
 def create_table(header_labels: list[str]) -> QTableWidget:
     table_widget = QTableWidget()
     table_widget.setEditTriggers(QTableWidget.NoEditTriggers)
@@ -156,7 +160,7 @@ def create_table(header_labels: list[str]) -> QTableWidget:
         if activity and activity.link_to_comment:
             action_open_comment = QAction("Открыть комментарий")
             action_open_comment.triggered.connect(
-                lambda: webbrowser.open(activity.link_to_comment)
+                lambda: web_browser_open(activity.link_to_comment)
             )
             actions.append(action_open_comment)
 
@@ -207,12 +211,12 @@ def clear_table(table_widget: QTableWidget):
 
 def open_jira(jira_id: str):
     url = f"{JIRA_HOST}/browse/{jira_id}"
-    webbrowser.open(url)
+    web_browser_open(url)
 
 
 def open_jira_project(project: str):
     url = f"{JIRA_HOST}/projects/{project}"
-    webbrowser.open(url)
+    web_browser_open(url)
 
 
 def get_scroll_area(widget: QWidget) -> QScrollArea:

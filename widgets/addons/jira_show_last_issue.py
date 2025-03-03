@@ -20,6 +20,9 @@ from widgets import open_jira, open_jira_project
 from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 
 
+SAMPLE_DATA: list[str] = ["RADIX", "FLORA"]
+
+
 class AddonGetLastIssueKeyWidget(AddonWidget):
     def __init__(self, addon_dock_widget: AddonDockWidget):
         super().__init__(addon_dock_widget)
@@ -32,7 +35,7 @@ class AddonGetLastIssueKeyWidget(AddonWidget):
 
         self.list_widget_projects = AdvancedListWidget()
         self.list_widget_projects.setObjectName("projects")
-        self.list_widget_projects.set_items(["RADIX", "FLORA"])
+        self.list_widget_projects.set_items(SAMPLE_DATA)
 
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -107,7 +110,7 @@ class AddonGetLastIssueKeyWidget(AddonWidget):
             settings: dict[str, Any] = dict()
 
         key: str = self.list_widget_projects.objectName()
-        items: list[str] = settings.get(key, [])
+        items: list[str] = settings.get(key, SAMPLE_DATA)
         self.list_widget_projects.set_items(items)
 
     def write_settings(self, settings: dict[str, Any]):
@@ -121,7 +124,6 @@ if __name__ == "__main__":
     app = QApplication([])
 
     w = AddonDockWidget(AddonGetLastIssueKeyWidget)
-    w.addon.list_widget_projects.set_items(["RADIX", "FLORA"])
     w.show()
     w.refresh()
 

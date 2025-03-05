@@ -505,14 +505,16 @@ class MainWindow(QMainWindow):
             addon_dock.read_settings(settings)
 
     def write_settings(self):
-        with open(PATH_CONFIG, "w") as f:
-            CONFIG["gui"] = {
-                "MainWindow": {
-                    "state": to_base64(self.saveState()),
-                    "geometry": to_base64(self.saveGeometry()),
-                    "auto_refresh": self.cb_auto_refresh_rss.isChecked(),
-                    "quit_dont_ask_again": self._quit_dont_ask_again,
-                },
+        if not CONFIG.get("gui"):
+            CONFIG["gui"] = dict()
+        config_gui: dict[str, Any] = CONFIG["gui"]
+
+        with open(PATH_CONFIG, "w", encoding="utf-8") as f:
+            config_gui["MainWindow"] = {
+                "state": to_base64(self.saveState()),
+                "geometry": to_base64(self.saveGeometry()),
+                "auto_refresh": self.cb_auto_refresh_rss.isChecked(),
+                "quit_dont_ask_again": self._quit_dont_ask_again,
             }
 
             for child in [self.logged_widget, self.activities_widget]:
@@ -520,7 +522,7 @@ class MainWindow(QMainWindow):
                 write_settings_children(child, child_config)
 
                 child_name = get_class_name(child)
-                CONFIG["gui"][child_name] = child_config
+                config_gui[child_name] = child_config
 
             addons: dict[str, Any] = dict()
             for addon_dock in self.addons:
@@ -528,7 +530,7 @@ class MainWindow(QMainWindow):
                 addon_dock.write_settings(settings)
                 addons[addon_dock.addon.name] = settings
 
-            CONFIG["gui"]["Addons"] = addons
+            config_gui["Addons"] = addons
 
             json.dump(CONFIG, f, indent=4, ensure_ascii=False)
 

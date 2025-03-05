@@ -31,12 +31,14 @@ from PyQt5.QtWidgets import (
 )
 
 from api import get_human_datetime, get_ago
+from api import requirements
 from config import (
     PROGRAM_NAME,
     DIR,
     GITHUB_PROJECT,
     PATH_README,
     PATH_CHANGELOG,
+    CONFIG,
 )
 from version import VERSION
 from third_party.column_resizer import ColumnResizer
@@ -52,6 +54,11 @@ PATTERN_EMAIL: re.Pattern = re.compile(
 )
 
 PATTERN_MARKDOWN_HTTP_LINK: re.Pattern = re.compile(r"\[(.+?)]\((https?.+?)\)")
+
+try:
+    SHOW_USED_MEMORY: bool = CONFIG["gui"]["About"]["show_used_memory"] is True
+except KeyError:
+    SHOW_USED_MEMORY: bool = False
 
 
 def get_ext_label(text: str) -> QLabel:
@@ -193,17 +200,26 @@ class About(QDialog):
                 get_ext_label("<br/>".join(links)),
             )
 
-        if psutil:
-            fields_layout.addRow(
-                "PID:",
-                get_ext_label(str(os.getpid())),
-            )
+        if SHOW_USED_MEMORY:
+            if psutil:
+                fields_layout.addRow(
+                    "PID:",
+                    get_ext_label(str(os.getpid())),
+                )
 
-            self._label_memory = get_ext_label("")
-            fields_layout.addRow(
-                "Память:",
-                self._label_memory,
-            )
+                self._label_memory = get_ext_label("")
+                fields_layout.addRow(
+                    "Память:",
+                    self._label_memory,
+                )
+            else:
+                not_module_widget = requirements.get_not_module_widget(
+                    module_name="psutil",
+                    text_template=(
+                        "Для отображения используемой памяти нужно установить {name} и перезапустить приложение"
+                    ),
+                )
+                fields_layout.addRow(not_module_widget)
 
         fields_widget = QWidget()
         fields_layout.setContentsMargins(0, 0, 0, 0)
@@ -227,7 +243,8 @@ class About(QDialog):
             f"{get_human_datetime(self._started)} ({get_ago(self._started)})"
         )
 
-        if psutil:
+        if SHOW_USED_MEMORY and psutil:
+
             def _get_tr(pid: int, value: int) -> str:
                 return f"<tr><td>{pid}</td><td>{sizeof_fmt(value)}</td></tr>"
 
@@ -239,7 +256,7 @@ class About(QDialog):
                     child_mem = child.memory_info().rss
                     mem += child_mem
                     lines.append(_get_tr(child.pid, child_mem))
-                except psutil.NoSuchProcess:
+                except psutil.Error:
                     pass
 
             self._label_memory.setText(

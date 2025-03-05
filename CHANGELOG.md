@@ -1,9 +1,9 @@
 # Change Log
 Все заметные изменения в этом проекте будут задокументированы в этом файле.
- 
+
 Формат основан на [Keep a Changelog](http://keepachangelog.com/)
 и этот проект придерживается [Semantic Versioning](http://semver.org/).
- 
+
 ## [Unreleased]
 ### Changed
 - GUI: Добавлена настройка в конфиг "gui/About/show_used_memory" 

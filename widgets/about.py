@@ -110,6 +110,11 @@ class About(QDialog):
 
         gb_python = QGroupBox("Python:")
         gb_python_layout = QFormLayout(gb_python)
+
+        margins = gb_python_layout.contentsMargins()
+        margins.setRight(0)
+        gb_python_layout.setContentsMargins(margins)
+
         gb_python_layout.addRow(
             "Версия:",
             get_ext_label(sys.version),

@@ -40,6 +40,7 @@ from config import (
 )
 from version import VERSION
 from third_party.column_resizer import ColumnResizer
+from third_party.human_byte_size import sizeof_fmt
 from widgets import get_scroll_area
 from widgets.markdown_viewer import MarkdownViewer
 
@@ -222,16 +223,6 @@ class About(QDialog):
         )
 
         if psutil:
-            # SOURCE: https://github.com/gil9red/SimplePyScripts/blob/fec522a6d931b0e353ed9e1025fe0a1c2d7c4ae6/human_byte_size.py#L7
-            def sizeof_fmt(num: int | float) -> str:
-                for x in ["bytes", "KB", "MB", "GB"]:
-                    if num < 1024.0:
-                        return "%.1f %s" % (num, x)
-
-                    num /= 1024.0
-
-                return "%.1f %s" % (num, "TB")
-
             def _get_tr(pid: int, value: int) -> str:
                 return f"<tr><td>{pid}</td><td>{sizeof_fmt(value)}</td></tr>"
 

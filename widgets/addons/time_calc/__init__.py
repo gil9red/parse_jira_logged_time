@@ -23,6 +23,7 @@ from widgets.addons.time_calc.eval_expr_total_time import eval_expr_with_time
 
 
 SAMPLE_DATA: str = """
+# Пример
 08:53:11 - 07:15:00
 + 08:56:12
 + 03:10:00

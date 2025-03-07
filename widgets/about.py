@@ -57,7 +57,7 @@ PATTERN_MARKDOWN_HTTP_LINK: re.Pattern = re.compile(r"\[(.+?)]\((https?.+?)\)")
 
 try:
     SHOW_USED_MEMORY: bool = CONFIG["gui"]["About"]["show_used_memory"] is True
-except KeyError:
+except Exception:
     SHOW_USED_MEMORY: bool = False
 
 

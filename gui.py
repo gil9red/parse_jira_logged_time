@@ -602,6 +602,10 @@ if __name__ == "__main__":
         mw = MainWindow()
         MAIN_WINDOW = mw
 
+        # NOTE: Аддоны могут переписать sys.excepthook, например, как тетрис
+        #       при импорте, поэтому лучше снова свою функцию записать
+        sys.excepthook = log_uncaught_exceptions
+
         app.setWindowIcon(mw.windowIcon())
 
         mw.resize(1200, 800)

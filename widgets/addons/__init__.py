@@ -5,6 +5,7 @@ __author__ = "ipetrash"
 
 
 import importlib
+import traceback
 import pkgutil
 import sys
 
@@ -27,6 +28,7 @@ from PyQt5.QtWidgets import (
     QFormLayout,
     QCheckBox,
     QHBoxLayout,
+    QMessageBox,
 )
 
 from api import RunFuncThread, get_human_datetime, get_ago
@@ -369,6 +371,16 @@ def import_all_addons(package: str = __name__) -> list[AddonDockWidget]:
             ):
                 continue
 
-            items.append(AddonDockWidget(addon_cls=obj))
+            try:
+                items.append(AddonDockWidget(addon_cls=obj))
+            except Exception as e:
+                msg_box = QMessageBox(
+                    QMessageBox.Warning,
+                    "Ошибка при загрузке аддона",
+                    f"Ошибка при загрузке аддона {name}: {e}",
+                )
+                msg_box.setDetailedText(traceback.format_exc())
+                msg_box.setStandardButtons(QMessageBox.Ok)
+                msg_box.exec()
 
     return items

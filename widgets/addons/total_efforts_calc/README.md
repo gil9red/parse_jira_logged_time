@@ -1,0 +1,1 @@
+https://github.com/gil9red/SimplePyScripts/blob/871ffec5c8e7e1ee17461a03a66a8159970ed4d3/job_compassplus/parse_total_efforts.py

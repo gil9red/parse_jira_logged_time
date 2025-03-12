@@ -6,9 +6,10 @@ __author__ = "ipetrash"
 
 from typing import Any
 
-from PyQt5.QtCore import Qt, pyqtSignal, QLocale, QRegularExpression
+from PyQt5.QtCore import Qt, pyqtSignal, QLocale, QRegularExpression, QRect
 from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat, QFont
 from PyQt5.QtWidgets import (
+    QApplication,
     QVBoxLayout,
     QFormLayout,
     QWidget,
@@ -17,6 +18,7 @@ from PyQt5.QtWidgets import (
     QTabWidget,
     QToolButton,
     QSplitter,
+    QToolTip,
 )
 
 from widgets import get_scroll_area
@@ -138,6 +140,27 @@ class AddonTotalEffortsCalcWidget(AddonWidget):
         self.args_widget = KeyValueWidget()
         self.args_widget.changed_data.connect(self._process)
 
+        button_copy_result = QToolButton()
+        button_copy_result.setText("📋")
+        button_copy_result.setToolTip("Скопировать результат в буфер обмена")
+        button_copy_result.setAutoRaise(True)
+        button_copy_result.clicked.connect(
+            lambda: (
+                QApplication.instance()
+                .clipboard()
+                .setText(self.result_edit.toPlainText()),
+                QToolTip.showText(
+                    self.mapToGlobal(
+                        button_copy_result.pos() + button_copy_result.rect().topRight()
+                    ),
+                    "👌",
+                    button_copy_result,
+                    QRect(),
+                    2000,
+                ),
+            )
+        )
+
         button_show_args = QToolButton()
         button_show_args.setText("Аргументы")
         button_show_args.setCheckable(True)
@@ -150,6 +173,7 @@ class AddonTotalEffortsCalcWidget(AddonWidget):
         self.tab_widget.setTabPosition(QTabWidget.South)
         self.tab_widget.addTab(self.result_edit, "Результат")
         self.tab_widget.addTab(self.template_edit, "Шаблон")
+        self.tab_widget.setCornerWidget(button_copy_result, Qt.TopLeftCorner)
         self.tab_widget.setCornerWidget(button_show_args, Qt.TopRightCorner)
 
         splitter = QSplitter(Qt.Vertical)
@@ -218,8 +242,6 @@ class AddonTotalEffortsCalcWidget(AddonWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
-
     app = QApplication([])
 
     w = AddonDockWidget(AddonTotalEffortsCalcWidget)

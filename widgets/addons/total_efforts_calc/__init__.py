@@ -7,7 +7,7 @@ __author__ = "ipetrash"
 from typing import Any
 
 from PyQt5.QtCore import Qt, pyqtSignal, QLocale, QRegularExpression, QRect
-from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat, QFont
+from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat, QFont, QCursor
 from PyQt5.QtWidgets import (
     QApplication,
     QVBoxLayout,
@@ -150,9 +150,7 @@ class AddonTotalEffortsCalcWidget(AddonWidget):
                 .clipboard()
                 .setText(self.result_edit.toPlainText()),
                 QToolTip.showText(
-                    self.mapToGlobal(
-                        button_copy_result.pos() + button_copy_result.rect().topRight()
-                    ),
+                    QCursor.pos(),
                     "👌",
                     button_copy_result,
                     QRect(),

@@ -19,6 +19,8 @@ from PyQt5.QtWidgets import (
     QToolButton,
     QSplitter,
     QToolTip,
+    QStyle,
+    QLineEdit,
 )
 
 from widgets import get_scroll_area
@@ -92,6 +94,17 @@ class KeyValueWidget(QWidget):
             double_spin_box.setLocale(QLocale(QLocale.Language.English))
             double_spin_box.setDecimals(1)
             double_spin_box.textChanged.connect(self.changed_data.emit)
+
+            clear_action = double_spin_box.lineEdit().addAction(
+                self.style().standardIcon(QStyle.SP_LineEditClearButton),
+                QLineEdit.TrailingPosition,
+            )
+            clear_action.triggered.connect(
+                lambda: double_spin_box.setValue(double_spin_box.minimum())
+            )
+            double_spin_box.textChanged.connect(
+                lambda val: clear_action.setVisible(val != DEFAULT_ARG_VALUE)
+            )
 
             self.form_layout.addRow(f"{key}:", double_spin_box)
             self.key_by_widget[key] = double_spin_box

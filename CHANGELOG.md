@@ -5,6 +5,8 @@
 и этот проект придерживается [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- GUI: В разработческой версии номер патча всегда 0
 
 ## [1.10.1] - 2025-05-14
 ### Fixed

@@ -34,6 +34,7 @@ def get_version() -> str:
             date_str = groups[3]
 
             if is_dev:
+                patch = 0
                 minor += 1
 
             return f"{major}.{minor}.{patch}{'-dev' if is_dev else ''}+{date_str}"

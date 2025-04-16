@@ -21,7 +21,7 @@ def is_installed(module_name: str) -> bool:
     try:
         importlib.import_module(module_name)
         return True
-    except ModuleNotFoundError as e:
+    except ModuleNotFoundError:
         return False
 
 

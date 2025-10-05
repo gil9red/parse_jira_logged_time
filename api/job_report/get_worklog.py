@@ -6,7 +6,12 @@ __author__ = "ipetrash"
 
 from dataclasses import dataclass
 from bs4 import BeautifulSoup
-from api.job_report.utils import get_report_context, NotFoundReport
+from api.job_report.utils import (
+    get_report,
+    ReportTypeEnum,
+    PeriodTypeEnum,
+    NotFoundReport,
+)
 
 
 @dataclass
@@ -30,10 +35,13 @@ class Worklog:
 
 
 def get_worklog() -> Worklog:
-    content = get_report_context(rep="worklog")
+    report: str = get_report(
+        report_type=ReportTypeEnum.WORKLOG,
+        period_type=PeriodTypeEnum.MONTH,
+    )
 
-    root = BeautifulSoup(content, "html.parser")
-    current_user_tr = root.select_one("table > tbody > tr.current")
+    soup = BeautifulSoup(report, "html.parser")
+    current_user_tr = soup.select_one("table > tbody > tr.current")
     if not current_user_tr:
         raise NotFoundReport()
 

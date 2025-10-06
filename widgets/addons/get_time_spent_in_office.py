@@ -9,7 +9,6 @@ from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit
 from api.job_report.get_time_spent_in_office import (
     get_time_spent_in_office,
     TimeSpent,
-    NotFoundReport,
     URL,
 )
 from widgets.addons import AddonWidget, AddonDockWidget
@@ -32,11 +31,8 @@ class AddonGetTimeSpentInOfficeWidget(AddonWidget):
     def url(self) -> str:
         return URL
 
-    def get_data(self) -> TimeSpent | None:
-        try:
-            return get_time_spent_in_office()
-        except NotFoundReport:
-            return
+    def get_data(self) -> TimeSpent:
+        return get_time_spent_in_office()
 
     def process(self, data: TimeSpent | None):
         if data:

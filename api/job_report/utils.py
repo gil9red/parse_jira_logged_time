@@ -43,8 +43,7 @@ def clear_hours(hours: str) -> str:
 def _send_data(data: dict[str, str | int]) -> str:
     # В какой-то момент адрес временно поменялся, тогда предварительный GET поможет получить актуальный адрес
     rs = session.get(URL)
-    if not rs.ok:
-        raise NotFoundReport(f"HTTP status is {rs.status_code}")
+    rs.raise_for_status()
 
     # Добавление полей, типа токенов, если явно не были заданы
     soup = BeautifulSoup(rs.content, "html.parser")
@@ -54,8 +53,7 @@ def _send_data(data: dict[str, str | int]) -> str:
             data[name] = el["value"]
 
     rs = session.post(rs.url, data=data)
-    if not rs.ok:
-        raise NotFoundReport(f"HTTP status is {rs.status_code}")
+    rs.raise_for_status()
 
     return rs.text
 

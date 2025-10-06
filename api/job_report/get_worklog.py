@@ -25,7 +25,7 @@ class Worklog:
         try:
             logged_percent: int = int(data[2].replace("%", ""))
         except Exception:
-            raise NotFoundReport()
+            raise Exception(f"Не удалось распарсить процент залогированного из {data}")
 
         return cls(
             actually=data[0],

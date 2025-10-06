@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 from bs4 import BeautifulSoup
 
-from api.job_report.utils import session, HOST, NotFoundReport
+from api.job_report.utils import session, HOST
 
 
 URL = f"{HOST}/pa-reports-new/report/"
@@ -23,8 +23,7 @@ class TimeSpent:
 
 def get_time_spent_in_office() -> TimeSpent:
     rs = session.get(URL)
-    if not rs.ok:
-        raise NotFoundReport(f"HTTP status is {rs.status_code}")
+    rs.raise_for_status()
 
     soup = BeautifulSoup(rs.content, "html.parser")
     text = soup.get_text(strip=True)

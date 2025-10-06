@@ -10,7 +10,7 @@ from multiprocessing.pool import Pool
 import requests
 from PyQt5.QtCore import QThread, pyqtSignal
 
-from config import PATH_CERT, JIRA_HOST
+from config import PATH_CERT, JIRA_HOST, PATH_README
 from third_party.ago import ago, L10N_RU
 
 
@@ -67,6 +67,32 @@ session.cert = str(PATH_CERT)
 session.mount("https://", CustomAdapter())
 session.mount("http://", CustomAdapter())
 session.headers["User-Agent"] = USER_AGENT
+
+
+# Проверка сертификата
+# TODO: Добавить бы проверку в CustomAdapter.send - по-крайней мере, при запущенном приложении,
+#       сертификат может устареть и будут 400 ошибки
+try:
+    rs = session.get(JIRA_HOST)
+    rs.raise_for_status()
+
+except requests.exceptions.HTTPError as e:
+    # Ошибка "400 Client Error: Bad Request" на GET-запрос по базовому адресу
+    # похожа на проблему устаревшего сертификата
+    if e.response.status_code == 400:
+        print(
+            f'[#] HTTP Error. Вероятно, используется устаревший сертификат в "{PATH_CERT}"\n'
+            f'Инструкция по сертификату есть в "{PATH_README}"'
+        )
+
+    raise e
+
+except requests.exceptions.SSLError as e:
+    print(
+        f'[#] SSL Error. Вероятно, используется невалидный или устаревший сертификат в "{PATH_CERT}"\n'
+        f'Инструкция по сертификату есть в "{PATH_README}"'
+    )
+    raise e
 
 
 DATE_FORMAT: str = "%d.%m.%Y"

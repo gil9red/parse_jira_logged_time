@@ -8,7 +8,7 @@
 ## Перед работой нужно будет:
   * Иметь PEM файл, содержащий сертификат. Получить можно, например:
     ```
-    openssl pkcs12 -nodes -out cert.pem -in ipetrash.p12
+    openssl pkcs12 -nodes -out cert.pem -in cert.p12
     ```
     
     * Пример структуры файла:

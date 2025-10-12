@@ -5,6 +5,8 @@
 и этот проект придерживается [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- README. Изменение названия сертификата 
 
 ## [1.11.1] - 2025-10-06
 ### Changed

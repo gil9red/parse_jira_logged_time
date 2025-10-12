@@ -10,6 +10,7 @@ from api.job_report.get_time_spent_in_office import (
     get_time_spent_in_office,
     TimeSpent,
     URL,
+    NotFoundReport,
 )
 from widgets.addons import AddonWidget, AddonDockWidget
 
@@ -31,16 +32,31 @@ class AddonGetTimeSpentInOfficeWidget(AddonWidget):
     def url(self) -> str:
         return URL
 
-    def get_data(self) -> TimeSpent:
-        return get_time_spent_in_office()
+    def get_data(self) -> TimeSpent | NotFoundReport:
+        try:
+            return get_time_spent_in_office()
+        except NotFoundReport as e:
+            return e
 
-    def process(self, data: TimeSpent | None):
-        if data:
+    def process(self, data: TimeSpent | NotFoundReport):
+        if isinstance(data, TimeSpent):
             text = f"""
 Первый вход: {data.first_enter}
 Отработано: {data.today}
             """.strip()
         else:
-            text = "Отчет на сегодня еще не готов"
+            text = f"Отчет на сегодня еще не готов:\n{data}"
 
         self.info.setPlainText(text)
+
+
+if __name__ == "__main__":
+    from PyQt5.QtWidgets import QApplication
+
+    app = QApplication([])
+
+    w = AddonDockWidget(AddonGetTimeSpentInOfficeWidget)
+    w.show()
+    w.refresh()
+
+    app.exec()

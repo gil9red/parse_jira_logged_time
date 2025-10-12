@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 from bs4 import BeautifulSoup
 
-from api.job_report.utils import session, HOST
+from api.job_report.utils import session, HOST, NotFoundReport
 
 
 URL = f"{HOST}/pa-reports-new/report/"
@@ -31,7 +31,7 @@ def get_time_spent_in_office() -> TimeSpent:
     def _find(pattern: str, about: str) -> str:
         if m := re.search(pattern, text, flags=re.IGNORECASE):
             return m.group(1)
-        raise Exception(f"Not found {about!r}")
+        raise NotFoundReport(f"Не найдено поле {about!r}!")
 
     return TimeSpent(
         first_enter=_find(
@@ -40,7 +40,7 @@ def get_time_spent_in_office() -> TimeSpent:
         ),
         today=_find(
             pattern=r"Today\s*\(Possible\):\s*([\d+:]+)",
-            about="Today(Possible)",
+            about="Today (Possible)",
         ),
     )
 

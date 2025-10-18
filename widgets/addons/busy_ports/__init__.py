@@ -32,23 +32,28 @@ if IS_INSTALLED_PSUTIL:
     from widgets.addons.busy_ports import get_info_html
 
     def open_html_file(run_as_admin: bool = False):
-        # Если нужно запустить как админ и текущий процесс не запущен от имени админа
-        # TODO: Поддержка posix систем, а не только Windows
-        if run_as_admin and not is_user_admin() and is_windows():
-            path_py_exe: str = sys.executable
-            path_script: str = get_info_html.__file__
+        try:
+            # Если нужно запустить как админ и текущий процесс не запущен от имени админа
+            # TODO: Поддержка posix систем, а не только Windows
+            if run_as_admin and not is_user_admin() and is_windows():
+                path_py_exe: str = sys.executable
+                path_script: str = get_info_html.__file__
 
-            args: list[str] = [
-                "powershell",
-                "-Command",
-                f"&{{Start-Process -FilePath '{path_py_exe}' '{path_script}' -Wait -Verb RunAs}}",
-            ]
-            print("Run command:", args)
-            subprocess.check_output(args)
-            return
+                args: list[str] = [
+                    "powershell",
+                    "-Command",
+                    f"&{{Start-Process -FilePath '{path_py_exe}' '{path_script}' -Wait -Verb RunAs}}",
+                ]
+                print("Run command:", args)
+                subprocess.check_output(args)
+                1/0
+                return
 
-        # Выполнение кода от текущего процесса
-        get_info_html.open_html_file()
+            # Выполнение кода от текущего процесса
+            get_info_html.open_html_file()
+
+        except Exception:
+            pass
 
 else:
 

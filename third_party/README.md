@@ -6,5 +6,6 @@
  * [jira_logged_human_time_to_seconds.py](https://github.com/gil9red/SimplePyScripts/blob/c317bcd71bf1621c12807d7e7c41007f9542cc70/jira_logged_human_time_to_seconds.py)
  * [get_quarter.py](https://github.com/gil9red/SimplePyScripts/blob/90a04f89e5ba72cb6d8345ae70c611496b03a37c/get_quarter.py)
  * [human_byte_size.py](https://github.com/gil9red/SimplePyScripts/blob/fec522a6d931b0e353ed9e1025fe0a1c2d7c4ae6/human_byte_size.py)
+ * [is_user_admin.py](https://github.com/gil9red/SimplePyScripts/blob/ea981ece934a4ff5130a608f47193545256b9567/is_user_admin.py)
  * [jira_logged_human_time_to_seconds.py](https://github.com/gil9red/SimplePyScripts/blob/c317bcd71bf1621c12807d7e7c41007f9542cc70/jira_logged_human_time_to_seconds.py)
  * [seconds_to_str.py](https://github.com/gil9red/SimplePyScripts/blob/0360c558f85c0fe5e7320d88f90c0a4e23a7e342/seconds_to_str.py)

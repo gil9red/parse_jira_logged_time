@@ -4,19 +4,24 @@
 __author__ = "ipetrash"
 
 
+import subprocess
+import sys
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QVBoxLayout,
     QPushButton,
+    QCheckBox,
     QWidget,
     QLabel,
     QHBoxLayout,
     QSizePolicy,
 )
 
-from api import RunFuncThread
-from api import requirements
+from api import RunFuncThread, requirements
 from widgets.addons import AddonWidget, AddonDockWidget, Defaults
+
+from third_party.is_user_admin import is_user_admin, is_windows
 
 
 REQUIRED_MODULE_NAME: str = "psutil"
@@ -24,10 +29,30 @@ IS_INSTALLED_PSUTIL: bool = requirements.is_installed(REQUIRED_MODULE_NAME)
 
 # NOTE: Использует psutil
 if IS_INSTALLED_PSUTIL:
-    from widgets.addons.busy_ports.get_info_html import open_html_file
+    from widgets.addons.busy_ports import get_info_html
+
+    def open_html_file(run_as_admin: bool = False):
+        # Если нужно запустить как админ и текущий процесс не запущен от имени админа
+        # TODO: Поддержка posix систем, а не только Windows
+        if run_as_admin and not is_user_admin() and is_windows():
+            path_py_exe: str = sys.executable
+            path_script: str = get_info_html.__file__
+
+            args: list[str] = [
+                "powershell",
+                "-Command",
+                f"&{{Start-Process -FilePath '{path_py_exe}' '{path_script}' -Wait -Verb RunAs}}",
+            ]
+            print("Run command:", args)
+            subprocess.check_output(args)
+            return
+
+        # Выполнение кода от текущего процесса
+        get_info_html.open_html_file()
+
 else:
 
-    def open_html_file():
+    def open_html_file(*args, **kwargs):
         pass
 
 
@@ -59,7 +84,17 @@ class AddonBusyPortsWidget(AddonWidget):
         main_layout.setContentsMargins(0, 0, 0, 0)
 
         if IS_INSTALLED_PSUTIL:
-            thread_func = RunFuncThread(func=open_html_file)
+            cb_as_admin = QCheckBox("Запустить как админ")
+            cb_as_admin.setChecked(True)
+            # NOTE: Если запущен от имени админа, то не показывать чекбокс
+            # TODO: Поддержка posix систем, а не только Windows
+            if is_user_admin() or not is_windows():
+                cb_as_admin.setVisible(False)
+                cb_as_admin.setChecked(False)
+
+            thread_func = RunFuncThread(
+                func=lambda: open_html_file(cb_as_admin.isChecked())
+            )
             thread_func.setParent(self)
 
             pb_open_report = create_push_button_with_word_wrap(
@@ -71,6 +106,8 @@ class AddonBusyPortsWidget(AddonWidget):
             thread_func.finished.connect(lambda: pb_open_report.setEnabled(True))
 
             main_layout.addWidget(pb_open_report)
+            main_layout.addWidget(cb_as_admin)
+
             return
 
         not_module_widget = requirements.get_not_module_widget(REQUIRED_MODULE_NAME)

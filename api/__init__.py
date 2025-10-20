@@ -4,8 +4,13 @@
 __author__ = "ipetrash"
 
 
+import os
+import subprocess
+import sys
+
 from datetime import datetime, date
 from multiprocessing.pool import Pool
+from pathlib import Path
 
 import requests
 from PyQt5.QtCore import QThread, pyqtSignal
@@ -125,6 +130,17 @@ def get_ago(dt1: datetime | None = None, dt2: datetime | None = None) -> str:
         dt2 = datetime.now()
 
     return ago(dt2 - dt1, l10n=L10N_RU())
+
+
+def start_file(file_name: Path | str):
+    if isinstance(file_name, Path):
+        file_name = str(file_name)
+
+    if sys.platform == "win32":
+        os.startfile(file_name)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, file_name])
 
 
 if __name__ == "__main__":

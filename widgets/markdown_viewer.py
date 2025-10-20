@@ -4,7 +4,6 @@
 __author__ = "ipetrash"
 
 
-import os
 from pathlib import Path
 
 from PyQt5.QtCore import Qt, QUrl
@@ -14,6 +13,8 @@ from PyQt5.QtWidgets import (
     QTextBrowser,
     QVBoxLayout,
 )
+
+from api import start_file
 
 
 class MarkdownViewer(QDialog):
@@ -47,9 +48,9 @@ class MarkdownViewer(QDialog):
 
         path = self.path.parent / url
         if path.exists():  # Если это путь к файлу или папке
-            os.startfile(path)
+            start_file(path)
         else:
-            os.startfile(url)
+            start_file(url)
 
 
 if __name__ == "__main__":

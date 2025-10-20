@@ -12,6 +12,8 @@ from dataclasses import dataclass
 # pip install psutil==6.1.0
 import psutil
 
+from api import start_file
+
 
 @dataclass
 class Process:
@@ -158,7 +160,7 @@ def open_html_file():
         fp.write(get_info_html())
         path: str = fp.name
 
-    os.startfile(path)
+    start_file(path)
 
 
 if __name__ == "__main__":

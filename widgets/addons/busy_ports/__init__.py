@@ -46,7 +46,6 @@ if IS_INSTALLED_PSUTIL:
                 ]
                 print("Run command:", args)
                 subprocess.check_output(args)
-                1/0
                 return
 
             # Выполнение кода от текущего процесса

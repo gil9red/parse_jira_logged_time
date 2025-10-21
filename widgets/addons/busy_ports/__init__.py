@@ -110,7 +110,11 @@ class AddonBusyPortsWidget(AddonWidget):
             thread_func.finished.connect(lambda: pb_open_report.setEnabled(True))
 
             main_layout.addWidget(pb_open_report)
-            main_layout.addWidget(cb_as_admin)
+
+            layout_settings = QHBoxLayout()
+            layout_settings.setContentsMargins(5, 0, 0, 0)  # Left = 5
+            layout_settings.addWidget(cb_as_admin)
+            main_layout.addLayout(layout_settings)
 
             return
 

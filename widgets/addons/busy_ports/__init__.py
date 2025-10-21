@@ -34,16 +34,19 @@ if IS_INSTALLED_PSUTIL:
     def open_html_file(run_as_admin: bool = False):
         try:
             # Если нужно запустить как админ и текущий процесс не запущен от имени админа
-            # TODO: Поддержка posix систем, а не только Windows
-            if run_as_admin and not is_user_admin() and is_windows():
+            if run_as_admin and not is_user_admin():
                 path_py_exe: str = sys.executable
                 path_script: str = get_info_html.__file__
 
-                args: list[str] = [
-                    "powershell",
-                    "-Command",
-                    f"&{{Start-Process -FilePath '{path_py_exe}' '{path_script}' -Wait -Verb RunAs}}",
-                ]
+                if is_windows():
+                    args: list[str] = [
+                        "powershell",
+                        "-Command",
+                        f"&{{Start-Process -FilePath '{path_py_exe}' '{path_script}' -Wait -Verb RunAs}}",
+                    ]
+                else:
+                    args: list[str] = ["sudo", path_py_exe, path_script]
+
                 print("Run command:", args)
                 subprocess.check_output(args)
                 return
@@ -91,8 +94,7 @@ class AddonBusyPortsWidget(AddonWidget):
             cb_as_admin = QCheckBox("Запустить как админ")
             cb_as_admin.setChecked(True)
             # NOTE: Если запущен от имени админа, то не показывать чекбокс
-            # TODO: Поддержка posix систем, а не только Windows
-            if is_user_admin() or not is_windows():
+            if is_user_admin():
                 cb_as_admin.setVisible(False)
                 cb_as_admin.setChecked(False)
 

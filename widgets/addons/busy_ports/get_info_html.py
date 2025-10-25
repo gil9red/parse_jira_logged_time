@@ -12,7 +12,20 @@ from dataclasses import dataclass
 # pip install psutil==6.1.0
 import psutil
 
-from api import start_file
+# TODO: С импортов не работает при запуске извне
+from pathlib import Path
+import sys
+import subprocess
+# from api import start_file
+def start_file(file_name: Path | str):
+    if isinstance(file_name, Path):
+        file_name = str(file_name)
+
+    if sys.platform == "win32":
+        os.startfile(file_name)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, file_name])
 
 
 @dataclass

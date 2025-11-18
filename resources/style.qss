@@ -31,3 +31,14 @@ AddonDockWidget #ago {
 AddonDockWidget #ago_progress {
     margin-right: 5px;
 }
+
+QSplitter::handle {
+    background-color: red;
+}
+    QSplitter::handle:hover {
+        background-color: green;
+    }
+
+QSplitter::handle {
+    background-color: lightGray;
+}

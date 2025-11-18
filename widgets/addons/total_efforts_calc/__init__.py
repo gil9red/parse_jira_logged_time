@@ -20,7 +20,7 @@ from PyQt5.QtWidgets import (
     QSplitter,
     QToolTip,
     QStyle,
-    QLineEdit,
+    QLineEdit, QPushButton,
 )
 
 from widgets import get_scroll_area
@@ -87,7 +87,8 @@ class KeyValueWidget(QWidget):
             double_spin_box = self.key_by_widget[key]
         else:
             double_spin_box = QDoubleSpinBox()
-            double_spin_box.setRange(-0.9, 1000)
+            double_spin_box.setRange(-0.1, 1000)
+            double_spin_box.setSingleStep(0.1)
             double_spin_box.setValue(1.0)
             double_spin_box.setSpecialValueText(DEFAULT_ARG_VALUE)
             # NOTE: Locale=English, чтобы разделителем была точка
@@ -253,7 +254,13 @@ class AddonTotalEffortsCalcWidget(AddonWidget):
 
 
 if __name__ == "__main__":
+    from config import PATH_STYLE_SHEET
+
     app = QApplication([])
+
+    # Использование qss из ресурсов, если он не был задан в аргументах
+    if not app.styleSheet():
+        app.setStyleSheet(f"file:///{PATH_STYLE_SHEET}")
 
     w = AddonDockWidget(AddonTotalEffortsCalcWidget)
     w.read_settings(None)

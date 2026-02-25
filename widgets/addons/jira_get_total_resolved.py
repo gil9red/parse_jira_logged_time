@@ -23,7 +23,7 @@ from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 
 
 class AddonGetTotalResolvedWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Jira. Статистика закрытых задач")
@@ -45,7 +45,7 @@ class AddonGetTotalResolvedWidget(AddonWidget):
     def get_data(self) -> Stats:
         return get_stats()
 
-    def process(self, data: Stats):
+    def process(self, data: Stats) -> None:
         def _get_tag_a(title: str, url: str) -> str:
             return f'<a href="{url}">{title}</a>'
 

@@ -17,7 +17,7 @@ def get_exception_traceback(e: Exception) -> str:
 
 
 class LogsWidget(QMainWindow):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self.logs = QPlainTextEdit()
@@ -40,11 +40,11 @@ class LogsWidget(QMainWindow):
 
         self.setCentralWidget(self.logs)
 
-    def append(self, text: str):
+    def append(self, text: str) -> None:
         self.logs.setCurrentCharFormat(QTextCharFormat())
         self.logs.appendPlainText(text)
 
-    def append_error(self, text: str):
+    def append_error(self, text: str) -> None:
         text: str = html.escape(text)
         text = f"<p style='color: red'>{text}</p>"
         text = text.replace("\n", "<br/>")
@@ -52,7 +52,7 @@ class LogsWidget(QMainWindow):
         self.logs.setCurrentCharFormat(QTextCharFormat())
         self.logs.appendHtml(text)
 
-    def append_exception(self, e: Exception):
+    def append_exception(self, e: Exception) -> None:
         error: str = get_exception_traceback(e)
         self.append_error(error)
 

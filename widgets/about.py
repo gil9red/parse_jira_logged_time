@@ -95,7 +95,7 @@ def get_ext_line_edit(text: str, is_path: bool = False) -> QLineEdit:
 
 
 class About(QDialog):
-    def __init__(self, parent: QWidget | None = None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self.setWindowTitle("О программе")
@@ -238,7 +238,7 @@ class About(QDialog):
 
         self.resize(800, 500)
 
-    def refresh(self):
+    def refresh(self) -> None:
         self._label_started.setText(
             f"{get_human_datetime(self._started)} ({get_ago(self._started)})"
         )

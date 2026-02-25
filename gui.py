@@ -75,7 +75,7 @@ from widgets.logs_widget import LogsWidget
 MAIN_WINDOW: "MainWindow" = None
 
 
-def log_uncaught_exceptions(ex_cls, ex, tb):
+def log_uncaught_exceptions(ex_cls, ex, tb) -> None:
     if isinstance(ex, KeyboardInterrupt):
         text = "The application was interrupted"
     else:
@@ -127,7 +127,7 @@ def get_class_name(obj: Any) -> str:
     return obj.__class__.__name__
 
 
-def read_settings_children(widget, config: dict[str, Any] | None):
+def read_settings_children(widget, config: dict[str, Any] | None) -> None:
     if not config:
         return
 
@@ -144,7 +144,7 @@ def read_settings_children(widget, config: dict[str, Any] | None):
         child.restoreState(from_base64(state))
 
 
-def write_settings_children(widget, config: dict[str, Any]):
+def write_settings_children(widget, config: dict[str, Any]) -> None:
     for child in widget.findChildren(QSplitter):
         object_name: str = child.objectName()
         if not object_name:
@@ -155,7 +155,7 @@ def write_settings_children(widget, config: dict[str, Any]):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         icon = QIcon(str(PATH_FAVICON))
@@ -289,10 +289,10 @@ class MainWindow(QMainWindow):
 
         return get_rss_jira_log(self.username)
 
-    def _tray_set_tool_tip(self, text: str):
+    def _tray_set_tool_tip(self, text: str) -> None:
         self.tray.setToolTip(textwrap.fill(text))
 
-    def _update_window_title(self):
+    def _update_window_title(self) -> None:
         username: str | None = self.username
         if not username:
             username = "<не задано>"
@@ -310,10 +310,10 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle(title)
 
-    def _set_error_log(self, e: Exception):
+    def _set_error_log(self, e: Exception) -> None:
         self.logs.append_exception(e)
 
-    def _fill_tables(self, xml_data: bytes | None):
+    def _fill_tables(self, xml_data: bytes | None) -> None:
         if not xml_data:
             return
 
@@ -379,18 +379,18 @@ class MainWindow(QMainWindow):
 
             print(text)
 
-    def _block_ui(self, block: bool):
+    def _block_ui(self, block: bool) -> None:
         self.button_refresh.setEnabled(not block)
         self.progress_refresh.setVisible(block)
 
-    def _before_refresh(self):
+    def _before_refresh(self) -> None:
         self._block_ui(True)
 
         for addon_dock in self.addons:
             if addon_dock.addon.is_active and addon_dock.is_auto_refresh():
                 addon_dock.refresh()
 
-    def _update_states(self):
+    def _update_states(self) -> None:
         self._update_window_title()
 
         for addon_dock in self.addons:
@@ -399,7 +399,7 @@ class MainWindow(QMainWindow):
 
         self.about.refresh()
 
-    def _after_refresh(self):
+    def _after_refresh(self) -> None:
         self._block_ui(False)
 
         self._last_refresh_datetime = datetime.now()
@@ -411,7 +411,7 @@ class MainWindow(QMainWindow):
         except Exception as e:
             self.logs.append_error(f"Ошибка при сохранении конфига: {e}")
 
-    def refresh(self):
+    def refresh(self) -> None:
         if not self.timer_auto_refresh.isActive():
             self.timer_auto_refresh.start()
 
@@ -424,15 +424,15 @@ class MainWindow(QMainWindow):
         if not self.username:
             loop = QEventLoop()
 
-            def _on_started():
+            def _on_started() -> None:
                 self._block_ui(True)
                 self.logs.append("Имя пользователя не задано. Выполнение запроса к API")
 
-            def _on_finished():
+            def _on_finished() -> None:
                 self._block_ui(False)
                 loop.quit()
 
-            def _set_username(value: str):
+            def _set_username(value: str) -> None:
                 self.username = value
 
                 # Сохранение в конфиге, чтобы при следующем запуске не запрашивать его
@@ -473,7 +473,7 @@ class MainWindow(QMainWindow):
 
         self.thread_get_data.start()
 
-    def read_settings(self):
+    def read_settings(self) -> None:
         config_gui: dict[str, Any] = CONFIG.get("gui")
         if config_gui is None:
             config_gui = dict()
@@ -509,7 +509,7 @@ class MainWindow(QMainWindow):
             settings: dict[str, Any] | None = config_addons.get(name)
             addon_dock.read_settings(settings)
 
-    def write_settings(self):
+    def write_settings(self) -> None:
         if not CONFIG.get("gui"):
             CONFIG["gui"] = dict()
         config_gui: dict[str, Any] = CONFIG["gui"]
@@ -539,7 +539,7 @@ class MainWindow(QMainWindow):
 
             json.dump(CONFIG, f, indent=4, ensure_ascii=False)
 
-    def _on_tray_activated(self, reason: QSystemTrayIcon.ActivationReason):
+    def _on_tray_activated(self, reason: QSystemTrayIcon.ActivationReason) -> None:
         if reason == QSystemTrayIcon.ActivationReason.Context:
             return
 
@@ -553,7 +553,7 @@ class MainWindow(QMainWindow):
 
             self.activateWindow()
 
-    def changeEvent(self, event: QEvent):
+    def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.WindowStateChange:
             self._last_is_maximized = self.isMaximized()
 
@@ -562,7 +562,7 @@ class MainWindow(QMainWindow):
                 # Прячем окно с панели задач
                 QTimer.singleShot(0, self.hide)
 
-    def closeEvent(self, event: QCloseEvent):
+    def closeEvent(self, event: QCloseEvent) -> None:
         if not self._quit_dont_ask_again:
             cb_dont_ask_again = QCheckBox("Не спрашивать")
             cb_dont_ask_again.setChecked(False)

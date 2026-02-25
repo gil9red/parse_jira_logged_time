@@ -12,7 +12,7 @@ from widgets.addons import AddonWidget, AddonDockWidget
 
 
 class AddonGetWorklogWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Рабочий журнал")
@@ -34,7 +34,7 @@ class AddonGetWorklogWidget(AddonWidget):
         except NotFoundReport:
             return
 
-    def process(self, data: Worklog | None):
+    def process(self, data: Worklog | None) -> None:
         if data:
             logged: str = data.logged
 

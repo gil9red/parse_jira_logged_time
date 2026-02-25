@@ -53,7 +53,7 @@ def create_syntax_highlighter(
     char_format.setForeground(foreground_color)
 
     class MySyntaxHighlighter(QSyntaxHighlighter):
-        def highlightBlock(self, text):
+        def highlightBlock(self, text) -> None:
             it = expression.globalMatch(text)
             while it.hasNext():
                 match = it.next()
@@ -69,7 +69,7 @@ def create_syntax_highlighter(
 class KeyValueWidget(QWidget):
     changed_data = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self.key_by_widget: dict[str, QDoubleSpinBox] = dict()
@@ -82,7 +82,7 @@ class KeyValueWidget(QWidget):
         main_layout.setContentsMargins(5, 0, 5, 0)
         main_layout.addWidget(get_scroll_area(widget))
 
-    def _add_widget_value(self, key: str, value: str):
+    def _add_widget_value(self, key: str, value: str) -> None:
         if key in self.key_by_widget:
             double_spin_box = self.key_by_widget[key]
         else:
@@ -115,7 +115,7 @@ class KeyValueWidget(QWidget):
         else:
             double_spin_box.setValue(float(value))
 
-    def set_value(self, data: dict[str, str]):
+    def set_value(self, data: dict[str, str]) -> None:
         for k, v in data.items():
             self._add_widget_value(k, v)
 
@@ -130,7 +130,7 @@ class KeyValueWidget(QWidget):
 
 
 class AddonTotalEffortsCalcWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Калькулятор итоговой трудоемкости")
@@ -196,7 +196,7 @@ class AddonTotalEffortsCalcWidget(AddonWidget):
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.addWidget(splitter)
 
-    def _refill_args(self):
+    def _refill_args(self) -> None:
         args_from_template: list[str] = get_args(self.template_edit.toPlainText())
         arg_by_value: dict[str, str] = self.args_widget.get_value()
         self.args_widget.set_value(
@@ -224,14 +224,14 @@ class AddonTotalEffortsCalcWidget(AddonWidget):
     def is_supported_settings(self) -> bool:
         return False
 
-    def _process(self):
+    def _process(self) -> None:
         text = parse_total_efforts(
             template=self.template_edit.toPlainText(),
             arg_by_value=self.args_widget.get_value(),
         )
         self.result_edit.setPlainText(text)
 
-    def read_settings(self, settings: dict[str, Any] | None):
+    def read_settings(self, settings: dict[str, Any] | None) -> None:
         if settings is None:
             settings: dict[str, Any] = dict()
 
@@ -248,7 +248,7 @@ class AddonTotalEffortsCalcWidget(AddonWidget):
         self._refill_args()
         self._process()
 
-    def write_settings(self, settings: dict[str, Any]):
+    def write_settings(self, settings: dict[str, Any]) -> None:
         settings["template"] = self.template_edit.toPlainText()
         settings["args"] = self.args_widget.get_value()
 

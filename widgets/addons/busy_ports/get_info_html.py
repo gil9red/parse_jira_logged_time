@@ -17,7 +17,7 @@ from pathlib import Path
 import sys
 import subprocess
 # from api import start_file
-def start_file(file_name: Path | str):
+def start_file(file_name: Path | str) -> None:
     if isinstance(file_name, Path):
         file_name = str(file_name)
 
@@ -162,7 +162,7 @@ def get_info_html() -> str:
     )
 
 
-def open_html_file():
+def open_html_file() -> None:
     with tempfile.NamedTemporaryFile(
         mode="w",
         encoding="utf-8",

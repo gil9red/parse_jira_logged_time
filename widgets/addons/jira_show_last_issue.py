@@ -24,7 +24,7 @@ SAMPLE_DATA: list[str] = ["RADIX", "FLORA"]
 
 
 class AddonGetLastIssueKeyWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Jira. Последние задачи в проектах")
@@ -48,7 +48,7 @@ class AddonGetLastIssueKeyWidget(AddonWidget):
             area=Qt.DockWidgetArea.LeftDockWidgetArea,
         )
 
-    def _anchor_clicked(self, url: QUrl):
+    def _anchor_clicked(self, url: QUrl) -> None:
         url: str = url.toString()
         if "-" in url:
             open_jira(url)
@@ -64,7 +64,7 @@ class AddonGetLastIssueKeyWidget(AddonWidget):
 
         return items
 
-    def process(self, data: list[tuple[str, str | None]]):
+    def process(self, data: list[tuple[str, str | None]]) -> None:
         lines = []
 
         if data:
@@ -101,11 +101,11 @@ class AddonGetLastIssueKeyWidget(AddonWidget):
             "".join(lines) if lines else "<b>Проекты не заданы</b>"
         )
 
-    def init_settings(self, settings_layout: QFormLayout):
+    def init_settings(self, settings_layout: QFormLayout) -> None:
         settings_layout.addRow("Проекты:", None)
         settings_layout.addRow(self.list_widget_projects)
 
-    def read_settings(self, settings: dict[str, Any] | None):
+    def read_settings(self, settings: dict[str, Any] | None) -> None:
         if settings is None:
             settings: dict[str, Any] = dict()
 
@@ -113,7 +113,7 @@ class AddonGetLastIssueKeyWidget(AddonWidget):
         items: list[str] = settings.get(key, SAMPLE_DATA)
         self.list_widget_projects.set_items(items)
 
-    def write_settings(self, settings: dict[str, Any]):
+    def write_settings(self, settings: dict[str, Any]) -> None:
         key: str = self.list_widget_projects.objectName()
         settings[key] = self.list_widget_projects.items()
 

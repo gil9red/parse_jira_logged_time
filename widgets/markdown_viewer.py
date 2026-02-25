@@ -23,7 +23,7 @@ class MarkdownViewer(QDialog):
         title: str,
         path: Path,
         parent: QWidget | None = None,
-    ):
+    ) -> None:
         super().__init__(parent)
 
         self.path = path
@@ -43,7 +43,7 @@ class MarkdownViewer(QDialog):
 
         self.resize(800, 500)
 
-    def _anchor_clicked(self, url: QUrl):
+    def _anchor_clicked(self, url: QUrl) -> None:
         url: str = url.toString()
 
         path = self.path.parent / url

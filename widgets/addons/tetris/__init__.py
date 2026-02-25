@@ -23,15 +23,15 @@ sys.path.remove(PATH_TETRIS)
 
 
 class TetrisWindow(MainWindow):
-    def save_high_scores(self):
+    def save_high_scores(self) -> None:
         pass
 
-    def load_high_scores(self):
+    def load_high_scores(self) -> None:
         pass
 
 
 class AddonTetrisWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Тетрис")
@@ -45,14 +45,14 @@ class AddonTetrisWidget(AddonWidget):
         # Для проброса клика от док-виджета
         self.addon_dock_widget.installEventFilter(self)
 
-    def read_settings(self, settings: dict[str, Any] | None):
+    def read_settings(self, settings: dict[str, Any] | None) -> None:
         if settings is None:
             settings: dict[str, Any] = dict()
 
         items: list[dict[str, Any]] = settings.get("scores", [])
         self.tetris_window.set_raw_high_scores(items)
 
-    def write_settings(self, settings: dict[str, Any]):
+    def write_settings(self, settings: dict[str, Any]) -> None:
         settings["scores"] = self.tetris_window.get_raw_high_scores()
 
     def defaults(self) -> Defaults:

@@ -16,7 +16,7 @@ from widgets.addons import AddonWidget, AddonDockWidget
 
 
 class AddonGetTimeSpentInOfficeWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Проведенное время в офисе")
@@ -38,7 +38,7 @@ class AddonGetTimeSpentInOfficeWidget(AddonWidget):
         except NotFoundReport as e:
             return e
 
-    def process(self, data: TimeSpent | NotFoundReport):
+    def process(self, data: TimeSpent | NotFoundReport) -> None:
         if isinstance(data, TimeSpent):
             text = f"""
 Первый вход: {data.first_enter}

@@ -23,12 +23,12 @@ class RunFuncThread(QThread):
     run_finished = pyqtSignal(object)
     about_error = pyqtSignal(Exception)
 
-    def __init__(self, func):
+    def __init__(self, func) -> None:
         super().__init__()
 
         self.func = func
 
-    def run(self):
+    def run(self) -> None:
         try:
             self.run_finished.emit(self.func())
         except Exception as e:
@@ -132,7 +132,7 @@ def get_ago(dt1: datetime | None = None, dt2: datetime | None = None) -> str:
     return ago(dt2 - dt1, l10n=L10N_RU())
 
 
-def start_file(file_name: Path | str):
+def start_file(file_name: Path | str) -> None:
     if isinstance(file_name, Path):
         file_name = str(file_name)
 

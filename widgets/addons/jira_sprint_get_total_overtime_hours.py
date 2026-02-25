@@ -33,7 +33,7 @@ from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 
 
 class AddonSprintsWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Спринты. Сверхурочные часы")
@@ -75,7 +75,7 @@ class AddonSprintsWidget(AddonWidget):
     def url(self) -> str:
         return f"{JIRA_HOST}/issues/?jql={QUERY['jql']}"
 
-    def _on_table_item_double_clicked(self, item: QTableWidgetItem):
+    def _on_table_item_double_clicked(self, item: QTableWidgetItem) -> None:
         row = item.row()
         item1 = item.tableWidget().item(row, 0)
 
@@ -88,7 +88,7 @@ class AddonSprintsWidget(AddonWidget):
     def get_data(self) -> list[Sprint]:
         return get_sprints_with_overtime_hours()
 
-    def process(self, data: list[Sprint]):
+    def process(self, data: list[Sprint]) -> None:
         sprints: list[Sprint] = data
         if not sprints:
             self.main_layout.setCurrentWidget(self.not_found)

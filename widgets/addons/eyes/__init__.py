@@ -12,7 +12,7 @@ from widgets.addons.eyes.eyes.eyes_widget import EyesWidget
 
 
 class AddonEyesWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Глаза 👀")

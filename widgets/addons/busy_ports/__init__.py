@@ -31,7 +31,7 @@ IS_INSTALLED_PSUTIL: bool = requirements.is_installed(REQUIRED_MODULE_NAME)
 if IS_INSTALLED_PSUTIL:
     from widgets.addons.busy_ports import get_info_html
 
-    def open_html_file(run_as_admin: bool = False):
+    def open_html_file(run_as_admin: bool = False) -> None:
         try:
             # Если нужно запустить как админ и текущий процесс не запущен от имени админа
             if run_as_admin and not is_user_admin():
@@ -59,7 +59,7 @@ if IS_INSTALLED_PSUTIL:
 
 else:
 
-    def open_html_file(*args, **kwargs):
+    def open_html_file(*args, **kwargs) -> None:
         pass
 
 
@@ -82,7 +82,7 @@ def create_push_button_with_word_wrap(
 
 
 class AddonBusyPortsWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Занятые порты")

@@ -46,7 +46,7 @@ def open_context_menu(
     table: QTableView,
     p: QPoint,
     get_additional_actions_func: Callable[[QTableView, int], list[QAction]] = None,
-):
+) -> None:
     index: QModelIndex = table.indexAt(p)
     if not index.isValid():
         return
@@ -58,7 +58,7 @@ def open_context_menu(
     model = table.model()
     column_count: int = model.columnCount()
 
-    def _copy_to_clipboard(value: str):
+    def _copy_to_clipboard(value: str) -> None:
         QApplication.clipboard().setText(value)
 
     def _shorten(text: str) -> str:
@@ -108,7 +108,7 @@ def open_context_menu(
     menu.exec(table.viewport().mapToGlobal(p))
 
 
-def web_browser_open(url: str):
+def web_browser_open(url: str) -> None:
     webbrowser.open(url)
 
 
@@ -196,25 +196,25 @@ def get_activity_from_row(model: QAbstractItemModel, row: int) -> Activity | Non
     return value if isinstance(value, Activity) else None
 
 
-def add_table_row(table: QTableWidget, items: list[QTableWidgetItem]):
+def add_table_row(table: QTableWidget, items: list[QTableWidgetItem]) -> None:
     row = table.rowCount()
     table.setRowCount(row + 1)
     for j, item in enumerate(items):
         table.setItem(row, j, item)
 
 
-def clear_table(table_widget: QTableWidget):
+def clear_table(table_widget: QTableWidget) -> None:
     # Удаление строк таблицы
     while table_widget.rowCount():
         table_widget.removeRow(0)
 
 
-def open_jira(jira_id: str):
+def open_jira(jira_id: str) -> None:
     url = f"{JIRA_HOST}/browse/{jira_id}"
     web_browser_open(url)
 
 
-def open_jira_project(project: str):
+def open_jira_project(project: str) -> None:
     url = f"{JIRA_HOST}/projects/{project}"
     web_browser_open(url)
 

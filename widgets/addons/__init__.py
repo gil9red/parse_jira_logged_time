@@ -48,7 +48,7 @@ class Defaults:
 
 
 class AddonWidget(QWidget):
-    def __init__(self, addon_dock_widget: "AddonDockWidget"):
+    def __init__(self, addon_dock_widget: "AddonDockWidget") -> None:
         super().__init__()
 
         self.addon_dock_widget = addon_dock_widget
@@ -59,7 +59,7 @@ class AddonWidget(QWidget):
         self.thread_process = RunFuncThread(func=self.get_data)
         self.thread_process.run_finished.connect(self.do_process)
 
-    def set_context(self, context: Any):
+    def set_context(self, context: Any) -> None:
         self.context = context
 
     def defaults(self) -> Defaults:
@@ -91,7 +91,7 @@ class AddonWidget(QWidget):
         return self.__is_active
 
     @is_active.setter
-    def is_active(self, value: bool):
+    def is_active(self, value: bool) -> None:
         self.__is_active = value
 
     @property
@@ -104,13 +104,13 @@ class AddonWidget(QWidget):
     def process(self, data: Any):
         raise NotImplementedError()
 
-    def do_process(self, data: Any):
+    def do_process(self, data: Any) -> None:
         try:
             self.process(data)
         except Exception as e:
             self.thread_process.about_error.emit(e)
 
-    def refresh(self):
+    def refresh(self) -> None:
         if (
             not self.isEnabled()
             or not self.__is_active
@@ -120,18 +120,18 @@ class AddonWidget(QWidget):
 
         self.thread_process.start()
 
-    def init_settings(self, settings_layout: QFormLayout):
+    def init_settings(self, settings_layout: QFormLayout) -> None:
         pass
 
-    def read_settings(self, settings: dict[str, Any] | None):
+    def read_settings(self, settings: dict[str, Any] | None) -> None:
         pass
 
-    def write_settings(self, settings: dict[str, Any]):
+    def write_settings(self, settings: dict[str, Any]) -> None:
         pass
 
 
 class AddonDockWidget(QDockWidget):
-    def __init__(self, addon_cls: Type[AddonWidget]):
+    def __init__(self, addon_cls: Type[AddonWidget]) -> None:
         super().__init__()
 
         self.progress_refresh = QProgressBar()
@@ -230,7 +230,7 @@ class AddonDockWidget(QDockWidget):
         self._update_window_title()
         self._init_settings()
 
-    def _init_settings(self):
+    def _init_settings(self) -> None:
         settings_layout = QFormLayout()
         settings_layout.addRow("Активный:", self.cb_is_active)
 
@@ -244,7 +244,7 @@ class AddonDockWidget(QDockWidget):
 
         self.addon.init_settings(settings_layout)
 
-    def _update_window_title(self):
+    def _update_window_title(self) -> None:
         title = self.addon.title
         if not self.addon.is_active:
             title = f"{title} (отключено)"
@@ -254,7 +254,7 @@ class AddonDockWidget(QDockWidget):
 
         self.setWindowTitle(title)
 
-    def _set_is_active(self, is_active: bool):
+    def _set_is_active(self, is_active: bool) -> None:
         # Зачеркивание текста действия у отключенного аддона
         action = self.toggleViewAction()
         font = action.font()
@@ -265,7 +265,7 @@ class AddonDockWidget(QDockWidget):
         self.button_refresh.setEnabled(is_active)
         self._update_window_title()
 
-    def update_last_refresh_datetime(self):
+    def update_last_refresh_datetime(self) -> None:
         self.label_ago.setText(
             get_ago(self._last_refresh_datetime) if self._last_refresh_datetime else ""
         )
@@ -273,14 +273,14 @@ class AddonDockWidget(QDockWidget):
     def is_auto_refresh(self) -> bool:
         return self.cb_is_auto_refresh.isChecked()
 
-    def refresh(self):
+    def refresh(self) -> None:
         if not self.addon.is_supported_refresh():
             return
 
         self.logs.append(f"Обновление в {get_human_datetime()}")
         self.addon.refresh()
 
-    def _process_started(self):
+    def _process_started(self) -> None:
         self._last_error = None
         self._last_refresh_datetime = None
 
@@ -288,7 +288,7 @@ class AddonDockWidget(QDockWidget):
         self.addon.setEnabled(False)
         self.stacked_ago_progress.setCurrentWidget(self.progress_refresh)
 
-    def _process_run_finished(self, _: Any):
+    def _process_run_finished(self, _: Any) -> None:
         # Это код может быть выполнен сразу после _process_set_error_log
         if self._last_error and self._idx_tab_logs != -1:
             self.tab_widget.setCurrentIndex(self._idx_tab_logs)
@@ -296,7 +296,7 @@ class AddonDockWidget(QDockWidget):
 
         self.tab_widget.setCurrentIndex(self._idx_tab_addon)
 
-    def _process_set_error_log(self, e: Exception):
+    def _process_set_error_log(self, e: Exception) -> None:
         self._last_error = e
 
         self.logs.append_exception(e)
@@ -304,7 +304,7 @@ class AddonDockWidget(QDockWidget):
         if self._idx_tab_logs != -1:
             self.tab_widget.setCurrentIndex(self._idx_tab_logs)
 
-    def _process_finished(self):
+    def _process_finished(self) -> None:
         self.button_refresh.setEnabled(True)
         self.addon.setEnabled(True)
         self.stacked_ago_progress.setCurrentWidget(self.label_ago)
@@ -312,7 +312,7 @@ class AddonDockWidget(QDockWidget):
         self._last_refresh_datetime = datetime.now()
         self.update_last_refresh_datetime()
 
-    def read_settings(self, settings: dict[str, Any] | None):
+    def read_settings(self, settings: dict[str, Any] | None) -> None:
         defaults: Defaults = self.addon.defaults()
 
         if not settings:
@@ -334,7 +334,7 @@ class AddonDockWidget(QDockWidget):
 
         self.addon.read_settings(settings)
 
-    def write_settings(self, settings: dict[str, Any]):
+    def write_settings(self, settings: dict[str, Any]) -> None:
         is_active = self.cb_is_active.objectName()
         settings[is_active] = self.cb_is_active.isChecked()
 

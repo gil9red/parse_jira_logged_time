@@ -33,7 +33,7 @@ SEP: str = "="
 
 
 class AddonTimeCalcWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Калькулятор времени")
@@ -62,7 +62,7 @@ class AddonTimeCalcWidget(AddonWidget):
     def is_supported_settings(self) -> bool:
         return False
 
-    def read_settings(self, settings: dict[str, Any] | None):
+    def read_settings(self, settings: dict[str, Any] | None) -> None:
         if settings is None:
             settings: dict[str, Any] = dict()
 
@@ -72,10 +72,10 @@ class AddonTimeCalcWidget(AddonWidget):
 
         self.text_edit.setPlainText(text)
 
-    def write_settings(self, settings: dict[str, Any]):
+    def write_settings(self, settings: dict[str, Any]) -> None:
         settings["text"] = self.text_edit.toPlainText()
 
-    def _on_text_changed(self):
+    def _on_text_changed(self) -> None:
         text: str = self.text_edit.toPlainText()
         input_text: str = text.split(SEP)[0]
 

@@ -29,7 +29,7 @@ from third_party.seconds_to_str import seconds_to_str
 
 
 class LoggedWidget(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self.table_logged = create_table(
@@ -64,7 +64,7 @@ class LoggedWidget(QWidget):
 
         self.setLayout(layout)
 
-    def set_date_by_activities(self, date_by_activities: dict[date, list[Activity]]):
+    def set_date_by_activities(self, date_by_activities: dict[date, list[Activity]]) -> None:
         with block_signals(self.table_logged):
             clear_table(self.table_logged)
 
@@ -102,7 +102,7 @@ class LoggedWidget(QWidget):
         self.table_logged.setFocus()
         self._on_table_logged_item_clicked(self.table_logged.currentItem())
 
-    def _on_table_logged_item_clicked(self, item: QTableWidgetItem | None):
+    def _on_table_logged_item_clicked(self, item: QTableWidgetItem | None) -> None:
         with block_signals(self.table_logged_info):
             clear_table(self.table_logged_info)
 
@@ -137,7 +137,7 @@ class LoggedWidget(QWidget):
                 ]
                 add_table_row(self.table_logged_info, items)
 
-    def _on_table_logged_info_item_double_clicked(self, item: QTableWidgetItem):
+    def _on_table_logged_info_item_double_clicked(self, item: QTableWidgetItem) -> None:
         row = item.row()
         jira_id = item.tableWidget().item(row, 2).text()
         open_jira(jira_id)

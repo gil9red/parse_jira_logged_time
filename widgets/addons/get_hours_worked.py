@@ -19,7 +19,7 @@ from widgets.addons import AddonWidget, AddonDockWidget
 
 
 class AddonGetHoursWorkedWidget(AddonWidget):
-    def __init__(self, addon_dock_widget: AddonDockWidget):
+    def __init__(self, addon_dock_widget: AddonDockWidget) -> None:
         super().__init__(addon_dock_widget)
 
         self.setWindowTitle("Рабочие часы")
@@ -72,7 +72,7 @@ class AddonGetHoursWorkedWidget(AddonWidget):
 
         return ok, text.strip()
 
-    def process(self, data: tuple[bool, str]):
+    def process(self, data: tuple[bool, str]) -> None:
         ok, text = data
 
         self.color = "#29AB87" if ok else "#80ff0000"
@@ -80,22 +80,22 @@ class AddonGetHoursWorkedWidget(AddonWidget):
 
         self.info.setPlainText(text)
 
-    def _update_is_colorized(self):
+    def _update_is_colorized(self) -> None:
         self.info.setStyleSheet(
             f"background: {self.color};"
             if self.color and self.cb_is_colorized.isChecked()
             else None
         )
 
-    def init_settings(self, settings_layout: QFormLayout):
+    def init_settings(self, settings_layout: QFormLayout) -> None:
         settings_layout.addRow("Раскрашивать:", self.cb_is_colorized)
 
-    def read_settings(self, settings: dict[str, Any] | None):
+    def read_settings(self, settings: dict[str, Any] | None) -> None:
         if settings is None:
             settings: dict[str, Any] = dict()
 
         value: bool = settings.get(self.cb_is_colorized.objectName(), True)
         self.cb_is_colorized.setChecked(value)
 
-    def write_settings(self, settings: dict[str, Any]):
+    def write_settings(self, settings: dict[str, Any]) -> None:
         settings[self.cb_is_colorized.objectName()] = self.cb_is_colorized.isChecked()

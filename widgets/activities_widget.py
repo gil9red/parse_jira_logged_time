@@ -30,7 +30,7 @@ from third_party.seconds_to_str import seconds_to_str
 
 
 class ActivitiesWidget(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self.table_date = create_table(
@@ -81,7 +81,7 @@ class ActivitiesWidget(QWidget):
 
         self.setLayout(layout)
 
-    def set_date_by_activities(self, date_by_activities: dict[date, list[Activity]]):
+    def set_date_by_activities(self, date_by_activities: dict[date, list[Activity]]) -> None:
         with block_signals(self.table_date):
             clear_table(self.table_date)
 
@@ -116,7 +116,7 @@ class ActivitiesWidget(QWidget):
         self.table_date.setFocus()
         self._on_table_date_item_clicked(self.table_date.currentItem())
 
-    def _on_table_date_item_clicked(self, item: QTableWidgetItem | None):
+    def _on_table_date_item_clicked(self, item: QTableWidgetItem | None) -> None:
         with block_signals(self.table_date_by_jira):
             clear_table(self.table_date_by_jira)
 
@@ -160,7 +160,7 @@ class ActivitiesWidget(QWidget):
         self.table_date_by_jira.setCurrentCell(0, 0)
         self._on_table_date_by_jira_item_clicked(self.table_date_by_jira.currentItem())
 
-    def _on_table_date_by_jira_item_clicked(self, item: QTableWidgetItem | None):
+    def _on_table_date_by_jira_item_clicked(self, item: QTableWidgetItem | None) -> None:
         with block_signals(self.table_jira_by_activities):
             clear_table(self.table_jira_by_activities)
 
@@ -203,7 +203,7 @@ class ActivitiesWidget(QWidget):
                 ]
                 add_table_row(self.table_jira_by_activities, items)
 
-    def _on_table_date_by_jira_item_double_clicked(self, item: QTableWidgetItem):
+    def _on_table_date_by_jira_item_double_clicked(self, item: QTableWidgetItem) -> None:
         row = item.row()
         item1 = item.tableWidget().item(row, 0)
 

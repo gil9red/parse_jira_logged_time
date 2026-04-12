@@ -2,7 +2,7 @@
  * [decode_escapes_telegram_bot/utils.py](https://github.com/gil9red/decode_escapes_telegram_bot/blob/a43ac4f21f1ca734431dc8ab038bdd306c3c1c52/utils.py)
  * [advanced_list_widget_pyqt6.py](https://github.com/gil9red/SimplePyScripts/blob/25b5d959cff30d23175230d5ce8d5821f6896da0/qt__pyqt__pyside__pyqode/advanced_list_widget_pyqt6.py)
  * [ago.py](https://github.com/gil9red/SimplePyScripts/blob/cb1c04acab4c8a2007eb780f9c3350e2d02e4fbb/ago.py)
- * [column_resizer.py](https://github.com/gil9red/SimplePyScripts/blob/0eda6c9e2a0c4ea0089c65214cdcfd28fc591cd4/qt__pyqt__pyside__pyqode/layout_column_resizer/column_resizer.py)
+ * [column_resizer_pyqt6.py](https://github.com/gil9red/SimplePyScripts/blob/c60577dee87a2857ba068fb12928ff02eab1fef3/qt__pyqt__pyside__pyqode/layout_column_resizer/column_resizer_pyqt6.py)
  * [jira_logged_human_time_to_seconds.py](https://github.com/gil9red/SimplePyScripts/blob/c317bcd71bf1621c12807d7e7c41007f9542cc70/jira_logged_human_time_to_seconds.py)
  * [get_quarter.py](https://github.com/gil9red/SimplePyScripts/blob/90a04f89e5ba72cb6d8345ae70c611496b03a37c/get_quarter.py)
  * [human_byte_size.py](https://github.com/gil9red/SimplePyScripts/blob/fec522a6d931b0e353ed9e1025fe0a1c2d7c4ae6/human_byte_size.py)

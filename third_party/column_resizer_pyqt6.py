@@ -9,8 +9,8 @@ __author__ = "ipetrash"
 
 from dataclasses import dataclass
 
-from PyQt5.QtCore import QEvent, QTimer, QSize, QRect, Qt, QObject, qCritical
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QEvent, QTimer, QSize, QRect, Qt, QObject, qCritical
+from PyQt6.QtWidgets import (
     QFormLayout,
     QGridLayout,
     QWidget,
@@ -63,8 +63,8 @@ class FormLayoutWidgetItem(QWidgetItem):
         rect: QRect = _rect
         width = self.widget().sizeHint().width()
         if (
-            self.m_itemRole == QFormLayout.LabelRole
-            and self.m_formLayout.labelAlignment() & Qt.AlignRight
+            self.m_itemRole == QFormLayout.ItemRole.LabelRole
+            and self.m_formLayout.labelAlignment() & Qt.AlignmentFlag.AlignRight
         ):
             rect.setLeft(rect.right() - width)
 
@@ -126,7 +126,7 @@ class ColumnResizer(QObject):
             info.layout.setColumnMinimumWidth(info.column, width)
 
     def eventFilter(self, _: QObject, event: QEvent) -> bool:
-        if event.type() == QEvent.Resize:
+        if event.type() == QEvent.Type.Resize:
             self.d.scheduleWidthUpdate()
 
         return False
@@ -137,9 +137,9 @@ class ColumnResizer(QObject):
         if isinstance(layout, QGridLayout):
             self.addWidgetsFromGridLayout(layout, column)
         elif isinstance(layout, QFormLayout):
-            if column > QFormLayout.ItemRole.SpanningRole:
+            if column > QFormLayout.ItemRole.SpanningRole.value:
                 qCritical(
-                    f"column should not be more than {QFormLayout.ItemRole.SpanningRole} for QFormLayout"
+                    f"column should not be more than {QFormLayout.ItemRole.SpanningRole.value} for QFormLayout"
                 )
                 return
 

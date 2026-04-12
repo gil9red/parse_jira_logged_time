@@ -20,7 +20,7 @@ from PyQt5.QtWidgets import (
     QSplitter,
     QToolTip,
     QStyle,
-    QLineEdit, QPushButton,
+    QLineEdit,
 )
 
 from widgets import get_scroll_area

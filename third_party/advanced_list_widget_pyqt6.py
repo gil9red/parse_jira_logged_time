@@ -4,8 +4,8 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QListWidgetItem, QListWidget, QWidget, QVBoxLayout, QToolBar
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QListWidgetItem, QListWidget, QWidget, QVBoxLayout, QToolBar
 
 
 class AdvancedListWidget(QWidget):
@@ -76,7 +76,7 @@ class AdvancedListWidget(QWidget):
 
     def append(self, text: str) -> QListWidgetItem:
         item = QListWidgetItem(text)
-        item.setFlags(item.flags() | Qt.ItemIsEditable)
+        item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable)
 
         self.list_widget.addItem(item)
 
@@ -100,7 +100,7 @@ class AdvancedListWidget(QWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication([])
 

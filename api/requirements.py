@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import QTextBrowser
 from config import DIR
 
 
+# TODO: Не актуально
 PATH_REQUIREMENTS_DEV: Path = DIR / "requirements-dev.txt"
 
 

@@ -45,7 +45,18 @@ if IS_INSTALLED_PSUTIL:
                         f"&{{Start-Process -FilePath '{path_py_exe}' '{path_script}' -Wait -Verb RunAs}}",
                     ]
                 else:
-                    args: list[str] = ["sudo", path_py_exe, path_script]
+                    # TODO: Не тестировалось
+                    if sys.platform == "darwin":
+                        # TODO:
+                        args: list[str] = [
+                            "osascript",
+                            "-e",
+                            f'tell app "Terminal" to do script "python3 {path_py_exe} {path_script}"',
+                        ]
+                    else:
+                        # TODO: open_new_terminal_linux
+                        # TODO: open_new_terminal_macos
+                        args: list[str] = ["sudo", path_py_exe, path_script]
 
                 print("Run command:", args)
                 subprocess.check_output(args)

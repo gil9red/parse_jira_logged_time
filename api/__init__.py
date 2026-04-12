@@ -13,10 +13,10 @@ from multiprocessing.pool import Pool
 from pathlib import Path
 
 import requests
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt6.QtCore import QThread, pyqtSignal
 
 from config import PATH_CERT, JIRA_HOST, PATH_README
-from third_party.ago import ago, L10N_RU
+from third_party.ago import ago, L10nRu
 
 
 class RunFuncThread(QThread):
@@ -129,7 +129,7 @@ def get_ago(dt1: datetime | None = None, dt2: datetime | None = None) -> str:
     if not dt2:
         dt2 = datetime.now()
 
-    return ago(dt2 - dt1, l10n=L10N_RU())
+    return ago(dt2 - dt1, l10n=L10nRu())
 
 
 def start_file(file_name: Path | str) -> None:

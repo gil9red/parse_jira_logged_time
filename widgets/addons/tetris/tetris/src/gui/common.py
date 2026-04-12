@@ -8,8 +8,8 @@ import enum
 import functools
 from typing import Callable
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter, QColor
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPainter, QColor
 
 
 CELL_SIZE: int = 20
@@ -40,7 +40,7 @@ def draw_cell_board(
     x: int,
     y: int,
     color: QColor,
-    pen: Qt.GlobalColor = Qt.NoPen,
+    pen: Qt.PenStyle | Qt.GlobalColor = Qt.PenStyle.NoPen,
     cell_size: int = CELL_SIZE,
     indent: int = 0,
 ) -> None:

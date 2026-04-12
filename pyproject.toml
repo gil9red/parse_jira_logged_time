@@ -1,0 +1,23 @@
+[project]
+name = "parse-jira-logged-time"
+dynamic = ["version"]
+description = "Графическое приложения для просмотра залогированных задач"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "beautifulsoup4==4.12.3",
+    "psutil==6.1.0",
+    "pyqt6==6.11.0",
+    "requests==2.32.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "CHANGELOG.md"
+pattern = "## \\[(?P<version>\\d+\\.\\d+\\.\\d+)]"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]

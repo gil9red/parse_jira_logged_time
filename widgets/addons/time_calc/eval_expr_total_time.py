@@ -5,7 +5,7 @@ __author__ = "ipetrash"
 
 
 import re
-from seconds_to_str import seconds_to_str
+from third_party.seconds_to_str import seconds_to_str
 
 
 PATTERN_TIME: re.Pattern = re.compile(r"(\d\d:\d\d:\d\d)")

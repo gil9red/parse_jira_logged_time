@@ -6,9 +6,9 @@ __author__ = "ipetrash"
 
 from typing import Any
 
-from PyQt5.QtCore import Qt, pyqtSignal, QLocale, QRegularExpression, QRect
-from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat, QFont, QCursor
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt, pyqtSignal, QLocale, QRegularExpression, QRect
+from PyQt6.QtGui import QSyntaxHighlighter, QTextCharFormat, QFont, QCursor
+from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
     QFormLayout,
@@ -44,12 +44,12 @@ SAMPLE_ARGS: dict[str, str] = dict.fromkeys(
 def create_syntax_highlighter(
     text_edit: QPlainTextEdit,
     reg_expr: str,
-    foreground_color: int,
+    foreground_color: Qt.GlobalColor,
 ) -> QSyntaxHighlighter:
     expression = QRegularExpression(reg_expr)
 
     char_format = QTextCharFormat()
-    char_format.setFontWeight(QFont.Bold)
+    char_format.setFontWeight(QFont.Weight.Bold)
     char_format.setForeground(foreground_color)
 
     class MySyntaxHighlighter(QSyntaxHighlighter):
@@ -97,8 +97,8 @@ class KeyValueWidget(QWidget):
             double_spin_box.textChanged.connect(self.changed_data.emit)
 
             clear_action = double_spin_box.lineEdit().addAction(
-                self.style().standardIcon(QStyle.SP_LineEditClearButton),
-                QLineEdit.TrailingPosition,
+                self.style().standardIcon(QStyle.StandardPixmap.SP_LineEditClearButton),
+                QLineEdit.ActionPosition.TrailingPosition,
             )
             clear_action.triggered.connect(
                 lambda: double_spin_box.setValue(double_spin_box.minimum())
@@ -141,14 +141,14 @@ class AddonTotalEffortsCalcWidget(AddonWidget):
         create_syntax_highlighter(
             text_edit=self.template_edit,
             reg_expr=f"{PATTERN_ARG.pattern}|{PATTERN_RESULT.pattern}",
-            foreground_color=Qt.darkGreen,
+            foreground_color=Qt.GlobalColor.darkGreen,
         )
 
         self.result_edit = QPlainTextEdit()
         create_syntax_highlighter(
             text_edit=self.result_edit,
             reg_expr=f"(?i){DEFAULT_ARG_VALUE}",
-            foreground_color=Qt.red,
+            foreground_color=Qt.GlobalColor.red,
         )
 
         self.args_widget = KeyValueWidget()
@@ -182,13 +182,13 @@ class AddonTotalEffortsCalcWidget(AddonWidget):
         self.args_widget.setVisible(button_show_args.isChecked())
 
         self.tab_widget = QTabWidget()
-        self.tab_widget.setTabPosition(QTabWidget.South)
+        self.tab_widget.setTabPosition(QTabWidget.TabPosition.South)
         self.tab_widget.addTab(self.result_edit, "Результат")
         self.tab_widget.addTab(self.template_edit, "Шаблон")
-        self.tab_widget.setCornerWidget(button_copy_result, Qt.TopLeftCorner)
-        self.tab_widget.setCornerWidget(button_show_args, Qt.TopRightCorner)
+        self.tab_widget.setCornerWidget(button_copy_result, Qt.Corner.TopLeftCorner)
+        self.tab_widget.setCornerWidget(button_show_args, Qt.Corner.TopRightCorner)
 
-        splitter = QSplitter(Qt.Vertical)
+        splitter = QSplitter(Qt.Orientation.Vertical)
         splitter.addWidget(self.tab_widget)
         splitter.addWidget(self.args_widget)
 

@@ -6,9 +6,9 @@ __author__ = "ipetrash"
 
 import random
 
-from PyQt5.QtCore import pyqtSignal, QTimer, QSize, Qt
-from PyQt5.QtGui import QPainter, QColor, QResizeEvent, QPaintEvent
-from PyQt5.QtWidgets import QWidget
+from PyQt6.QtCore import pyqtSignal, QTimer, QSize, Qt
+from PyQt6.QtGui import QPainter, QColor, QResizeEvent, QPaintEvent
+from PyQt6.QtWidgets import QWidget
 
 from ..core.board import Board
 from ..core.common import ms_to_str
@@ -158,7 +158,7 @@ class BoardWidget(QWidget):
                     indent=self.INDENT,
                 )
 
-        painter.setPen(Qt.black)
+        painter.setPen(Qt.GlobalColor.black)
 
         # Горизонтальные линии
         y1 = y2 = self.INDENT
@@ -246,7 +246,7 @@ class BoardWidget(QWidget):
         # Алгоритм изменения размера текста взят из http://stackoverflow.com/a/2204501
         # Для текущего пришлось немного адаптировать
         max_line_width = max(
-            painter.fontMetrics().width(line) for line in text.splitlines()
+            painter.fontMetrics().horizontalAdvance(line) for line in text.splitlines()
         )
         factor = min(self.width(), self.height()) / max_line_width
         if factor < 1 or factor > 1.25:
@@ -263,18 +263,18 @@ class BoardWidget(QWidget):
 
             painter.setFont(f)
 
-        painter.setPen(Qt.black)
+        painter.setPen(Qt.GlobalColor.black)
 
-        brush = QColor(Qt.lightGray)
+        brush = QColor(Qt.GlobalColor.lightGray)
         brush.setAlphaF(0.6)
 
         painter.setBrush(brush)
 
         painter.drawRect(self.rect())
-        painter.drawText(self.rect(), Qt.AlignCenter, text)
+        painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, text)
 
     def process_key(self, key: int) -> None:
-        if key == Qt.Key_Space and self.status in [
+        if key == Qt.Key.Key_Space and self.status in [
             StatusGameEnum.STARTED,
             StatusGameEnum.PAUSED,
         ]:
@@ -286,22 +286,22 @@ class BoardWidget(QWidget):
             self.update()
             return
 
-        if key in [Qt.Key_Enter, Qt.Key_Return]:
+        if key in [Qt.Key.Key_Enter, Qt.Key.Key_Return]:
             self.start()
             return
 
         if self.board.current_piece and self.status == StatusGameEnum.STARTED:
             match key:
-                case Qt.Key_Left:
+                case Qt.Key.Key_Left:
                     self.board.current_piece.move_left()
 
-                case Qt.Key_Right:
+                case Qt.Key.Key_Right:
                     self.board.current_piece.move_right()
 
-                case Qt.Key_Up:
+                case Qt.Key.Key_Up:
                     self.board.current_piece.turn()
 
-                case Qt.Key_Down:
+                case Qt.Key.Key_Down:
                     while self.board.current_piece.move_down():
                         pass
 
@@ -320,7 +320,7 @@ class BoardWidget(QWidget):
 
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         self._draw_current_piece(painter)
         self._draw_shadow_of_current_piece(painter)

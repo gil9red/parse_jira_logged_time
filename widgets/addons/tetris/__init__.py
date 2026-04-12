@@ -8,8 +8,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from PyQt5.QtCore import Qt, QObject, QEvent
-from PyQt5.QtWidgets import QVBoxLayout
+from PyQt6.QtCore import Qt, QObject, QEvent
+from PyQt6.QtGui import QKeyEvent
+from PyQt6.QtWidgets import QVBoxLayout
 
 from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 
@@ -72,7 +73,11 @@ class AddonTetrisWidget(AddonWidget):
         return False
 
     def eventFilter(self, watched: QObject | None, event: QEvent | None) -> bool:
-        if self.addon_dock_widget == watched and event.type() == QEvent.Type.KeyRelease:
+        if (
+            self.addon_dock_widget == watched
+            and isinstance(event, QKeyEvent)
+            and event.type() == QEvent.Type.KeyRelease
+        ):
             self.tetris_window.keyReleaseEvent(event)
             return True
 
@@ -80,7 +85,7 @@ class AddonTetrisWidget(AddonWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication([])
 

@@ -4,9 +4,9 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtWidgets import QWidget, QApplication
-from PyQt5.QtGui import QCursor, QResizeEvent
-from PyQt5.QtCore import QTimer, QPoint
+from PyQt6.QtWidgets import QWidget, QApplication
+from PyQt6.QtGui import QCursor, QResizeEvent
+from PyQt6.QtCore import QTimer, QPointF
 
 from .eye_widget import EyeWidget
 
@@ -31,7 +31,7 @@ class EyesWidget(QWidget):
     def refresh_look_there(self) -> None:
         self.update()
 
-        position: QPoint = QCursor.pos()
+        position: QPointF = QPointF(QCursor.pos())
         for eye in self.eyes:
             eye.look_there(position)
 

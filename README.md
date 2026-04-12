@@ -3,7 +3,7 @@
 Графическое приложения для просмотра залогированных задач.
 Использует RSS Jira для получения информации.
 
-Разработано на python и использует Qt 5.
+Разработано на python и использует Qt 6.
 
 ## Перед работой нужно будет:
   * Иметь PEM файл, содержащий сертификат. Получить можно, например:
@@ -83,8 +83,8 @@
 
 ## Кастомизация
 
-По-умолчанию, приложение загружает файл [Qt Style Sheets](https://doc.qt.io/qt-5/stylesheet.html) (QSS) - [resources/style.qss](resources/style.qss).
+По-умолчанию, приложение загружает файл [Qt Style Sheets](https://doc.qt.io/qt-6/stylesheet.html) (QSS) - [resources/style.qss](resources/style.qss).
 Возможно загружать свой файл QSS через аргумент "-stylesheet".
 Про другие аргументы можно узнать из документации по:
-* [QApplication](https://doc.qt.io/qt-5/qapplication.html#QApplication)
-* [QGuiApplication](https://doc.qt.io/qt-5/qguiapplication.html#supported-command-line-options)
+* [QApplication](https://doc.qt.io/qt-6/qapplication.html#QApplication)
+* [QGuiApplication](https://doc.qt.io/qt-6/qguiapplication.html#supported-command-line-options)

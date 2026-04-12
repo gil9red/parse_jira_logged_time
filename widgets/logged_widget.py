@@ -6,8 +6,8 @@ __author__ = "ipetrash"
 
 from datetime import date
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QWidget,
     QHeaderView,
     QSplitter,
@@ -46,13 +46,13 @@ class LoggedWidget(QWidget):
         # Первые 3 колонки (кроме названия) имеют размер под содержимое
         for j in range(3):
             self.table_logged_info.horizontalHeader().setSectionResizeMode(
-                j, QHeaderView.ResizeToContents
+                j, QHeaderView.ResizeMode.ResizeToContents
             )
         self.table_logged_info.itemDoubleClicked.connect(
             self._on_table_logged_info_item_double_clicked
         )
 
-        splitter_main = QSplitter(Qt.Horizontal)
+        splitter_main = QSplitter(Qt.Orientation.Horizontal)
         splitter_main.setObjectName("splitter_main")
         splitter_main.addWidget(self.table_logged)
         splitter_main.addWidget(self.table_logged_info)
@@ -94,7 +94,7 @@ class LoggedWidget(QWidget):
                 ]
                 for item in items:
                     if is_odd_week:
-                        item.setBackground(Qt.lightGray)
+                        item.setBackground(Qt.GlobalColor.lightGray)
 
                 add_table_row(self.table_logged, items)
 
@@ -112,7 +112,7 @@ class LoggedWidget(QWidget):
             row = item.row()
             item1 = item.tableWidget().item(row, 0)
 
-            activities: list[Activity] = item1.data(Qt.UserRole)
+            activities: list[Activity] = item1.data(Qt.ItemDataRole.UserRole)
             if not activities:
                 return
 

@@ -11,15 +11,14 @@ import webbrowser
 from contextlib import contextmanager
 from typing import Any, Callable
 
-from PyQt5.QtCore import Qt, QObject, QPoint, QModelIndex, QAbstractItemModel
-from PyQt5.QtGui import QPalette
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt, QObject, QPoint, QModelIndex, QAbstractItemModel
+from PyQt6.QtGui import QPalette, QAction
+from PyQt6.QtWidgets import (
     QApplication,
     QTableWidget,
     QTableWidgetItem,
     QScrollArea,
     QWidget,
-    QAction,
     QTableView,
     QMenu,
 )
@@ -85,7 +84,7 @@ def open_context_menu(
         value: str = get_cell_value(model, current_row, column)
 
         action = menu_copy_from.addAction(
-            model.headerData(column, Qt.Horizontal),
+            model.headerData(column, Qt.Orientation.Horizontal),
             lambda value=value: _copy_to_clipboard(value),
         )
         action.setEnabled(bool(value))
@@ -114,22 +113,22 @@ def web_browser_open(url: str) -> None:
 
 def create_table(header_labels: list[str]) -> QTableWidget:
     table_widget = QTableWidget()
-    table_widget.setEditTriggers(QTableWidget.NoEditTriggers)
-    table_widget.setSelectionBehavior(QTableWidget.SelectRows)
-    table_widget.setSelectionMode(QTableWidget.SingleSelection)
+    table_widget.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+    table_widget.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+    table_widget.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
     table_widget.setColumnCount(len(header_labels))
     table_widget.setHorizontalHeaderLabels(header_labels)
     table_widget.horizontalHeader().setStretchLastSection(True)
 
     p = table_widget.palette()
     p.setColor(
-        QPalette.Inactive,
-        QPalette.Highlight,
-        p.color(QPalette.Active, QPalette.Highlight),
+        QPalette.ColorGroup.Inactive,
+        QPalette.ColorRole.Highlight,
+        p.color(QPalette.ColorGroup.Active, QPalette.ColorRole.Highlight),
     )
     table_widget.setPalette(p)
 
-    table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
+    table_widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
     def _get_additional_actions(table: QTableView, row: int) -> list[QAction]:
         model = table.model()
@@ -184,14 +183,14 @@ def create_table_item(
         item.setToolTip(tool_tip)
 
     if data:
-        item.setData(Qt.UserRole, data)
+        item.setData(Qt.ItemDataRole.UserRole, data)
 
     return item
 
 
 def get_activity_from_row(model: QAbstractItemModel, row: int) -> Activity | None:
     idx = model.index(row, 0)
-    value = model.data(idx, role=Qt.UserRole)
+    value = model.data(idx, role=Qt.ItemDataRole.UserRole)
 
     return value if isinstance(value, Activity) else None
 
@@ -221,7 +220,7 @@ def open_jira_project(project: str) -> None:
 
 def get_scroll_area(widget: QWidget) -> QScrollArea:
     scroll_area = QScrollArea()
-    scroll_area.setFrameStyle(QScrollArea.NoFrame)
+    scroll_area.setFrameStyle(QScrollArea.Shape.NoFrame)
     scroll_area.setWidgetResizable(True)
     scroll_area.setWidget(widget)
 

@@ -8,6 +8,7 @@ import enum
 import re
 
 from datetime import datetime
+from typing import Any
 
 from bs4 import BeautifulSoup
 
@@ -61,7 +62,7 @@ def _send_data(data: dict[str, str | int]) -> str:
 def get_report(report_type: ReportTypeEnum, period_type: PeriodTypeEnum) -> str:
     today = datetime.today()
 
-    data = {
+    data: dict[str, Any] = {
         "reporttype": report_type.value,
         "PeriodType": period_type.value,
         "Month": today.month,

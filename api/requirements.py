@@ -9,7 +9,7 @@ import sys
 
 from pathlib import Path
 
-from PyQt5.QtWidgets import QTextBrowser
+from PyQt6.QtWidgets import QTextBrowser
 
 from config import DIR
 

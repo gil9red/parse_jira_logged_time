@@ -4,9 +4,9 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPaintEvent, QPainter, QPen
-from PyQt5.QtCore import QPoint, Qt
+from PyQt6.QtWidgets import QWidget
+from PyQt6.QtGui import QPaintEvent, QPainter, QPen
+from PyQt6.QtCore import QPointF, Qt
 
 from .common import percent_number
 from .eye import Eye, Iris, Pupil
@@ -17,15 +17,15 @@ MINIMAL_SIZE_EYE: int = 50
 
 class EyeWidget(QWidget):
     eye: Eye = Eye(
-        brush=Qt.white,
-        pen=QPen(Qt.black, 2.0),
+        brush=Qt.GlobalColor.white,
+        pen=QPen(Qt.GlobalColor.black, 2.0),
         iris=Iris(
-            brush=Qt.black,
-            pen=QPen(Qt.black, 1.0),
+            brush=Qt.GlobalColor.black,
+            pen=QPen(Qt.GlobalColor.black, 1.0),
         ),
         pupil=Pupil(
-            brush=Qt.black,
-            pen=QPen(Qt.white, 1.0),
+            brush=Qt.GlobalColor.black,
+            pen=QPen(Qt.GlobalColor.white, 1.0),
         ),
     )
 
@@ -35,7 +35,7 @@ class EyeWidget(QWidget):
     d_percent_pupil_radius_x: int = 55
     d_percent_pupil_radius_y: int = 55
 
-    position_look: QPoint = QPoint(0, 0)
+    position_look: QPointF = QPointF(0.0, 0.0)
 
     def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
@@ -47,15 +47,15 @@ class EyeWidget(QWidget):
 
         self.setFixedSize(diameter, diameter)
 
-    def look_there(self, position: QPoint) -> None:
-        self.position_look = self.mapFromGlobal(position)
+    def look_there(self, position: QPointF) -> None:
+        self.position_look = QPointF(self.mapFromGlobal(position))
         self.update()
 
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        indent = 3
+        indent: int = 3
 
         # По размерам окна определим примерно размер глаз
         # расчет будет по высоте и ширине
@@ -75,12 +75,12 @@ class EyeWidget(QWidget):
             radius_y_iris, self.d_percent_pupil_radius_y
         )
 
-        x: int = int(radius_x_eye + indent)
-        y: int = int(radius_y_eye + indent)
+        x: float = float(radius_x_eye + indent)
+        y: float = float(radius_y_eye + indent)
 
         self.eye.radiusX = radius_x_eye
         self.eye.radiusY = radius_y_eye
-        self.eye.center = QPoint(x, y)
+        self.eye.center = QPointF(x, y)
 
         # Радужка глаза
         iris = self.eye.iris

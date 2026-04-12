@@ -4,8 +4,8 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QHeaderView,
     QFormLayout,
     QLabel,
@@ -46,10 +46,10 @@ class AddonSprintsWidget(AddonWidget):
         self.table = create_table(header_labels=["Задача", "Дата", "Часы"])
         self.table.itemDoubleClicked.connect(self._on_table_item_double_clicked)
         self.table.horizontalHeader().setSectionResizeMode(
-            0, QHeaderView.ResizeToContents
+            0, QHeaderView.ResizeMode.ResizeToContents
         )
         self.table.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeToContents
+            1, QHeaderView.ResizeMode.ResizeToContents
         )
 
         self.main_widget = QWidget()
@@ -79,7 +79,7 @@ class AddonSprintsWidget(AddonWidget):
         row = item.row()
         item1 = item.tableWidget().item(row, 0)
 
-        sprint: Sprint = item1.data(Qt.UserRole)
+        sprint: Sprint = item1.data(Qt.ItemDataRole.UserRole)
         if not sprint:
             return
 
@@ -124,7 +124,7 @@ class AddonSprintsWidget(AddonWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
     from config import PATH_STYLE_SHEET
 
     app = QApplication([])

@@ -4,8 +4,8 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QTextBrowser,
     QVBoxLayout,
 )
@@ -82,7 +82,7 @@ class AddonGetTotalResolvedWidget(AddonWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication([])
 

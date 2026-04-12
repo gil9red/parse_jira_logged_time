@@ -7,9 +7,9 @@ __author__ = "ipetrash"
 import html
 import traceback
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QTextCharFormat
-from PyQt5.QtWidgets import QMainWindow, QPlainTextEdit, QToolBar
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QTextCharFormat
+from PyQt6.QtWidgets import QMainWindow, QPlainTextEdit, QToolBar
 
 
 def get_exception_traceback(e: Exception) -> str:
@@ -26,7 +26,7 @@ class LogsWidget(QMainWindow):
         self.logs.setReadOnly(True)
 
         # TODO:
-        # from PyQt5.QtGui import QTextOption
+        # from PyQt6.QtGui import QTextOption
         # self.logs.setWordWrapMode(QTextOption.NoWrap)
 
         tool_bar = QToolBar()
@@ -36,7 +36,7 @@ class LogsWidget(QMainWindow):
         action_clear.setToolTip("Очистить всё")
         action_clear.triggered.connect(self.logs.clear)
 
-        self.addToolBar(Qt.LeftToolBarArea, tool_bar)
+        self.addToolBar(Qt.ToolBarArea.LeftToolBarArea, tool_bar)
 
         self.setCentralWidget(self.logs)
 
@@ -58,7 +58,7 @@ class LogsWidget(QMainWindow):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication([])
 

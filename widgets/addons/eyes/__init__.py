@@ -4,8 +4,8 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QVBoxLayout
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QVBoxLayout
 
 from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 from widgets.addons.eyes.eyes.eyes_widget import EyesWidget
@@ -39,7 +39,7 @@ class AddonEyesWidget(AddonWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication([])
 

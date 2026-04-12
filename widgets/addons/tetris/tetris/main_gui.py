@@ -15,9 +15,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QKeyEvent
+from PyQt6.QtWidgets import (
     QWidget,
     QApplication,
     QMessageBox,
@@ -54,7 +54,7 @@ sys.excepthook = log_uncaught_exceptions
 # SOURCE: https://github.com/gil9red/parse_jira_logged_time/blob/9a842ed071f317b7323b7b7775aa9f5195dbaf47/widgets/__init__.py#L218
 def get_scroll_area(widget: QWidget) -> QScrollArea:
     scroll_area = QScrollArea()
-    scroll_area.setFrameStyle(QScrollArea.NoFrame)
+    scroll_area.setFrameStyle(QScrollArea.Shape.NoFrame)
     scroll_area.setWidgetResizable(True)
     scroll_area.setWidget(widget)
 
@@ -119,14 +119,14 @@ class MainWindow(QWidget):
             button.clicked.connect(lambda: self.board_widget.process_key(key))
             return button
 
-        self.up_button = _add_button("🢁", Qt.Key_Up)
-        self.left_button = _add_button("🢀", Qt.Key_Left)
-        self.right_button = _add_button("🢂", Qt.Key_Right)
-        self.down_button = _add_button("🢃", Qt.Key_Down)
-        self.pause_resume_button = _add_button("Pause/Resume", Qt.Key_Space)
+        self.up_button = _add_button("🢁", Qt.Key.Key_Up)
+        self.left_button = _add_button("🢀", Qt.Key.Key_Left)
+        self.right_button = _add_button("🢂", Qt.Key.Key_Right)
+        self.down_button = _add_button("🢃", Qt.Key.Key_Down)
+        self.pause_resume_button = _add_button("Pause/Resume", Qt.Key.Key_Space)
 
         control_layout = QGridLayout()
-        control_layout.setAlignment(Qt.AlignCenter)
+        control_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         control_layout.addWidget(self.up_button, 0, 1)
         control_layout.addWidget(self.left_button, 1, 0)
         control_layout.addWidget(self.right_button, 1, 2)
@@ -142,8 +142,8 @@ class MainWindow(QWidget):
         self.le_seed.setVisible(self.cb_random.isChecked())
         self.le_seed.returnPressed.connect(self._do_start)
         action_rand_seed = self.le_seed.addAction(
-            self.style().standardIcon(QStyle.SP_BrowserReload),
-            QLineEdit.TrailingPosition,
+            self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload),
+            QLineEdit.ActionPosition.TrailingPosition,
         )
         action_rand_seed.triggered.connect(
             lambda: self.le_seed.setText(get_random_seed())

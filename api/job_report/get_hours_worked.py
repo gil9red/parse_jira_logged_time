@@ -5,7 +5,10 @@ __author__ = "ipetrash"
 
 
 import re
-from bs4 import BeautifulSoup, Tag
+
+from bs4 import BeautifulSoup
+from bs4.element import Tag
+
 from api.job_report.utils import (
     NotFoundReport,
     ReportTypeEnum,

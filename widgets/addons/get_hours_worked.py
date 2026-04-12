@@ -6,7 +6,7 @@ __author__ = "ipetrash"
 
 from typing import Any
 
-from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit, QFormLayout, QCheckBox
+from PyQt6.QtWidgets import QVBoxLayout, QPlainTextEdit, QFormLayout, QCheckBox
 
 from api.job_report.get_hours_worked import (
     get_user_and_deviation_hours,

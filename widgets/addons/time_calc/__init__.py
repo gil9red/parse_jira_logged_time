@@ -9,8 +9,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QVBoxLayout, QTextEdit
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QVBoxLayout, QTextEdit
 
 from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 from widgets import block_signals
@@ -103,7 +103,7 @@ class AddonTimeCalcWidget(AddonWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication([])
 

@@ -13,9 +13,9 @@ import textwrap
 
 from contextlib import redirect_stdout
 from datetime import datetime, date
-from typing import Any
+from typing import Any, Optional
 
-from PyQt5.QtCore import (
+from PyQt6.QtCore import (
     QEvent,
     QTimer,
     QByteArray,
@@ -24,8 +24,8 @@ from PyQt5.QtCore import (
     QLibraryInfo,
     QEventLoop,
 )
-from PyQt5.QtGui import QIcon, QCloseEvent
-from PyQt5.QtWidgets import (
+from PyQt6.QtGui import QIcon, QCloseEvent
+from PyQt6.QtWidgets import (
     QApplication,
     QMessageBox,
     QMainWindow,
@@ -71,8 +71,7 @@ from widgets.activities_widget import ActivitiesWidget
 from widgets.logged_widget import LoggedWidget
 from widgets.logs_widget import LogsWidget
 
-
-MAIN_WINDOW: "MainWindow" = None
+MAIN_WINDOW: Optional["MainWindow"] = None
 
 
 def log_uncaught_exceptions(ex_cls, ex, tb) -> None:
@@ -93,13 +92,13 @@ def log_uncaught_exceptions(ex_cls, ex, tb) -> None:
 
     if QApplication.instance():
         msg_box = QMessageBox(
-            QMessageBox.Critical,
+            QMessageBox.Icon.Critical,
             "Ошибка",
             f"Ошибка: {ex}",
             parent=MAIN_WINDOW,
         )
         msg_box.setDetailedText(text)
-        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
         msg_box.exec()
 
 
@@ -249,7 +248,7 @@ class MainWindow(QMainWindow):
         tab_widget = QTabWidget()
         tab_widget.addTab(self.logged_widget, "ЗАЛОГИРОВАНО")
         tab_widget.addTab(self.activities_widget, "АКТИВНОСТИ")
-        tab_widget.setCornerWidget(self.cb_auto_refresh_rss, Qt.TopRightCorner)
+        tab_widget.setCornerWidget(self.cb_auto_refresh_rss, Qt.Corner.TopRightCorner)
 
         layout_main = QVBoxLayout()
         layout_main.addWidget(self.progress_refresh)
@@ -325,9 +324,9 @@ class MainWindow(QMainWindow):
                     f"{xml_data[:150] + b'...' if len(xml_data) > 150 else xml_data!r}"
                 )
 
-                date_by_activities: dict[
-                    date, list[Activity]
-                ] = parse_date_by_activities(xml_data)
+                date_by_activities: dict[date, list[Activity]] = (
+                    parse_date_by_activities(xml_data)
+                )
                 if not date_by_activities:
                     return
 
@@ -554,7 +553,7 @@ class MainWindow(QMainWindow):
             self.activateWindow()
 
     def changeEvent(self, event: QEvent) -> None:
-        if event.type() == QEvent.WindowStateChange:
+        if event.type() == QEvent.Type.WindowStateChange:
             self._last_is_maximized = self.isMaximized()
 
             # Если окно свернули
@@ -570,13 +569,15 @@ class MainWindow(QMainWindow):
             msg_box = QMessageBox(self)
             msg_box.setWindowTitle("Выйти")
             msg_box.setText("Вы уверены, что хотите выйти?")
-            msg_box.setIcon(QMessageBox.Question)
-            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-            msg_box.setDefaultButton(QMessageBox.No)
+            msg_box.setIcon(QMessageBox.Icon.Question)
+            msg_box.setStandardButtons(
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+            msg_box.setDefaultButton(QMessageBox.StandardButton.No)
             msg_box.setCheckBox(cb_dont_ask_again)
 
             reply = msg_box.exec()
-            if reply == QMessageBox.No:
+            if reply == QMessageBox.StandardButton.No:
                 event.ignore()
                 return
 
@@ -596,7 +597,7 @@ if __name__ == "__main__":
 
         # Использование локали на русском в стандартных виджетах
         translator = QTranslator()
-        translations_path = QLibraryInfo.location(QLibraryInfo.TranslationsPath)
+        translations_path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
         if translator.load("qtbase_ru", directory=translations_path):
             app.installTranslator(translator)
 

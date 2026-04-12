@@ -6,8 +6,8 @@ __author__ = "ipetrash"
 
 from pathlib import Path
 
-from PyQt5.QtCore import Qt, QUrl
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt, QUrl
+from PyQt6.QtWidgets import (
     QDialog,
     QWidget,
     QTextBrowser,
@@ -29,7 +29,7 @@ class MarkdownViewer(QDialog):
         self.path = path
 
         self.setWindowTitle(f"{title} ({self.path.name})")
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, False)
 
         self.content = QTextBrowser()
         self.content.setOpenLinks(False)
@@ -54,7 +54,7 @@ class MarkdownViewer(QDialog):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
     from config import PATH_CHANGELOG
 
     app = QApplication([])

@@ -12,13 +12,12 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, date, timezone
 
-from config import USERNAME, MAX_RESULTS, JIRA_HOST
+from config import USERNAME, JIRA_HOST
 from api import session, get_human_date
 from api.jira import get_jira_current_username
 from third_party.decode_escapes_telegram_bot.utils import decode
 from third_party.jira_logged_human_time_to_seconds import logged_human_time_to_seconds
 from third_party.seconds_to_str import seconds_to_str
-
 
 PATTERN_TAGS: re.Pattern = re.compile("<.*?>")
 PATTERN_SPACES: re.Pattern = re.compile(r"\s{2,}")
@@ -74,7 +73,9 @@ class Activity:
 def utc_to_local(utc_dt: datetime) -> datetime:
     return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
-MAX_RESULTS = 250
+
+MAX_RESULTS: int = 250
+
 
 def get_rss_jira_log(username: str | None = USERNAME) -> bytes:
     if not username:
@@ -106,7 +107,10 @@ def get_rss_jira_log_v2(dt1, dt2, username: str | None = USERNAME) -> bytes:
     rs.raise_for_status()
 
     from pathlib import Path
-    Path(f"{dt1.date().isoformat()}-{dt2.date().isoformat()}.xml").write_bytes(rs.content)
+
+    Path(f"{dt1.date().isoformat()}-{dt2.date().isoformat()}.xml").write_bytes(
+        rs.content
+    )
 
     return rs.content
 
@@ -174,7 +178,7 @@ def get_date_by_activities(root) -> dict[date, list[Activity]]:
         try:
             jira_id = _get_text(entry, "./activity:object/title")
             jira_title = _get_text(entry, "./activity:object/summary")
-        except:
+        except Exception:
             jira_id = _get_text(entry, "./activity:target/title")
             jira_title = _get_text(entry, "./activity:target/summary")
 
@@ -265,10 +269,8 @@ if __name__ == "__main__":
 
     from datetime import datetime, timedelta
 
-
     def get_zero_time(dt: datetime) -> datetime:
         return dt.replace(hour=0, minute=0, second=0, microsecond=0)
-
 
     def get_items(
         start_dt: datetime,
@@ -293,10 +295,8 @@ if __name__ == "__main__":
 
         return items
 
-
     def to_ms(dt: datetime) -> int:
         return int(dt.timestamp() * 1000)
-
 
     # dt = get_zero_time(datetime.utcnow())
     # print(dt)
@@ -321,12 +321,14 @@ if __name__ == "__main__":
         print()
 
         # Структура документа - xml
-        date_by_activities: dict[date, list[Activity]] = parse_date_by_activities(xml_data)
+        date_by_activities: dict[date, list[Activity]] = parse_date_by_activities(
+            xml_data
+        )
         # print(date_by_activities)
         # print()
 
         # Для красоты выводим результат в табличном виде
-        lines = [
+        lines: list[tuple[str, str, str | int, str | int]] = [
             ("DATE", "LOGGED", "SECONDS", "ACTIVITIES"),
         ]
         for entry_date, activities in sorted(

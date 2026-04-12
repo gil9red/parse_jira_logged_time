@@ -4,7 +4,7 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtWidgets import QVBoxLayout, QPlainTextEdit
+from PyQt6.QtWidgets import QVBoxLayout, QPlainTextEdit
 
 from api.job_report.get_worklog import get_worklog, Worklog, NotFoundReport
 from api.job_report.utils import URL

@@ -17,8 +17,8 @@ try:
 except ImportError:
     psutil = None
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QDialog,
     QWidget,
     QFormLayout,
@@ -41,7 +41,7 @@ from config import (
     CONFIG,
 )
 from version import VERSION
-from third_party.column_resizer import ColumnResizer
+from third_party.column_resizer_pyqt6 import ColumnResizer
 from third_party.human_byte_size import sizeof_fmt
 from widgets import get_scroll_area
 from widgets.markdown_viewer import MarkdownViewer
@@ -67,8 +67,8 @@ def get_ext_label(text: str) -> QLabel:
     label.setWordWrap(True)
 
     flags = label.textInteractionFlags()
-    flags |= Qt.TextSelectableByMouse
-    flags |= Qt.LinksAccessibleByMouse
+    flags |= Qt.TextInteractionFlag.TextSelectableByMouse
+    flags |= Qt.TextInteractionFlag.LinksAccessibleByMouse
     label.setTextInteractionFlags(flags)
 
     label.setOpenExternalLinks(True)
@@ -86,8 +86,8 @@ def get_ext_line_edit(text: str, is_path: bool = False) -> QLineEdit:
         if path.is_file():
             path = path.parent
 
-        icon = line_edit.style().standardIcon(QStyle.SP_DirOpenIcon)
-        action = line_edit.addAction(icon, QLineEdit.TrailingPosition)
+        icon = line_edit.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon)
+        action = line_edit.addAction(icon, QLineEdit.ActionPosition.TrailingPosition)
         action.setToolTip("Открыть папку")
         action.triggered.connect(lambda: os.startfile(str(path)))
 
@@ -99,7 +99,7 @@ class About(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("О программе")
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, False)
 
         self.changelog = MarkdownViewer(
             title="Журнал изменений",
@@ -134,7 +134,7 @@ class About(QDialog):
             "Путь:", get_ext_line_edit(sys.executable, is_path=True)
         )
 
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok)
+        button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
 
@@ -142,13 +142,13 @@ class About(QDialog):
 
         le_version = get_ext_line_edit(VERSION)
 
-        icon = self.style().standardIcon(QStyle.SP_MessageBoxInformation)
-        action_readme = le_version.addAction(icon, QLineEdit.TrailingPosition)
+        icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MessageBoxInformation)
+        action_readme = le_version.addAction(icon, QLineEdit.ActionPosition.TrailingPosition)
         action_readme.setToolTip("Посмотреть README.md")
         action_readme.triggered.connect(self.readme.exec)
 
-        icon = self.style().standardIcon(QStyle.SP_FileDialogDetailedView)
-        action_changelog = le_version.addAction(icon, QLineEdit.TrailingPosition)
+        icon = self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView)
+        action_changelog = le_version.addAction(icon, QLineEdit.ActionPosition.TrailingPosition)
         action_changelog.setToolTip("Посмотреть журнал изменений (CHANGELOG.md)")
         action_changelog.triggered.connect(self.changelog.exec)
 
@@ -231,8 +231,8 @@ class About(QDialog):
         main_layout.addWidget(button_box)
 
         resizer = ColumnResizer(self)
-        resizer.addWidgetsFromLayout(fields_layout, 0)
-        resizer.addWidgetsFromLayout(gb_python_layout, 0)
+        resizer.addWidgetsFromLayout(fields_layout, column=0)
+        resizer.addWidgetsFromLayout(gb_python_layout, column=0)
 
         self.refresh()
 
@@ -301,7 +301,7 @@ class About(QDialog):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication(sys.argv)
 

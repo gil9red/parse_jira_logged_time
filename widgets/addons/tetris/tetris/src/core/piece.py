@@ -7,8 +7,8 @@ __author__ = "ipetrash"
 import abc
 from random import choice, randrange
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QColor
 
 from .common import logger
 
@@ -215,7 +215,7 @@ class PieceO(Piece):
         return self._
 
     def get_color(self) -> QColor:
-        return QColor(Qt.yellow)
+        return QColor(Qt.GlobalColor.yellow)
 
 
 class PieceI(Piece):
@@ -261,7 +261,7 @@ class PieceS(Piece):
         return self._
 
     def get_color(self) -> QColor:
-        return QColor(Qt.green)
+        return QColor(Qt.GlobalColor.green)
 
 
 class PieceZ(Piece):
@@ -284,7 +284,7 @@ class PieceZ(Piece):
         return self._
 
     def get_color(self) -> QColor:
-        return QColor(Qt.red)
+        return QColor(Qt.GlobalColor.red)
 
 
 class PieceL(Piece):
@@ -319,7 +319,7 @@ class PieceL(Piece):
         return self._
 
     def get_color(self) -> QColor:
-        return QColor(Qt.blue)
+        return QColor(Qt.GlobalColor.blue)
 
 
 class PieceJ(Piece):
@@ -354,7 +354,7 @@ class PieceJ(Piece):
         return self._
 
     def get_color(self) -> QColor:
-        return QColor(Qt.darkGreen)
+        return QColor(Qt.GlobalColor.darkGreen)
 
 
 class PieceT(Piece):
@@ -389,4 +389,4 @@ class PieceT(Piece):
         return self._
 
     def get_color(self) -> QColor:
-        return QColor(Qt.darkCyan)
+        return QColor(Qt.GlobalColor.darkCyan)

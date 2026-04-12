@@ -7,8 +7,8 @@ __author__ = "ipetrash"
 from collections import defaultdict
 from datetime import date
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QWidget,
     QHeaderView,
     QSplitter,
@@ -53,7 +53,7 @@ class ActivitiesWidget(QWidget):
         )
         for j in [0, 1, 2]:
             self.table_date_by_jira.horizontalHeader().setSectionResizeMode(
-                j, QHeaderView.ResizeToContents
+                j, QHeaderView.ResizeMode.ResizeToContents
             )
 
         self.table_jira_by_activities = create_table(
@@ -61,15 +61,15 @@ class ActivitiesWidget(QWidget):
         )
         for j in [0, 1, 2]:
             self.table_jira_by_activities.horizontalHeader().setSectionResizeMode(
-                j, QHeaderView.ResizeToContents
+                j, QHeaderView.ResizeMode.ResizeToContents
             )
 
-        splitter_table_activities = QSplitter(Qt.Vertical)
+        splitter_table_activities = QSplitter(Qt.Orientation.Vertical)
         splitter_table_activities.setObjectName("splitter_table_activities")
         splitter_table_activities.addWidget(self.table_date_by_jira)
         splitter_table_activities.addWidget(self.table_jira_by_activities)
 
-        splitter_main = QSplitter(Qt.Horizontal)
+        splitter_main = QSplitter(Qt.Orientation.Horizontal)
         splitter_main.setObjectName("splitter_main")
         splitter_main.addWidget(self.table_date)
         splitter_main.addWidget(splitter_table_activities)
@@ -108,7 +108,7 @@ class ActivitiesWidget(QWidget):
                 ]
                 for item in items:
                     if is_odd_week:
-                        item.setBackground(Qt.lightGray)
+                        item.setBackground(Qt.GlobalColor.lightGray)
 
                 add_table_row(self.table_date, items)
 
@@ -126,7 +126,7 @@ class ActivitiesWidget(QWidget):
             row = item.row()
             item1 = item.tableWidget().item(row, 0)
 
-            activities: list[Activity] = item1.data(Qt.UserRole)
+            activities: list[Activity] = item1.data(Qt.ItemDataRole.UserRole)
             if not activities:
                 return
 
@@ -153,7 +153,7 @@ class ActivitiesWidget(QWidget):
                     create_table_item(jira_id),
                     create_table_item(jira_title, tool_tip=jira_title),
                 ]
-                items[0].setData(Qt.UserRole, activities)
+                items[0].setData(Qt.ItemDataRole.UserRole, activities)
 
                 add_table_row(self.table_date_by_jira, items)
 
@@ -170,7 +170,7 @@ class ActivitiesWidget(QWidget):
             row = item.row()
             item1 = item.tableWidget().item(row, 0)
 
-            activities: list[Activity] = item1.data(Qt.UserRole)
+            activities: list[Activity] = item1.data(Qt.ItemDataRole.UserRole)
             if not activities:
                 return
 
@@ -207,7 +207,7 @@ class ActivitiesWidget(QWidget):
         row = item.row()
         item1 = item.tableWidget().item(row, 0)
 
-        activities: list[Activity] = item1.data(Qt.UserRole)
+        activities: list[Activity] = item1.data(Qt.ItemDataRole.UserRole)
         if not activities:
             return
 

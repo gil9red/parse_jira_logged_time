@@ -6,8 +6,8 @@ __author__ = "ipetrash"
 
 from dataclasses import dataclass, field
 
-from PyQt5.QtGui import QBrush, QPen, QPainter
-from PyQt5.QtCore import QPoint, Qt
+from PyQt6.QtGui import QBrush, QPen, QPainter
+from PyQt6.QtCore import QPointF, Qt
 
 from .common import (
     Ellipse,
@@ -20,12 +20,12 @@ from .common import (
 
 @dataclass
 class EllipseObject:
-    center: QPoint = field(default_factory=lambda: QPoint(0, 0))
+    center: QPointF = field(default_factory=lambda: QPointF(0.0, 0.0))
     radiusX: float = 0.0
     radiusY: float = 0.0
 
-    brush: QBrush = Qt.black
-    pen: QPen = field(default_factory=lambda: QPen(Qt.black, 1.0))
+    brush: QBrush | Qt.GlobalColor = Qt.GlobalColor.black
+    pen: QPen = field(default_factory=lambda: QPen(Qt.GlobalColor.black, 1.0))
 
 
 @dataclass
@@ -70,12 +70,12 @@ class Eye(EllipseObject):
         x2 = self.iris.center.x()
         y2 = self.iris.center.y()
 
-        bounding_width = self.radiusX - self.iris.radiusX
-        bounding_height = self.radiusY - self.iris.radiusY
+        bounding_width: float = self.radiusX - self.iris.radiusX
+        bounding_height: float = self.radiusY - self.iris.radiusY
 
         # Установим размер ограничивающего эллипса, он будет в процентах от размера глаз
-        bounding_width = percent_number(bounding_width, 80)
-        bounding_height = percent_number(bounding_height, 80)
+        bounding_width: float = percent_number(bounding_width, 80)
+        bounding_height: float = percent_number(bounding_height, 80)
 
         bounding_ellipse = Ellipse(
             self.center.x(), self.center.y(), bounding_width, bounding_height
@@ -122,7 +122,7 @@ class Eye(EllipseObject):
         painter.setBrush(self.iris.brush)
         painter.setPen(self.iris.pen)
 
-        painter.drawEllipse(QPoint(0, 0), self.iris.radiusX, self.iris.radiusY)
+        painter.drawEllipse(QPointF(0.0, 0.0), self.iris.radiusX, self.iris.radiusY)
 
         painter.restore()
 
@@ -136,5 +136,5 @@ class Eye(EllipseObject):
         painter.setBrush(self.pupil.brush)
         painter.setPen(self.pupil.pen)
 
-        painter.drawEllipse(QPoint(0, 0), self.pupil.radiusX, self.pupil.radiusY)
+        painter.drawEllipse(QPointF(0.0, 0.0), self.pupil.radiusX, self.pupil.radiusY)
         painter.restore()

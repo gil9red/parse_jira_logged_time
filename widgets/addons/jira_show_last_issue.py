@@ -7,15 +7,15 @@ __author__ = "ipetrash"
 import time
 from typing import Any
 
-from PyQt5.QtCore import QUrl, Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QUrl, Qt
+from PyQt6.QtWidgets import (
     QFormLayout,
     QTextBrowser,
     QVBoxLayout,
 )
 
 from api.jira_show_last_issue import get_last_issue_key
-from third_party.advanced_list_widget import AdvancedListWidget
+from third_party.advanced_list_widget_pyqt6 import AdvancedListWidget
 from widgets import open_jira, open_jira_project
 from widgets.addons import AddonWidget, AddonDockWidget, Defaults
 
@@ -119,7 +119,7 @@ class AddonGetLastIssueKeyWidget(AddonWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication([])
 

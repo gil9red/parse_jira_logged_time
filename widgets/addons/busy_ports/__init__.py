@@ -7,8 +7,8 @@ __author__ = "ipetrash"
 import subprocess
 import sys
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QVBoxLayout,
     QPushButton,
     QCheckBox,
@@ -79,15 +79,15 @@ def create_push_button_with_word_wrap(
     parent: QWidget | None = None,
 ) -> QPushButton:
     btn = QPushButton(parent)
-    btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+    btn.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
     label = QLabel(text, btn)
     label.setWordWrap(True)
-    label.setTextInteractionFlags(Qt.NoTextInteraction)
+    label.setTextInteractionFlags(Qt.TextInteractionFlag.NoTextInteraction)
     label.setMouseTracking(False)
 
     layout = QHBoxLayout(btn)
-    layout.addWidget(label, Qt.AlignCenter)
+    layout.addWidget(label, Qt.AlignmentFlag.AlignCenter)
 
     return btn
 
@@ -152,7 +152,7 @@ class AddonBusyPortsWidget(AddonWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication([])
 

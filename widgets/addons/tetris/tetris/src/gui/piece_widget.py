@@ -3,9 +3,9 @@
 
 __author__ = "ipetrash"
 
-from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QPaintEvent, QPainter
-from PyQt5.QtWidgets import QWidget
+from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtGui import QPaintEvent, QPainter
+from PyQt6.QtWidgets import QWidget
 
 from ..core.piece import Piece
 from .common import CELL_SIZE, draw_cell_board
@@ -32,7 +32,7 @@ class PieceWidget(QWidget):
             return
 
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         for x, y in self.piece.get_points_for_state(x=2, y=1):
-            draw_cell_board(painter, x, y, self.piece.get_color(), pen=Qt.black)
+            draw_cell_board(painter, x, y, self.piece.get_color(), pen=Qt.GlobalColor.black)

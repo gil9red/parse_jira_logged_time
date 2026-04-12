@@ -16,8 +16,8 @@ from typing import Type, Any
 from types import ModuleType
 from pathlib import Path
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
     QWidget,
     QDockWidget,
     QToolButton,
@@ -221,9 +221,9 @@ class AddonDockWidget(QDockWidget):
             )
 
         if self.addon.is_supported_refresh():
-            self.tab_widget.setCornerWidget(self.button_refresh, Qt.TopLeftCorner)
+            self.tab_widget.setCornerWidget(self.button_refresh, Qt.Corner.TopLeftCorner)
 
-        self.tab_widget.setCornerWidget(right_corner_widget, Qt.TopRightCorner)
+        self.tab_widget.setCornerWidget(right_corner_widget, Qt.Corner.TopRightCorner)
 
         self.setWidget(self.tab_widget)
 
@@ -375,12 +375,12 @@ def import_all_addons(package: str = __name__) -> list[AddonDockWidget]:
                 items.append(AddonDockWidget(addon_cls=obj))
             except Exception as e:
                 msg_box = QMessageBox(
-                    QMessageBox.Warning,
+                    QMessageBox.Icon.Warning,
                     "Ошибка при загрузке аддона",
                     f"Ошибка при загрузке аддона {name}: {e}",
                 )
                 msg_box.setDetailedText(traceback.format_exc())
-                msg_box.setStandardButtons(QMessageBox.Ok)
+                msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
                 msg_box.exec()
 
     return items

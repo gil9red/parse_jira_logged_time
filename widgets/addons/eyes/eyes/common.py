@@ -7,9 +7,8 @@ __author__ = "ipetrash"
 from dataclasses import dataclass
 from math import fabs, sqrt
 
-from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtWidgets import QWidget
-
+from PyQt6.QtCore import QPoint, Qt
+from PyQt6.QtWidgets import QWidget
 
 EPS: float = 0.00001
 
@@ -100,10 +99,7 @@ def is_ellipse_and_direct(
         # lnk и lnb - коэффициенты прямой по формуле lnk * x + lnb  ==  y
         lnk: float = dy / dx
         lnb: float = (
-            ellipse.x1 * dy
-            + line.x1 * line.y2
-            - line.y1 * line.x2
-            - ellipse.y1 * dx
+            ellipse.x1 * dy + line.x1 * line.y2 - line.y1 * line.x2 - ellipse.y1 * dx
         ) / dx
 
         # Получаем уравнение пересечения: a0 x^2 + a1 x + a2  ==  0
@@ -140,9 +136,13 @@ def set_top_of_all_windows(widget: QWidget, top: bool) -> None:
     old_pos: QPoint = widget.pos()
 
     if top:
-        flags = Qt.Tool | Qt.WindowStaysOnTopHint
+        flags = Qt.WindowType.Tool | Qt.WindowType.WindowStaysOnTopHint
     else:
-        flags = Qt.FramelessWindowHint | Qt.Tool | Qt.WindowStaysOnBottomHint
+        flags = (
+            Qt.WindowType.FramelessWindowHint
+            | Qt.WindowType.Tool
+            | Qt.WindowType.WindowStaysOnBottomHint
+        )
 
     widget.setWindowFlags(flags)
 

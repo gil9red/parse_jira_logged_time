@@ -54,17 +54,17 @@
 
 ## Для запуска:
   * Нужен python (проверялось на 3.10-3.12 версиях)
-  * Установить в него зависимости [requirements.txt](requirements.txt) вручную (например, `pip install requests==2.32.2`) или все зависимости через команду:
+  * Установить в него зависимости [pyproject.toml](pyproject.toml) вручную (например, `pip install requests==2.32.2`) или все зависимости в папке проекта через команду:
     ```
-    pip install -r requirements.txt
+    pip install .
     ```
     Для установки в конкретную версию:
     ```
-    <путь до приложения python> -m pip install -r requirements.txt
+    <путь до приложения python> -m pip install .
     ```
 	Если при установке возникает сетевая ошибка, то можно к команде `pip` добавить прокси:
 	```
-	pip install --proxy <адрес> -r requirements.txt
+	pip install --proxy <адрес> .
 	```
   * Запуск:
     ```

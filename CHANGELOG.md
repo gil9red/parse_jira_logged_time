@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-04-13
+### Fixed
+- Замена хранения зависимостей из requirements.txt на [pyproject.toml](pyproject.toml)
+
 ## [2.0.0] - 2026-04-13
 ### Changed
 - Обновление с PyQt5 -> PyQt6

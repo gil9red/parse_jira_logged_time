@@ -7,7 +7,6 @@ __author__ = "ipetrash"
 import re
 from config import PATH_CHANGELOG
 
-
 PATTERN_VERSION: re.Pattern = re.compile(r"^## \[(\d+)\.(\d+)\.(\d+)] - (.+)$")
 
 

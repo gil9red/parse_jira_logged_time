@@ -2,7 +2,6 @@
 name = "parse-jira-logged-time"
 dynamic = ["version"]
 description = "Графическое приложения для просмотра залогированных задач"
-readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "beautifulsoup4==4.12.3",
@@ -10,6 +9,7 @@ dependencies = [
     "pyqt6==6.11.0",
     "requests==2.32.2",
 ]
+readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE.txt"]
 

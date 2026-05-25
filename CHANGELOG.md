@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-05-25
+### Fixed
+- Исправление аддона "Рабочий журнал"
+
 ## [2.0.1] - 2026-04-13
 ### Fixed
 - Замена хранения зависимостей из requirements.txt на [pyproject.toml](pyproject.toml)

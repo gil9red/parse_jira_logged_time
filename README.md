@@ -6,7 +6,7 @@
 Разработано на python и использует Qt 6.
 
 ## Перед работой нужно будет:
-  * Иметь PEM файл, содержащий сертификат. Получить можно, например:
+  * Иметь PEM файл, содержащий сертификат (p12 AES-256). Получить можно, например:
     ```
     openssl pkcs12 -nodes -out cert.pem -in cert.p12
     ```
@@ -27,7 +27,7 @@
       -----END PRIVATE KEY-----
       ```
       
-    * Если при выполнении команды ошибки вида
+    * Если при выполнении команды возникли ошибки вида
       ```
       'openssl' is not recognized as an internal or external command, operable program or batch file.
       ```

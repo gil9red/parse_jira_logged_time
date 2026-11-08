@@ -229,7 +229,7 @@ class MainWindow(QMainWindow):
         menu_tool_bar = menu_view.addMenu("&Панель инструментов")
         menu_tool_bar.addAction(tool_bar_general.toggleViewAction())
 
-        menu_addons = menu_view.addMenu("&Аддоны")
+        menu_addons = self.menuBar().addMenu("&Аддоны")
         self.addons: list[AddonDockWidget] = import_all_addons()
         for addon_dock in self.addons:
             addon_dock.addon.set_context(self)

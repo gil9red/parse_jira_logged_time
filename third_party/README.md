@@ -1,5 +1,8 @@
 ### SOURCE:
  * [decode_escapes_telegram_bot/utils.py](https://github.com/gil9red/decode_escapes_telegram_bot/blob/a43ac4f21f1ca734431dc8ab038bdd306c3c1c52/utils.py)
+ * [tools/EscapeString/](https://github.com/gil9red/SimplePyScripts/blob/4435b0a4f405614ac5078e35463ef54d82945240/EscapeString/main.py)
+ * [tools/hex2str/gui.py](https://github.com/gil9red/SimplePyScripts/blob/49ed283f84040cab21134cdb2c3492b685e9c816/hex2str/gui.py)
+ * [tools/gui_base64.py]([https://github.com/gil9red/SimplePyScripts/blob/4435b0a4f405614ac5078e35463ef54d82945240/EscapeString/main.py](https://github.com/gil9red/SimplePyScripts/blob/d86149131597dae7181d798296a0f576633a188f/Base64_examples/gui_base64.py))
  * [advanced_list_widget_pyqt6.py](https://github.com/gil9red/SimplePyScripts/blob/25b5d959cff30d23175230d5ce8d5821f6896da0/qt__pyqt__pyside__pyqode/advanced_list_widget_pyqt6.py)
  * [ago.py](https://github.com/gil9red/SimplePyScripts/blob/cb1c04acab4c8a2007eb780f9c3350e2d02e4fbb/ago.py)
  * [column_resizer_pyqt6.py](https://github.com/gil9red/SimplePyScripts/blob/c60577dee87a2857ba068fb12928ff02eab1fef3/qt__pyqt__pyside__pyqode/layout_column_resizer/column_resizer_pyqt6.py)

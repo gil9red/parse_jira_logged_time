@@ -70,6 +70,7 @@ from widgets.about import About
 from widgets.activities_widget import ActivitiesWidget
 from widgets.logged_widget import LoggedWidget
 from widgets.logs_widget import LogsWidget
+from widgets.tools import ToolWidget, import_all_tool_classes
 
 MAIN_WINDOW: Optional["MainWindow"] = None
 
@@ -238,6 +239,13 @@ class MainWindow(QMainWindow):
             self.addDockWidget(defaults.area, addon_dock)
             menu_addons.addAction(addon_dock.toggleViewAction())
 
+        menu_tools = self.menuBar().addMenu("&Инструменты")
+        self.tools: list[ToolWidget] = [
+            tool_cls() for tool_cls in import_all_tool_classes()
+        ]
+        for tool in self.tools:
+            menu_tools.addAction(tool.toggleViewAction())
+
         self.menu_help = self.menuBar().addMenu("&Помощь")
 
         self.about = About(self)
@@ -261,6 +269,8 @@ class MainWindow(QMainWindow):
 
         menu_tray = QMenu()
         menu_tray.addAction(action_about)
+        menu_tray.addSeparator()
+        menu_tray.addMenu(menu_tools)
         menu_tray.addSeparator()
         menu_tray.addAction(action_exit)
 

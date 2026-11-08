@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 ### Changed
+- В API добавлены инструменты. Добавлены инструменты: `Escape String`, `Base64`, `Hex -> Str`
 - Аддоны. Причесан код widgets/addons/__init__.py
 
 ### Fixed

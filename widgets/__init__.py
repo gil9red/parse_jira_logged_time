@@ -3,12 +3,16 @@
 
 __author__ = "ipetrash"
 
+import importlib
+import pkgutil
 
 import re
+import sys
 import textwrap
 import webbrowser
 
 from contextlib import contextmanager
+from types import ModuleType
 from typing import Any, Callable
 
 from PyQt6.QtCore import Qt, QObject, QPoint, QModelIndex, QAbstractItemModel
@@ -229,3 +233,16 @@ def get_scroll_area(widget: QWidget) -> QScrollArea:
 
 def get_class_name(obj: Any) -> str:
     return obj.__class__.__name__
+
+
+# SOURCE: https://stackoverflow.com/a/25083161/5909792
+def import_submodules(package_name: str) -> dict[str, ModuleType]:
+    """
+    Import all submodules of a module, recursively
+    """
+
+    package = sys.modules[package_name]
+    return {
+        name: importlib.import_module(package_name + "." + name)
+        for _, name, _ in pkgutil.walk_packages(package.__path__)
+    }

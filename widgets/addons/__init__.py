@@ -4,16 +4,12 @@
 __author__ = "ipetrash"
 
 
-import importlib
 import traceback
-import pkgutil
-import sys
 
 from dataclasses import dataclass
 from datetime import datetime
 from inspect import isclass
 from typing import Type, Any
-from types import ModuleType
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -31,7 +27,7 @@ from PyQt6.QtWidgets import (
 )
 
 from api import RunFuncThread, get_human_datetime, get_ago
-from widgets import get_class_name, get_scroll_area, web_browser_open
+from widgets import get_class_name, get_scroll_area, web_browser_open, import_submodules
 from widgets.logs_widget import LogsWidget
 
 
@@ -342,24 +338,11 @@ class AddonDockWidget(QDockWidget):
         self.addon.write_settings(settings)
 
 
-# SOURCE: https://stackoverflow.com/a/25083161/5909792
-def import_submodules(package_name: str) -> dict[str, ModuleType]:
-    """
-    Import all submodules of a module, recursively
-    """
-
-    package = sys.modules[package_name]
-    return {
-        name: importlib.import_module(package_name + "." + name)
-        for _, name, _ in pkgutil.walk_packages(package.__path__)
-    }
-
-
 def import_all_addons(package: str = __name__) -> list[AddonDockWidget]:
     items = []
 
     for module in import_submodules(package).values():
-        # Перебираем список объектов в модуле
+        # Перебор списка объектов в модуле
         for name in dir(module):
             obj = getattr(module, name)
             if (

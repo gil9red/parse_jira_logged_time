@@ -14,7 +14,6 @@ from datetime import datetime
 from inspect import isclass
 from typing import Type, Any
 from types import ModuleType
-from pathlib import Path
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -34,10 +33,6 @@ from PyQt6.QtWidgets import (
 from api import RunFuncThread, get_human_datetime, get_ago
 from widgets import get_class_name, get_scroll_area, web_browser_open
 from widgets.logs_widget import LogsWidget
-
-
-FILE: Path = Path(__file__).resolve()
-DIR: Path = FILE.parent
 
 
 @dataclass
@@ -221,7 +216,9 @@ class AddonDockWidget(QDockWidget):
             )
 
         if self.addon.is_supported_refresh():
-            self.tab_widget.setCornerWidget(self.button_refresh, Qt.Corner.TopLeftCorner)
+            self.tab_widget.setCornerWidget(
+                self.button_refresh, Qt.Corner.TopLeftCorner
+            )
 
         self.tab_widget.setCornerWidget(right_corner_widget, Qt.Corner.TopRightCorner)
 
@@ -318,6 +315,7 @@ class AddonDockWidget(QDockWidget):
         if not settings:
             settings: dict[str, Any] = dict()
 
+            # Видимость на первом запуске
             self.setVisible(defaults.is_visible)
 
         is_active: bool = settings.get(

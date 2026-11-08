@@ -5,8 +5,9 @@
 и этот проект придерживается [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Аддоны. Причесан код widgets/addons/__init__.py
 
-## [2.0.3] - 2026-11-05
 ### Fixed
 - README. Добавлено про p12 AES-256
 

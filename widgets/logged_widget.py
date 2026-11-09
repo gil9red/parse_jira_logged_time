@@ -79,7 +79,6 @@ class LoggedWidget(QWidget):
                 total_seconds_str: str = seconds_to_str(total_seconds)
 
                 date_str: str = get_human_date(entry_date)
-                is_odd_week: int = entry_date.isocalendar().week % 2 == 1
 
                 # Не показывать даты, в которых не было залогировано
                 if not total_seconds:
@@ -92,9 +91,6 @@ class LoggedWidget(QWidget):
                         tool_tip=f"Всего секунд: {total_seconds}",
                     ),
                 ]
-                for item in items:
-                    if is_odd_week:
-                        item.setBackground(Qt.GlobalColor.lightGray)
 
                 add_table_row(self.table_logged, items)
 

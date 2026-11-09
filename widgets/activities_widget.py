@@ -94,7 +94,6 @@ class ActivitiesWidget(QWidget):
                 total_seconds_str: str = seconds_to_str(total_seconds)
 
                 date_str: str = get_human_date(entry_date)
-                is_odd_week: int = entry_date.isocalendar().week % 2 == 1
 
                 items = [
                     create_table_item(date_str, data=activities),
@@ -106,9 +105,6 @@ class ActivitiesWidget(QWidget):
                         f"{activities_number}",
                     ),
                 ]
-                for item in items:
-                    if is_odd_week:
-                        item.setBackground(Qt.GlobalColor.lightGray)
 
                 add_table_row(self.table_date, items)
 
